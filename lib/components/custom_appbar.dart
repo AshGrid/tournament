@@ -42,10 +42,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           );
         },
       ),
+
       actions: <Widget>[
         IconButton(
           iconSize: 52,
-          icon: const Icon(Icons.person),
+          icon: const ImageIcon(AssetImage("assets/icons/dotsPNG.png")),
           onPressed: () {
             Navigator.push(
               context,

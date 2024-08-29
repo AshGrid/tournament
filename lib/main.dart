@@ -5,6 +5,7 @@ import 'package:untitled/screens/home_screen.dart';
 import 'package:untitled/screens/login.dart';
 import 'package:untitled/screens/more_screen.dart';
 import 'package:untitled/screens/profile_screen.dart';
+import 'package:untitled/screens/splash_screen.dart';
 
 import 'components/bottom_navigation.dart';
 import 'components/colors.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  LoginScreen(),
+      home:  SplashScreen(),
 
     );
   }

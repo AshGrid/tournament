@@ -1,12 +1,10 @@
 import 'dart:ui';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:untitled/main.dart';
 import 'package:untitled/screens/home_screen.dart';
-
-
+import 'package:flutter_image/flutter_image.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -54,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     // Handle login logic here, and if successful:
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  MyHomePage()),
+      MaterialPageRoute(builder: (context) => MyHomePage()),
     );
   }
 
@@ -67,6 +65,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Add the GIF at the top of the screen
+              Image(
+                image: AssetImage('assets/images/soccer.gif'),
+                width: 200, // Adjust width as needed
+                height: 200, // Adjust height as needed
+              ),
+              SizedBox(height: 20),
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Text(

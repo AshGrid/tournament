@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
             top: 5,
             left: 5,
             child: IconButton(
-              icon: const Icon(Icons.arrow_drop_up),
+              icon: ImageIcon(AssetImage("assets/icons/lines.png")),
               onPressed: () {
                 _showBottomSheet(context);
               },
