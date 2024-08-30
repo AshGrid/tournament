@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/colors.dart';
 
 
 import '../screens/bottom_sheet.dart';
@@ -15,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leadingWidth: 100,
       toolbarHeight: 100,
+      backgroundColor: AppColors.appbarColor,
 
 
       leading: Builder(

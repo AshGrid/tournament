@@ -1,13 +1,22 @@
 class Match {
-  final String team1;
-  final String team2;
-  final String score;
-  final String time;
+  final String homeTeam;
+  final String awayTeam;
+  final int homeScore;
+  final int awayScore;
+  final String matchStatus;
+  final String matchTime;
+  final String homeTeamLogo;
+  final String awayTeamLogo;
+   String? extraTime;
 
   Match({
-    required this.team1,
-    required this.team2,
-    required this.score,
-    required this.time,
+    required this.homeTeam,
+    required this.awayTeam,
+    required this.homeScore,
+    required this.awayScore,
+    required this.matchStatus,
+    required this.matchTime,
+    required this.homeTeamLogo,
+    required this.awayTeamLogo
   });
 }

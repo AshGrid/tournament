@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/colors.dart';
-import '../components/ads_banner.dart';
-import '../components/story_circle.dart';
 import 'bottom_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -18,31 +16,34 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-                const AdsBanner(),
-                 // Add the AdsBanner widget
-              ],
+    return MaterialApp(
+      home: Builder(
+        builder: (context) => Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                          icon: ImageIcon(AssetImage("assets/icons/lines.png")),
+                          onPressed: () {
+                            _showBottomSheet(context);
+                          },
+                          tooltip: 'Open Bottom Sheet',
+                        ),
+                      ),
+                    ),
+                    // Add the AdsBanner widget here
+                  ],
+                ),
+              ),
             ),
-          ),
-          Positioned(
-            top: 5,
-            left: 5,
-            child: IconButton(
-              icon: ImageIcon(AssetImage("assets/icons/lines.png")),
-              onPressed: () {
-                _showBottomSheet(context);
-              },
-              tooltip: 'Open Bottom Sheet',
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
