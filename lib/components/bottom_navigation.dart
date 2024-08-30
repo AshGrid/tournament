@@ -44,8 +44,8 @@ class BottomNavigation extends StatelessWidget {
         ),
       ],
       currentIndex: currentIndex,
-      selectedItemColor: Colors.black, // Set color for the selected item
-      unselectedItemColor: Colors.black,
+      selectedItemColor: Colors.white, // Set color for the selected item
+      unselectedItemColor: Colors.white,
       onTap: onTap,
 
     );

@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
 
-    return AppBar(
+    return SliverAppBar(
       leadingWidth: 100,
       toolbarHeight: 100,
       backgroundColor: AppColors.appbarColor,

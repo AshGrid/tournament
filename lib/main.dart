@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/screens/bottom_sheet.dart';
 import 'package:untitled/screens/match_details.dart';
 import 'package:untitled/screens/matches_screen.dart';
 import 'package:untitled/screens/home_screen.dart';
-import 'package:untitled/screens/login.dart';
 import 'package:untitled/screens/more_screen.dart';
-import 'package:untitled/screens/profile_screen.dart';
-import 'package:untitled/screens/splash_screen.dart';
-
 import 'components/bottom_navigation.dart';
 import 'components/colors.dart';
 import 'components/custom_appbar.dart';
@@ -28,7 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SplashScreen(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -62,15 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
       body: Container(
-        // Applying gradient background
-        decoration: const BoxDecoration(
-          gradient: AppColors.backgroundColor, // Ensure this is defined in your colors.dart
+        decoration: BoxDecoration(
+          gradient: AppColors.backgroundColor, // Gradient background
         ),
-        child: selectedMatch == null
-            ? _getPage(_selectedIndex)
-            : MatchDetailsPage(match: selectedMatch!), // Show MatchDetailsPage if a match is selected
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              const CustomAppBar(), // Use your CustomAppBar here
+            ];
+          },
+          body: selectedMatch == null
+              ? _getPage(_selectedIndex)
+              : MatchDetailsPage(match: selectedMatch!), // Show MatchDetailsPage if a match is selected
+        ),
       ),
       bottomNavigationBar: BottomNavigation(
         currentIndex: _selectedIndex,
