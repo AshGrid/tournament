@@ -15,38 +15,37 @@ class BottomNavigation extends StatelessWidget {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/home.png"),
-          ),
+          icon: Icon(Icons.home),
           label: 'Acceuil',
           backgroundColor: AppColors.navbarColor,
 
         ),
         BottomNavigationBarItem(
           icon: ImageIcon(AssetImage("assets/icons/field.png"),
-            ),
+            color: Colors.black,),
           label: 'Matches',
 
           backgroundColor: AppColors.navbarColor,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.star_outline),
+          icon: Icon(Icons.star),
           label: 'Favoris',
           backgroundColor: AppColors.navbarColor,
         ),
-
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Boutique',
+          backgroundColor: AppColors.navbarColor,
+        ),
         BottomNavigationBarItem(
           icon: ImageIcon(AssetImage("assets/icons/shirt.png"),),
           label: 'Fantasy',
           backgroundColor: AppColors.navbarColor,
         ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/lines.png"),),
-          label: 'Menu',
-          backgroundColor: AppColors.navbarColor,
-        ),
       ],
       currentIndex: currentIndex,
-
+      selectedItemColor: Colors.black, // Set color for the selected item
+      unselectedItemColor: Colors.black,
       onTap: onTap,
 
     );

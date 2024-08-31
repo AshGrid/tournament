@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/screens/bottom_sheet.dart';
 import 'package:untitled/screens/match_details.dart';
 import 'package:untitled/screens/matches_screen.dart';
 import 'package:untitled/screens/home_screen.dart';
+import 'package:untitled/screens/login.dart';
 import 'package:untitled/screens/more_screen.dart';
+import 'package:untitled/screens/profile_screen.dart';
+import 'package:untitled/screens/splash_screen.dart';
+
 import 'components/bottom_navigation.dart';
 import 'components/colors.dart';
 import 'components/custom_appbar.dart';
@@ -23,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: SplashScreen(),
     );
   }
 }
@@ -57,20 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.backgroundColor, // Gradient background
+        // Applying gradient background
+        decoration: const BoxDecoration(
+          gradient: AppColors.backgroundColor, // Ensure this is defined in your colors.dart
         ),
-        child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              const CustomAppBar(), // Use your CustomAppBar here
-            ];
-          },
-          body: selectedMatch == null
-              ? _getPage(_selectedIndex)
-              : MatchDetailsPage(match: selectedMatch!), // Show MatchDetailsPage if a match is selected
-        ),
+        child: selectedMatch == null
+            ? _getPage(_selectedIndex)
+            : MatchDetailsPage(match: selectedMatch!), // Show MatchDetailsPage if a match is selected
       ),
       bottomNavigationBar: BottomNavigation(
         currentIndex: _selectedIndex,
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return const HomeScreen();
       case 1:
-        return MatchesScreen(); // Pass the callback to handle match selection
+        return MatchesScreen(onMatchTap: _onMatchSelected); // Pass the callback to handle match selection
       case 2:
         return MoreScreen();
       default:

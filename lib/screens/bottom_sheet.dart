@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:untitled/components/colors.dart';
 
 class BottomSheetContent extends StatelessWidget {
   @override
@@ -9,7 +8,7 @@ class BottomSheetContent extends StatelessWidget {
       padding: EdgeInsets.all(16.0),
       height: 200,
       decoration: BoxDecoration(
-        color: AppColors.bottomSheet,
+        color: Color(0xFF071952),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
