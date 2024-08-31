@@ -24,19 +24,7 @@ class HomeScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: IconButton(
-                          icon: ImageIcon(AssetImage("assets/icons/lines.png")),
-                          onPressed: () {
-                            _showBottomSheet(context);
-                          },
-                          tooltip: 'Open Bottom Sheet',
-                        ),
-                      ),
-                    ),
+
                     // Add the AdsBanner widget here
                   ],
                 ),

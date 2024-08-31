@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return const HomeScreen();
       case 1:
-        return MatchesScreen(onMatchTap: _onMatchSelected); // Pass the callback to handle match selection
+        return MatchesScreen(); // Pass the callback to handle match selection
       case 2:
         return MoreScreen();
       default:

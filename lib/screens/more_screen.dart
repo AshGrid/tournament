@@ -5,7 +5,7 @@ class MoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'More Screen',
+        'Favoris',
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );

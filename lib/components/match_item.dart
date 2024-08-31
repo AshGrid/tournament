@@ -1,114 +1,70 @@
 import 'package:flutter/material.dart';
-import '../models/match.dart';
-import '../components/colors.dart';
+import '../models/match.dart'; // Make sure the Match class is correctly imported
 
 class MatchItem extends StatelessWidget {
   final Match match;
+  final Color backgroundColor;
 
-  const MatchItem({Key? key, required this.match}) : super(key: key);
+  const MatchItem({Key? key, required this.match, required this.backgroundColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.matchCard, // Set your background color here
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white, // Adjust border color as needed
-            width: 2,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 0.0), // Reduced vertical margin
+      padding: const EdgeInsets.symmetric(vertical: 1.0), // Padding around the item
+      color: backgroundColor,
+      child: Column(
+
+        children: [
+
+          // Match Date at the top center
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 1.0), // Reduced vertical padding
+            child: Text(
+              match.matchTime,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Date Section
-            Container(
-              padding: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1), // Light overlay to distinguish the date section
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // First team's logo and name
+              Row(
                 children: [
+                  Image.asset(
+                    match.homeTeamLogo,
+                    width: 60, // Adjust width as needed
+                    height: 60, // Adjust height as needed
+                  ),
+                  const SizedBox(width: 8), // Space between logo and team name
                   Text(
-                    match.matchTime, // Use your date format
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    match.homeTeam,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-            ),
-
-            // Line Separator
-            Container(
-              width: 1, // Width of the line
-              height: 60, // Adjust the height as needed
-              color: Colors.white, // Color of the line
-              margin: const EdgeInsets.symmetric(horizontal: 10), // Spacing around the line
-            ),
-
-            // Team Details Section
-            Expanded(
-              child: Column(
+              // 'VS' text in the center
+              const Text(
+                'VS',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              // Second team's name and logo
+              Row(
                 children: [
-                  // Home Team
-                  _buildTeamRow(match.homeTeamLogo, match.homeTeam, match.homeScore),
-                  SizedBox(height: 10),
-                  // Away Team
-                  _buildTeamRow(match.awayTeamLogo, match.awayTeam, match.awayScore),
+                  Text(
+                    match.awayTeam,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 8), // Space between team name and logo
+                  Image.asset(
+                    match.awayTeamLogo,
+                    width: 60, // Adjust width as needed
+                    height: 60, // Adjust height as needed
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTeamRow(String logoUrl, String teamName, int score) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.white, // Border color of the avatar
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundImage: AssetImage(logoUrl), // Load the team logo
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-              SizedBox(width: 8),
-              Text(
-                teamName,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ],
-          ),
-          Text(
-            score.toString(),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
           ),
         ],
       ),
