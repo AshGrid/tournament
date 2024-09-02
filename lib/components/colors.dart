@@ -20,6 +20,11 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+  static const LinearGradient newsBackground = LinearGradient(
+    colors: [Color(0x50000), Color(0x74FFFFFF)], // Change to your desired colors
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   static const Color errorColor = Color(0xFFB00020);
   static const Color onSecondary = Color(0xFF000000);
   static const Color onSurface = Color(0xFF000000);
