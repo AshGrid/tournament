@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
+
 class BottomNavigation extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
@@ -12,42 +13,56 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/home.png"),
-          ),
-          label: 'Acceuil',
-          backgroundColor: AppColors.navbarColor,
+    return
 
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/field.png"),
+       BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/icons/home.png"),
+              color: Colors.white, // Set icon color here
             ),
-          label: 'Matches',
-
-          backgroundColor: AppColors.navbarColor,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.star_outline),
-          label: 'Favoris',
-          backgroundColor: AppColors.navbarColor,
-        ),
-
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/shirt.png"),),
-          label: 'Fantasy',
-          backgroundColor: AppColors.navbarColor,
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(AssetImage("assets/icons/lines.png"),),
-          label: 'Menu',
-          backgroundColor: AppColors.navbarColor,
-        ),
-      ],
-      currentIndex: currentIndex,
-
-      onTap: onTap,
+            label: 'Acceuil',
+            backgroundColor: AppColors.navbarColor, // Optional, for item background color
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/icons/field.png"),
+              color: Colors.white, // Set icon color here
+            ),
+            label: 'Matches',
+            backgroundColor: AppColors.navbarColor, // Optional, for item background color
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/icons/Star18.png"),
+              color: Colors.white, // Set icon color here
+            ),
+            label: 'Favoris',
+            backgroundColor: AppColors.navbarColor, // Optional, for item background color
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/icons/shirt.png"),
+              color: Colors.white, // Set icon color here
+            ),
+            label: 'Fantasy',
+            backgroundColor: AppColors.navbarColor, // Optional, for item background color
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/icons/lines.png"),
+              color: Colors.white, // Set icon color here
+            ),
+            label: 'Menu',
+            backgroundColor: AppColors.navbarColor, // Optional, for item background color
+          ),
+        ],
+        currentIndex: currentIndex,
+        onTap: onTap,
+        backgroundColor: AppColors.navbarColor, // Make background transparent to use Container color
+        selectedItemColor: Colors.white, // Set color for selected item
+        unselectedItemColor: Colors.white54, // Set color for unselected items
 
     );
   }

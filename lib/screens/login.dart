@@ -6,6 +6,8 @@ import 'package:untitled/main.dart';
 import 'package:untitled/screens/home_screen.dart';
 import 'package:flutter_image/flutter_image.dart';
 
+import 'myhomePage.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();

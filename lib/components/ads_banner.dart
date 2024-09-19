@@ -6,10 +6,10 @@ class AdsBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50.0, // Adjust the height as needed
+      height: 70.0, // Adjust the height as needed
       decoration: BoxDecoration(
-        color: Colors.grey[200], // Background color for the ad banner
-        borderRadius: BorderRadius.circular(12.0), // Radius for rounded corners
+        color: Colors.grey[50], // Background color for the ad banner
+        borderRadius: BorderRadius.circular(20.0), // Radius for rounded corners
         border: Border.all(
           color: Colors.black12, // Border color
           width: 1.0, // Border width
@@ -20,8 +20,8 @@ class AdsBanner extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              'assets/icons/dots.png', // Path to the logo image
-              height: 40.0, // Adjust the height of the logo
+              'assets/icons/logo.png', // Path to the logo image
+              height: 50.0, // Adjust the height of the logo
             ),
           ),
           Expanded(

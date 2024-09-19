@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:untitled/components/colors.dart';
 import '../main.dart';
 import 'login.dart';
+import 'myhomePage.dart';
  // Import your main screen here
 
 class SplashScreen extends StatefulWidget {
@@ -25,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set your desired background color
+      backgroundColor: AppColors.splashScreen, // Set your desired background color
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              'Welcome to My App',
+              'ABC Events',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],

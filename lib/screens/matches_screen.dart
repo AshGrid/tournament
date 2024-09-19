@@ -1,61 +1,68 @@
 import 'package:flutter/material.dart';
 import '../components/LeagueComponent.dart';
-import '../models/league.dart'; // Import your League model
-import '../models/match.dart'; // Import your Match model
-// Import the LeagueComponent
+import '../models/league.dart';
+import '../models/match.dart';
 
-class MatchesScreen extends StatelessWidget {
+class MatchesScreen extends StatefulWidget {
   const MatchesScreen({Key? key}) : super(key: key);
 
   @override
+  _MatchesScreenState createState() => _MatchesScreenState();
+}
+
+class _MatchesScreenState extends State<MatchesScreen> {
+  // Track the selected day
+  int selectedDayIndex = 0;
+
+  // Sample list of days to display
+  final List<String> days = [
+    'Journée 1',
+    'Journée 2',
+    'Journée 3',
+    'Journée 4',
+    'Journée 5',
+    'Journée 6',
+    'Journée 7',
+  ];
+
+  // Sample list of leagues
+  List<League> leagues = [
+    League(
+      leagueName: 'LEAGUE SAMEDI',
+      matches: [
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+
+      ],
+      leagueLogo: 'assets/images/LIGUE SAMEDI.png',
+    ),
+    League(
+      leagueName: 'LEAGUE DIMANCHE',
+      matches: [
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+
+      ],
+      leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
+    ),
+    League(
+      leagueName: 'LEAGUE IT',
+      matches: [
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+      ],
+      leagueLogo: 'assets/images/LIGUE IT.png',
+    ),
+    // Add more leagues as needed
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    // Sample list of days to display
-    List<String> days = [
-      'Journée 1',
-      'Journée 2',
-      'Journée 3',
-      'Journée 4',
-      'Journée 5',
-      'Journée 6',
-      'Journée 7',
-    ];
-
-    // Sample list of leagues
-    List<League> leagues = [
-      League(
-        leagueName: 'League A',
-        matches: [
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-
-        ],
-        leagueLogo: 'assets/images/jabami.jpg',
-      ),
-      League(
-        leagueName: 'League c',
-        matches: [
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-
-        ],
-        leagueLogo: 'assets/images/jabami.jpg',
-      ),
-      League(
-        leagueName: 'League B',
-        matches: [
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-          Match(homeTeam: 'teram A', awayTeam: 'team B', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:48', homeTeamLogo: 'assets/images/itachi.jpg', awayTeamLogo: 'assets/images/itachi.jpg'/* match details */),
-        ],
-        leagueLogo: 'assets/images/jabami.jpg',
-      ),
-      // Add more leagues as needed
-    ];
-
     return Column(
       children: [
         // Horizontally scrollable container for days
@@ -64,48 +71,53 @@ class MatchesScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Row(
-              children: days.map((day) {
+              children: days.asMap().entries.map((entry) {
+                int index = entry.key;
+                String day = entry.value;
+                bool isSelected = index == selectedDayIndex;
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: GestureDetector(
                     onTap: () {
-                      // Add action on tap if needed
+                      setState(() {
+                        selectedDayIndex = index;
+                      });
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          day,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        day,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
+                        if (isSelected)
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            width: 70, // Adjust this to match the desired underline width
+                            height: 2,  // Height of the underline
+                            color: Colors.white, // Underline color
+                          ),
+                      ],
                     ),
                   ),
                 );
               }).toList(),
             ),
           ),
-        ),
+        )
+
+        ,
         // Vertically scrollable container for leagues
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 0),
             children: leagues.map((league) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
                 child: LeagueComponent(league: league),
               );
             }).toList(),

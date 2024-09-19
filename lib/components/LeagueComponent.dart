@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/components/colors.dart';
+import '../models/match.dart';
 import '../models/league.dart'; // Import your League model
 import 'match_item.dart'; // Import the MatchItem component
+import 'match_item_live.dart'; // Import the MatchItemLive component
+import 'package:untitled/components/colors.dart'; // Ensure AppColors is correctly imported
 
 class LeagueComponent extends StatelessWidget {
   final League league;
@@ -10,78 +12,106 @@ class LeagueComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 0.0), // Reduced vertical margin
-      padding: const EdgeInsets.symmetric(vertical: 1.0),
-      decoration: BoxDecoration(
-        color: AppColors.leagueComponent, // Set background color to white
-        borderRadius: BorderRadius.circular(12.0), // Round the corners
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-       // Set background color to white
-      // Margin for spacing between leagues
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // League Name and Logo in a separate box
-          Container(
-            height: 80,
-            padding: const EdgeInsets.all(6.0),
-            decoration: BoxDecoration(
-              color: Colors.white, // Light grey background for the box
-              borderRadius: BorderRadius.circular(15.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 4,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
+    // Sort matches to put live matches first
+    List<Match> sortedMatches = List.from(league.matches);
+    sortedMatches.sort((a, b) {
+      // Check if the match is live or not
+      bool aIsLive = a.matchStatus.toLowerCase() == 'live';
+      bool bIsLive = b.matchStatus.toLowerCase() == 'live';
 
-              children: [
-                if (league.leagueLogo != null) // Make sure `leagueLogo` is defined in your League class
-                  Image(
-                    image: AssetImage(league.leagueLogo),
-                    width: 100, // Adjust width as needed
-                    height: 100, // Adjust height as needed
+      // Prioritize live matches
+      if (aIsLive && !bIsLive) return -1;
+      if (!aIsLive && bIsLive) return 1;
+
+      // Maintain the original order if both matches have the same status
+      return 0;
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // League Name and Logo Container
+        Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: AppColors.leagueComponent,
+            border: Border(
+              top: BorderSide(color: Colors.white),
+              bottom: BorderSide(color: Colors.white),
+            ),
+          ),
+          child: Row(
+            children: [
+              if (league.leagueLogo != null) const SizedBox(width: 12),
+              // Container for the League Logo with border and shadow
+              Container(
+                width: 65, // Adjust the width and height as needed
+                height: 65,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(color: AppColors.teamLogoBorder, width: 1), // Add border to the container
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.teamLogoShadow, // Shadow color
+                      offset: Offset(2, 4), // Shadow position
+                      blurRadius: 4, // How blurry the shadow is
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0), // Match the border radius
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown, // Ensure the image scales down to fit inside
+                    child: Image.asset(
+                      league.leagueLogo,
+                      width: 55, // Adjust the size here
+                      height: 55,
+                    ),
                   ),
-                const SizedBox(width: 12),
-                // League Name
-                Text(
-                  league.leagueName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
-
                 ),
-                // League Logo
-
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                league.leagueName,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          // List of MatchItems
-          SizedBox(
-            height: 180, // Adjust height to show 2 items (e.g., 2 * 90 = 180)
-            child: ListView.builder(
-              
-              itemCount: league.matches.length,
-              itemBuilder: (context, index) {
-                // Alternate background colors
-                final backgroundColor = index.isEven ? AppColors.matchItem1 : Colors.transparent;
-
-                return MatchItem(match: league.matches[index], backgroundColor: backgroundColor!,);
-              },
-            ),
+        ),
+        // Matches List Container with no extra padding or spacing
+        Column(
+          children: List.generate(
+            sortedMatches.length,
+                (index) {
+              final match = sortedMatches[index];
+              return MatchItemLive(
+                match: match,
+                backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
+                isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+              );
+              // Check if the match is live and return the appropriate widget
+              // if (match.matchStatus.toLowerCase() == 'live') {
+              //   return MatchItemLive(
+              //     match: match,
+              //     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
+              //     isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+              //   );
+              // } else {
+              //   return MatchItemLive(
+              //     match: match,
+              //     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
+              //     isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+              //   );
+              // }
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -11,19 +11,44 @@ class NewsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Add "News" title
+        // Add "News" title with shadow and underline
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Text(
-            'News:',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              decoration: TextDecoration.underline, // Add underline to the text
-              decorationColor: Colors.white, // Customize the underline color
-              decorationThickness: 1.0, // Customize the thickness of the underline// Change the color as per your background
-            ),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'News',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 4.0,
+                      color: AppColors.textShadow,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 2), // Space between text and underline
+              Container(
+                width: 68, // Adjust width for underline
+                height: 3, // Thickness of the underline
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.textShadow,
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: Offset(0, 4), // Shadow position for the underline
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
 
@@ -37,10 +62,11 @@ class NewsSection extends StatelessWidget {
 
   Widget _buildNewsItem(NewsItem newsItem) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      height: 200,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       padding: const EdgeInsets.all(16.0),
       constraints: const BoxConstraints(
-        minHeight: 120.0, // Set a minimum height for each news item
+        // minHeight: 120.0, // Set a minimum height for each news item if needed
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -55,10 +81,17 @@ class NewsSection extends StatelessWidget {
         alignment: Alignment.bottomLeft, // Position the text at the bottom left
         child: Text(
           newsItem.title,
-          style: const TextStyle(
+          style:  TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
             color: Colors.white, // Text color to contrast with background
+            shadows: [
+              Shadow(
+                blurRadius: 4.0,
+                color: Colors.black.withOpacity(0.5),
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         ),
       ),

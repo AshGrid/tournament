@@ -1,73 +1,119 @@
 import 'package:flutter/material.dart';
-import '../models/match.dart'; // Make sure the Match class is correctly imported
+import '../models/match.dart';
+import 'colors.dart'; // Ensure the Match class is correctly imported
 
 class MatchItem extends StatelessWidget {
   final Match match;
   final Color backgroundColor;
+  final bool isLastItem;
 
-  const MatchItem({Key? key, required this.match, required this.backgroundColor}) : super(key: key);
+  const MatchItem({
+    Key? key,
+    required this.match,
+    required this.backgroundColor,
+    this.isLastItem = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 0.0), // Reduced vertical margin
-      padding: const EdgeInsets.symmetric(vertical: 1.0), // Padding around the item
-      color: backgroundColor,
-      child: Column(
-
+      height: 90,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        border: Border(
+          bottom: isLastItem ? BorderSide.none : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
-          // Match Date at the top center
+          // Match time on the left
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 1.0), // Reduced vertical padding
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              match.matchTime,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
-              textAlign: TextAlign.center,
+              "15-10-2024", // Use match.matchTime if it's dynamic
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white,fontFamily: 'Oswald'),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // First team's logo and name
-              Row(
-                children: [
-                  Image.asset(
-                    match.homeTeamLogo,
-                    width: 60, // Adjust width as needed
-                    height: 60, // Adjust height as needed
-                  ),
-                  const SizedBox(width: 8), // Space between logo and team name
-                  Text(
-                    match.homeTeam,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              // 'VS' text in the center
-              const Text(
-                'VS',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-              // Second team's name and logo
-              Row(
-                children: [
-                  Text(
-                    match.awayTeam,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 8), // Space between team name and logo
-                  Image.asset(
-                    match.awayTeamLogo,
-                    width: 60, // Adjust width as needed
-                    height: 60, // Adjust height as needed
-                  ),
-                ],
-              ),
-            ],
+          // Vertical line
+          Container(
+            width: 1,
+            height: 40, // Adjust the height of the divider line
+            color: AppColors.timeLogoSeperator,
+          ),
+          // Team 1 - Team 2 logos and names
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTeamLogo(match.homeTeamLogo, match.homeTeam),
+                const SizedBox(width: 10),
+                const Text(
+                  '-',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(width: 10),
+                _buildTeamLogo(match.awayTeamLogo, match.awayTeam),
+              ],
+            ),
+          ),
+          // Vertical line
+          Container(
+            width: 1,
+            height: 40, // Adjust the height of the divider line
+            color: AppColors.timeLogoSeperator,
+          ),
+          // Match time on the right
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              match.matchTime,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  // Helper method to build the team logo with rounded corners, shadow, and team name
+  Widget _buildTeamLogo(String logoPath, String teamName) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+
+          width: 60,
+          height: 45,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            border: Border.all(color: AppColors.teamLogoBorder, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.teamLogoShadow,
+                offset: const Offset(2, 2), // Shadow direction and offset
+                blurRadius: 4, // Amount of blur for the shadow
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.asset(
+              logoPath,
+              fit: BoxFit.scaleDown,
+              width: 55,
+              height: 40,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4), // Space between logo and team name
+        Text(
+          teamName,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

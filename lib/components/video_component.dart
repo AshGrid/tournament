@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'colors.dart';
+
 class VideoComponent extends StatefulWidget {
   final String videoUrl;
   final String title;
@@ -73,29 +75,47 @@ class _VideoComponentState extends State<VideoComponent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 24, // Adjust font size as needed
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              decoration: TextDecoration.underline, // Add underline to the text
-              decorationColor: Colors.white, // Customize the underline color
-              decorationThickness: 1.0, // Customize the thickness of the underline
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 16),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: 24, // Adjust font size as needed
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "oswald",
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 4.0,
+                      color: AppColors.textShadow,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 2), // Space between text and underline
+              Container(
+                width: 125, // Adjust width for underline
+                height: 3, // Thickness of the underline
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.textShadow,
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: Offset(0, 4), // Shadow position for the underline
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            widget.description,
-            style: TextStyle(
-              fontSize: 16, // Adjust font size as needed
-              color: Colors.grey[600], // Light grey for description
-            ),
-          ),
-        ),
+        ////YOU CAN ADD PADDING HERE
         SizedBox(
           height: 200, // Adjust height as needed
           child: ClipRRect(

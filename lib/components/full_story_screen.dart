@@ -25,7 +25,7 @@ class FullStoryScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 24, color: Colors.white),
               ),
               const SizedBox(height: 20),
-              Image.asset('assets/images/ahri.jpg'),
+
             ],
           ),
         ),

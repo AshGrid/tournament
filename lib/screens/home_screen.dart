@@ -10,18 +10,54 @@ import '../components/ads_banner.dart'; // Import AdsBanner widget
 import '../components/dynamic_image_grid.dart';
 import '../components/news_section.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return BottomSheetContent();
-      },
-    );
-  }
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  // List of image paths
+  List<List<String>> imagePaths = [
+    [
+      'assets/images/image1.jpeg',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
+    ],
+    [
+      'assets/images/ABC.png',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
+    ],
+    [
+      'assets/images/image1.jpeg',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
+    ],
+  ];
+
+  List<String> users = [
+    'A l’instant',
+    'Saison-2022',
+    'Saison-2022',
+    'Saison-2022',
+    'Saison-2022',
+    'Saison-2022',
+  ];
+
+  // Initialize viewedStatuses for each story
+
+
+  @override
+  final List<bool> viewedStatuses = [
+    true,  // Story set 1 has been viewed
+    false, // Story set 2 has not been viewed
+    true,  // Story set 3 has been viewed
+    // Add more statuses as needed
+  ];
+
+  // Function to open the full story screen
   void _openFullStory(BuildContext context) {
     Navigator.push(
       context,
@@ -33,43 +69,43 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List of MatchResult objects
     final List<MatchResult> matchResults = [
       MatchResult(
-        team1Logo: 'assets/icons/dots.png',
-        team2Logo: 'assets/icons/dots.png',
+        team1Logo: 'assets/images/ennakl.jpg',
+        team2Logo: 'assets/images/monoprix.jpg',
         result: '2 - 1',
         dateTime: '2024-08-30 20:00',
-        stadiumName: 'Stadium Name',
+        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
       ),
       MatchResult(
-        team1Logo: 'assets/icons/dots.png',
-        team2Logo: 'assets/icons/dots.png',
+        team1Logo: 'assets/images/ennakl.jpg',
+        team2Logo: 'assets/images/monoprix.jpg',
         result: '1 - 3',
         dateTime: '2024-08-31 18:00',
-        stadiumName: 'Another Stadium',
+        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
       ),
       MatchResult(
-        team1Logo: 'assets/icons/dots.png',
-        team2Logo: 'assets/icons/dots.png',
+        team1Logo: 'assets/images/ennakl.jpg',
+        team2Logo: 'assets/images/monoprix.jpg',
         result: '1 - 1',
         dateTime: '2024-08-31 18:00',
-        stadiumName: 'Another Stadium',
+        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
       ),
       // Add more MatchResult objects as needed
     ];
 
+    // List of NewsItem objects
     final List<NewsItem> newsItems = [
-      NewsItem(title: 'Breaking News 1'),
-      NewsItem(title: 'Breaking News 2'),
-      NewsItem(title: 'Breaking News 3'),
-      // Add more NewsItem objects as needed
+      NewsItem(title: 'TITRE DE NEWS 1'),
+      NewsItem(title: 'TITRE DE NEWS 2'),
+      NewsItem(title: 'TITRE DE NEWS 3'),
     ];
 
-    final List<String> imagePaths = [
-      'assets/images/ahri.jpg',
-      'assets/images/itachi.jpg',
-      'assets/images/jabami.jpg',
-      'assets/images/sample.jpg', // Add more paths as needed
+    List<String> imagePath = [
+      'assets/images/image1.jpeg',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
     ];
 
     return Scaffold(
@@ -80,67 +116,90 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Horizontal scrollable list of StoryCircle widgets with text below
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      _openFullStory(context); // Open full-screen story on tap
+                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+                child: SizedBox(
+                  height: 92, // Adjust height to accommodate text below circles
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: imagePaths.length, // Use the length of the outer list
+                    separatorBuilder: (context, index) => const SizedBox(width: 10),
+                    itemBuilder: (context, index) {
+                      final images = imagePaths[index]; // Access the list of images for each story
+                      return GestureDetector(
+                        onTap: () {
+                          _openFullStory(context); // Open full-screen story on tap
+                        },
+                        child: Column(
+                          children: [
+                            StoryCircle(
+                              imageUrls: imagePaths, // Pass the list of images to the StoryCircle
+                              userNames: users, // Example user names
+                              isFirst: index == 0, // Set isFirst to true for the first circle
+                              viewedStatuses: viewedStatuses, // Pass the viewed statuses
+                              currentIndex: index,
+                            ),
+                            const SizedBox(height: 4), // Space between circle and text
+                            Text(
+                              users[index], // Example text below each story circle
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "oswald",
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis, // Prevent text overflow
+                            ),
+                          ],
+                        ),
+                      );
                     },
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: StoryCircle(
-                        imageUrls: [
-                          'assets/images/ahri.jpg',
-                          'assets/images/itachi.jpg',
-                          'assets/images/jabami.jpg',
-                        ],
-                        userName: 'User 1',
-                      ),
-                    ),
                   ),
                 ),
               ),
-              // Use the ImageSlider widget here
+              // Use the MatchResultComponent widget here
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ImageSlider(
-                  imagePaths: [
-                    'assets/images/ahri.jpg',
-                    'assets/images/itachi.jpg',
-                    'assets/images/jabami.jpg',
-                  ],
-                ),
-              ),
-              // Add the VideoComponent widget here
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: VideoComponent(
-                  videoUrl: 'assets/videos/cs2.mp4', // Provide the path to your video
-                  title: 'Video Title',
-                  description: '',
-                ),
-              ),
-              // Add the MatchResultComponent widget here
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 8),
                 child: MatchResultComponent(
                   matchResults: matchResults,
                 ),
               ),
-              // Add the smaller AdsBanner widget here
+              // Adds the ad banner with padding to the layout
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Adjust horizontal padding
-                child: const AdsBanner(), // Adds the ad banner with padding to the layout
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: const AdsBanner(),
               ),
-              // Add the DynamicImageGrid widget here
-              DynamicImageGrid(
-                imagePaths: imagePaths,
-              ),
+              // Dynamic Image Grid
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: SizedBox(
+                  height: 770,
+                  child: DynamicImageGrid(
+                    imagePaths: imagePath,
+                    captions: ['Caption 1', 'Caption 2', 'Caption 3', 'Caption 4'],
+                  ),
+                ),
+              ),
+              // Add the ImageSlider widget
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: ImageSlider(
+                  imagePaths: imagePath,
+                ),
+              ),
+              // Add the VideoComponent widget
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: VideoComponent(
+                  videoUrl: 'assets/videos/videofoot.mp4', // Provide the path to your video
+                  title: 'Streaming',
+                  description: '',
+                ),
+              ),
+              // Add the NewsSection widget
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: NewsSection(newsItems: newsItems),
               ),
             ],
