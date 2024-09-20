@@ -21,23 +21,21 @@ class BottomSheetContent extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bottomSheet,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10.0), // Adjust the radius as needed
           topRight: Radius.circular(10.0), // Adjust the radius as needed
         ),
-        //border: Border.all(color: AppColors.teamLogoBorder, width: 1), // Add border to the container
         boxShadow: [
           BoxShadow(
             color: AppColors.bottomSheetShadow, // Shadow color
-            offset: Offset(0, 2), // Shadow position
+            offset: const Offset(0, 2), // Shadow position
             blurRadius: 5.9, // How blurry the shadow is
             spreadRadius: 6,
           ),
         ],
       ),
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       height: 330, // Set height of the bottom sheet
-      //color: AppColors.bottomSheet, // Custom background color
       child: ListView.builder(
         itemCount: trophies.length,
         itemBuilder: (context, index) {
@@ -50,11 +48,11 @@ class BottomSheetContent extends StatelessWidget {
               color: backgroundColor,
               border: Border(
                 bottom: const BorderSide(color: Color(0xFFFFFFFF), width: 2),
-                top: index==0 ? BorderSide(color: Color(0xFFFFFFFF), width: 2) : BorderSide.none,
+                top: index == 0
+                    ? const BorderSide(color: Color(0xFFFFFFFF), width: 2)
+                    : BorderSide.none,
               ),
-
             ),
-
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               leading: Container(
@@ -81,7 +79,6 @@ class BottomSheetContent extends StatelessWidget {
                   child: Image.asset(
                     'assets/images/${trophy.name}.png', // Adjust path as needed
                     fit: BoxFit.scaleDown, // Adjust image fit
-
                   ),
                 ),
               ),
@@ -106,7 +103,6 @@ class BottomSheetContent extends StatelessWidget {
                 Navigator.pop(context); // Close the bottom sheet
               },
             ),
-
           );
         },
       ),

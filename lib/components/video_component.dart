@@ -82,7 +82,7 @@ class _VideoComponentState extends State<VideoComponent> {
             children: [
               Text(
                 widget.title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24, // Adjust font size as needed
                   fontWeight: FontWeight.bold,
                   fontFamily: "oswald",
@@ -96,7 +96,7 @@ class _VideoComponentState extends State<VideoComponent> {
                   ],
                 ),
               ),
-              SizedBox(height: 2), // Space between text and underline
+              const SizedBox(height: 2), // Space between text and underline
               Container(
                 width: 125, // Adjust width for underline
                 height: 3, // Thickness of the underline
