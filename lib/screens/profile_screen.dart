@@ -4,12 +4,15 @@ import 'package:untitled/components/colors.dart';
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-backgroundColor: AppColors.profileSideMenu,
-      body: Center(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.profileSideMenu,
+      ),
+
+      child: Center(
         child: Text(
           'Profile Screen',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white),
         ),
 
       ),

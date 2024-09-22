@@ -66,7 +66,7 @@ class MatchItemLive extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       match.matchTime, // Display match time if live
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: const TextStyle(fontSize: 10                       , fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 ] else ...[

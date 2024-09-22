@@ -72,7 +72,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
         ),
         child: Column(
           children: [
-            const SizedBox(height: 45.0), // Fixed space
+             SizedBox(height: MediaQuery.of(context).size.height * 0.05), // Fixed space
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -163,7 +163,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                       duration: _isSearching
                           ? const Duration(milliseconds: 300) // Smooth animation when opening
                           : Duration.zero, // Instant collapse when closing
-                      width: _isSearching ? 200 : 0, // Set width conditionally based on state
+                      width: _isSearching ? MediaQuery.of(context).size.width * 0.5 : 0, // Set width conditionally based on state
                       height: 45,
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 1.0),
                       decoration: BoxDecoration(

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ImageSlider extends StatefulWidget {
   final List<String> imagePaths;
-  final double height;
+ // final double height;
 
   const ImageSlider({
     Key? key,
     required this.imagePaths,
-    this.height = 200.0, // Default height
+   // this.height = 200.0, // Default height
   }) : super(key: key);
 
   @override
@@ -43,7 +43,7 @@ class _ImageSliderState extends State<ImageSlider> {
     return Stack(
       children: [
         SizedBox(
-          height: widget.height,
+          height: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.height * 0.4 :  MediaQuery.of(context).size.height * 0.225,
           child: PageView(
             controller: _pageController,
             scrollDirection: Axis.horizontal,

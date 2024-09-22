@@ -74,6 +74,7 @@ static const Color nav = Color(0xFF7E2424);
   static const Color storyBorderNotViewed1 = Color(0xFFAB0000);
   static const Color storyBorderNotViewed2 = Color(0xFFFF0000);
   static const Color storyBorderNotViewed3 = Color(0xFF450000);
+  static const Color imageGridItem = Color(0xBAFFFFFF);
 
 
   static const Color bottomSheetLogo = Color(0xFFCECECE);

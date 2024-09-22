@@ -6,7 +6,8 @@ class AdsBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70.0, // Adjust the height as needed
+      height: MediaQuery.of(context).size.height * 0.08, // Adjust the height as needed
+      width: MediaQuery.of(context).size.width * 0.99,
       decoration: BoxDecoration(
         color: Colors.grey[50], // Background color for the ad banner
         borderRadius: BorderRadius.circular(20.0), // Radius for rounded corners

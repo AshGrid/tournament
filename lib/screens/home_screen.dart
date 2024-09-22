@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Initialize viewedStatuses for each story
 
 
-  @override
+
   final List<bool> viewedStatuses = [
     true,  // Story set 1 has been viewed
     false, // Story set 2 has not been viewed
@@ -171,13 +171,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const AdsBanner(),
               ),
               // Dynamic Image Grid
+              SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 0.8),
                 child: SizedBox(
-                  height: 770,
+                  height: MediaQuery.of(context).size.height*0.9 ,
                   child: DynamicImageGrid(
                     imagePaths: imagePath,
-                    captions: ['Caption 1', 'Caption 2', 'Caption 3', 'Caption 4'],
+                    captions: ['Caption 1', 'Caption 2', 'Caption 3'],
                   ),
                 ),
               ),
@@ -209,3 +210,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+

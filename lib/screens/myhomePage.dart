@@ -44,7 +44,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: AppColors.nav,
       endDrawer:  Drawer(
-        child: ProfileScreen(),
+        width: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.width * 0.6 :  MediaQuery.of(context).size.width * 0.8,
+
+          child: ProfileScreen(),
+
       ),
 
       body: Container(

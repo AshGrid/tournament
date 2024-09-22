@@ -6,8 +6,10 @@ class NewsSection extends StatelessWidget {
 
   const NewsSection({Key? key, required this.newsItems}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,15 +56,15 @@ class NewsSection extends StatelessWidget {
 
         // Add list of news items
         Column(
-          children: newsItems.map((newsItem) => _buildNewsItem(newsItem)).toList(),
+          children: newsItems.map((newsItem) => _buildNewsItem(newsItem,context)).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildNewsItem(NewsItem newsItem) {
+  Widget _buildNewsItem(NewsItem newsItem,BuildContext context) {
     return Container(
-      height: 200,
+      height: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.height * 0.5 :  MediaQuery.of(context).size.height * 0.225,
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       padding: const EdgeInsets.all(16.0),
       constraints: const BoxConstraints(

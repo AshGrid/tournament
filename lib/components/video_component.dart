@@ -117,7 +117,7 @@ class _VideoComponentState extends State<VideoComponent> {
         ),
         ////YOU CAN ADD PADDING HERE
         SizedBox(
-          height: 200, // Adjust height as needed
+          height: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.height * 0.7 :  MediaQuery.of(context).size.height * 0.225, // Adjust height as needed
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.0), // Set the border radius for rounded corners
             child: Stack(
