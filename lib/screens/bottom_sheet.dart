@@ -35,7 +35,7 @@ class BottomSheetContent extends StatelessWidget {
         ],
       ),
       padding: const EdgeInsets.symmetric(vertical: 15),
-      height: MediaQuery.of(context).size.height * 0.45, // Set height of the bottom sheet
+      height: MediaQuery.of(context).size.height * 0.4, // Set height of the bottom sheet
       width: MediaQuery.of(context).size.width ,
 
       child: ListView.builder(

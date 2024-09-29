@@ -35,15 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
       'assets/images/image2.jpeg',
       'assets/images/image1.jpeg',
     ],
+    [
+      'assets/images/image1.jpeg',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
+    ],
+    [
+      'assets/images/image1.jpeg',
+      'assets/images/image2.jpeg',
+      'assets/images/image1.jpeg',
+    ],
   ];
 
   List<String> users = [
     'A l’instant',
-    'Saison-2022',
-    'Saison-2022',
-    'Saison-2022',
-    'Saison-2022',
-    'Saison-2022',
+    'TOP ARRETS',
+    'DANS LES FILETS',
+    'VU DU BANC',
+    'AMBIANCE',
+
   ];
 
   // Initialize viewedStatuses for each story

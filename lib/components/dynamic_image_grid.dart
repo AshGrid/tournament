@@ -23,7 +23,7 @@ class DynamicImageGrid extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Meilleur Moments',
+                'MEILLEURS MOMENTS',
                 style: TextStyle(
                   fontSize: 24,
                   fontFamily: "oswald",
@@ -40,7 +40,7 @@ class DynamicImageGrid extends StatelessWidget {
               ),
               SizedBox(height: 2), // Space between text and underline
               Container(
-                width: 200, // Adjust the underline length here
+                width: 235, // Adjust the underline length here
                 height: 3, // Thickness of the underline
                 decoration: BoxDecoration(
                   color: Colors.white,

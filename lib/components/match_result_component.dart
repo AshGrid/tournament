@@ -23,7 +23,7 @@ class MatchResultComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Dernier Résultat',
+                  'DERNIERS RESULTATS',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -39,7 +39,7 @@ class MatchResultComponent extends StatelessWidget {
                 ),
                 const SizedBox(height: 2), // Space between text and underline
                 Container(
-                  width: 200, // Adjust width for the underline
+                  width: 225, // Adjust width for the underline
                   height: 3, // Thickness of the underline
                   decoration: BoxDecoration(
                     color: Colors.white,

@@ -11,6 +11,8 @@ import 'package:untitled/screens/trophy_screen.dart';
 import '../components/bottom_navigation.dart';
 import '../components/colors.dart';
 import '../components/custom_appbar.dart';
+import '../models/league.dart';
+import 'LeagueDetailsScreen.dart';
 import 'menu_screen.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,11 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   bool _showTrophyScreen = false;
   String? _selectedTrophyName;
+  League? _selectedLeague;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _showTrophyScreen = false;
+      _showTrophyScreen = false; // Reset trophy screen when switching tabs
+      _selectedLeague = null; // Reset league when navigating through the navbar
     });
   }
 
@@ -36,6 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _showTrophyScreen = true;
       _selectedTrophyName = trophyName;
+      _selectedLeague = null; // Reset league when selecting a new trophy
+    });
+  }
+
+  void _onLeagueSelected(League league) {
+    setState(() {
+      _selectedLeague = league; // Update with the selected league
     });
   }
 
@@ -43,13 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.nav,
-      endDrawer:  Drawer(
-        width: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.width * 0.6 :  MediaQuery.of(context).size.width * 0.8,
-
-          child: ProfileScreen(),
-
+      endDrawer: Drawer(
+        width: MediaQuery.of(context).size.width > 600
+            ? MediaQuery.of(context).size.width * 0.6
+            : MediaQuery.of(context).size.width * 0.8,
+        child: ProfileScreen(),
       ),
-
       body: Container(
         decoration: BoxDecoration(
           gradient: AppColors.backgroundColor,
@@ -58,15 +68,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                CustomAppBar(onTrophySelected: _onTrophySelected), // Custom AppBar
+                CustomAppBar(onTrophySelected: _onTrophySelected),
               ];
             },
             body: _getPage(_selectedIndex),
           ),
         ),
       ),
-      // Custom button to open the right-side drawer
-
       bottomNavigationBar: Container(
         height: 84,
         decoration: BoxDecoration(
@@ -74,7 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10), topLeft: Radius.circular(10)),
           boxShadow: [
-            BoxShadow(color: AppColors.navbarShadow, spreadRadius: 4, blurRadius: 5.9),
+            BoxShadow(
+              color: AppColors.navbarShadow,
+              spreadRadius: 4,
+              blurRadius: 5.9,
+            ),
           ],
         ),
         child: ClipRRect(
@@ -92,23 +104,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getPage(int selectedIndex) {
-    if (_showTrophyScreen && _selectedTrophyName != null) {
-      return TrophyScreen(trophyName: _selectedTrophyName!);
+    // Show league details if a league is selected
+    if (_selectedLeague != null) {
+      return LeagueDetailsScreen(league: _selectedLeague!);
     }
 
+    // Show trophy screen if a trophy is selected
+    if (_showTrophyScreen && _selectedTrophyName != null) {
+      return TrophyScreen(
+        trophyName: _selectedTrophyName!,
+        onLeagueSelected: _onLeagueSelected, // Pass the callback to TrophyScreen
+      );
+    }
+
+    // Return the selected index page
     switch (selectedIndex) {
       case 0:
         return const HomeScreen();
       case 1:
         return const MatchesScreen();
       case 2:
-        return FavoriteScreen();
+        return  FavoriteScreen();
       case 3:
-        return FantasyScreen();
+        return  FantasyScreen();
       case 4:
-        return MenuScreen();
+        return  MenuScreen();
       default:
-        return const SizedBox(); // Use SizedBox instead of Container for empty space
+        return const SizedBox();
     }
   }
 }

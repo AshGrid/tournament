@@ -28,7 +28,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
   // Sample list of leagues
   List<League> leagues = [
     League(
-      leagueName: 'LEAGUE SAMEDI',
+      leagueName: 'LIGUE SAMEDI',
       matches: [
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
@@ -41,7 +41,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
       leagueLogo: 'assets/images/LIGUE SAMEDI.png',
     ),
     League(
-      leagueName: 'LEAGUE DIMANCHE',
+      leagueName: 'LIGUE DIMANCHE',
       matches: [
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
@@ -51,7 +51,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
       leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
     ),
     League(
-      leagueName: 'LEAGUE IT',
+      leagueName: 'LIGUE IT',
       matches: [
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
         Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),

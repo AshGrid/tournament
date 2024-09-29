@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 
-import '../components/image_slider.dart';
- // Import your Trophy model
+import '../components/image_slider.dart'; // Your image slider component
 import '../components/colors.dart'; // Import your custom colors
-import '../models/league.dart'; // Import your League model
-// Import your DynamicImageGrid component
+import '../models/league.dart'; // League model
 
 class TrophyScreen extends StatelessWidget {
   final String trophyName;
+  final void Function(League league) onLeagueSelected;
 
-  const TrophyScreen({super.key, required this.trophyName});
+  const TrophyScreen({
+    super.key,
+    required this.trophyName,
+    required this.onLeagueSelected, // Assigning the callback
+  });
 
   @override
   Widget build(BuildContext context) {
     // Static list of leagues for demonstration
     final List<League> leagues = [
       League(
-        leagueName: 'League Samedi',
+        leagueName: 'Ligue Samedi',
         leagueLogo: 'assets/images/LIGUE SAMEDI.png',
         matches: [],
       ),
       League(
-        leagueName: 'League Dimanche',
+        leagueName: 'Ligue Dimanche',
         leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
         matches: [],
       ),
@@ -35,7 +38,20 @@ class TrophyScreen extends StatelessWidget {
         leagueLogo: 'assets/images/COUPE DIMANCHE.png',
         matches: [],
       ),
-      // Add more leagues here
+    ];
+
+    final List<League> leaguesIT = [
+      League(
+        leagueName: 'Ligue IT',
+        leagueLogo: 'assets/images/LIGUE SAMEDI.png',
+        matches: [],
+      ),
+      League(
+        leagueName: 'Coupe IT',
+        leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
+        matches: [],
+      ),
+
     ];
 
     List<String> imagePath = [
@@ -44,8 +60,10 @@ class TrophyScreen extends StatelessWidget {
       'assets/images/image1.jpeg',
     ];
 
+
+
     return Scaffold(
-      backgroundColor: AppColors.secondaryBackground, // Use your gradient or background color
+      backgroundColor: AppColors.secondaryBackground, // Custom background color
 
       body: CustomScrollView(
         slivers: [
@@ -56,10 +74,10 @@ class TrophyScreen extends StatelessWidget {
               margin: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
                 color: AppColors.trophyComponent, // Use your component background color
-                borderRadius: BorderRadius.circular(12.0), // Round the corners
+                borderRadius: BorderRadius.circular(12.0), // Rounded corners
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.transparent.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 1),
                   ),
@@ -72,11 +90,11 @@ class TrophyScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
-                      color: AppColors.trophyTitleComponent, // Light grey background for the box
+                      color: AppColors.trophyTitleComponent, // Light background
                       borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.transparent.withOpacity(0.25),
+                          color: Colors.black.withOpacity(0.25),
                           blurRadius: 4,
                           offset: const Offset(0, 4),
                         ),
@@ -86,8 +104,8 @@ class TrophyScreen extends StatelessWidget {
                       children: [
                         // Trophy Image in a rounded container
                         Container(
-                          width: 100, // Container size
-                          height: 100, // Container size
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
                             color: Colors.white, // Background color of the container
                             borderRadius: BorderRadius.circular(15.0),
@@ -104,10 +122,10 @@ class TrophyScreen extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                'assets/images/${trophyName}.png', // Adjust path as needed
-                                fit: BoxFit.contain, // Ensure the image fits inside
-                                width: 80, // Image size
-                                height: 80, // Image size
+                                'assets/images/$trophyName.png', // Adjust path
+                                fit: BoxFit.contain,
+                                width: 80,
+                                height: 80,
                               ),
                             ),
                           ),
@@ -117,78 +135,91 @@ class TrophyScreen extends StatelessWidget {
                         Expanded(
                           child: Text(
                             trophyName,
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                 // const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   // List of Leagues in the second container
                   SizedBox(
                     height: 200, // Adjust height if needed
                     child: ListView.builder(
-                      itemCount: leagues.length,
+                      itemCount:trophyName == "TROPHEES IT" ? leaguesIT.length : leagues.length,
                       itemBuilder: (context, index) {
                         final league = leagues[index];
-                        // Alternate background colors
                         final backgroundColor = index.isEven ? AppColors.trophyItem1 : Colors.transparent;
 
                         return Container(
-                          //margin: const EdgeInsets.symmetric(vertical: 4.0),
                           decoration: BoxDecoration(
                             color: backgroundColor,
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Container(
                             decoration: BoxDecoration(
-
                               border: Border(
-                                bottom: const BorderSide(color: AppColors.trophyListTileItemBorder, width: 2),
-                                top: index==0 ? BorderSide(color: AppColors.trophyListTileItemBorder, width: 2) : BorderSide.none,
+                                bottom: const BorderSide(
+                                  color: AppColors.trophyListTileItemBorder,
+                                  width: 2,
+                                ),
+                                top: index == 0
+                                    ? const BorderSide(
+                                  color: AppColors.trophyListTileItemBorder,
+                                  width: 2,
+                                )
+                                    : BorderSide.none,
                               ),
-
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 8.0,
+                              ),
                               leading: Container(
-                                width: 55, // Box width
-                                height: 55, // Box height
+                                width: 55,
+                                height: 55,
                                 decoration: BoxDecoration(
-                                  color: Colors.white, // Background color for the box
-                                  borderRadius: BorderRadius.circular(15.0), // Rounded corners
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.0),
                                   border: Border.all(
-                                    color: AppColors.bottomSheetLogo, // Border color
-                                    width: 1.0, // Border width
+                                    color: AppColors.bottomSheetLogo,
+                                    width: 1.0,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.25), // Shadow color
-                                      blurRadius: 4.0, // Blur radius
-                                      spreadRadius: 0.0, // Spread radius
-                                      offset: const Offset(0, 4), // Shadow position
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 4.0,
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(2.0), // Padding inside the box
+                                  padding: const EdgeInsets.all(2.0),
                                   child: Image.asset(
-                                    league.leagueLogo, // Adjust path as needed
-                                    fit: BoxFit.scaleDown, // Adjust image fit
-
+                                    league.leagueLogo,
+                                    fit: BoxFit.scaleDown,
                                   ),
                                 ),
                               ),
                               title: Text(
                                 league.leagueName,
-                                style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "oswald"),
-
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  fontFamily: "oswald",
+                                ),
                               ),
                               onTap: () {
-                                // Handle tap event if needed
+                                onLeagueSelected(league); // Call the callback
                               },
                             ),
-                          )
+                          ),
                         );
                       },
                     ),
@@ -206,8 +237,6 @@ class TrophyScreen extends StatelessWidget {
               imagePaths: imagePath,
             ),
           ),
-          // Optional: Ads Banner
-
         ],
       ),
     );
