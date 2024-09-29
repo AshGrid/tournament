@@ -4,23 +4,30 @@ import 'package:untitled/models/league.dart';
 import 'package:untitled/screens/phaseDetailsScreen.dart';
 import '../components/colors.dart';
 import '../components/image_slider.dart';
- // Import the PhaseDetailsScreen
 
-class LeagueDetailsScreen extends StatelessWidget {
+class LeagueDetailsScreen extends StatefulWidget {
   final League league;
+  final String trophy;
 
-  const LeagueDetailsScreen({super.key, required this.league});
+  const LeagueDetailsScreen({super.key, required this.league, required this.trophy});
+
+  @override
+  State<LeagueDetailsScreen> createState() => _LeagueDetailsScreenState();
+}
+
+class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
+  String? selectedPhase;
 
   @override
   Widget build(BuildContext context) {
+    final league = widget.league;
+
     // Static list of phases for demonstration
     final List<String> phases = [
-      'Phase de Poule',
-      'Quart de Finale',
-      'Demi-Finale',
-      'Finale',
+      'PREMIERE PHASE',
+      'SUPER PLAY-OFF',
+      'TROPHEE HANNIBAL',
     ];
-
 
     // Static list of images for demonstration
     List<String> imagePath = [
@@ -31,7 +38,9 @@ class LeagueDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.secondaryBackground,
-      body: CustomScrollView(
+      body: selectedPhase != null
+          ? PhaseDetailsScreen(phaseName: selectedPhase!, league: league, trophyName: this.widget.trophy,) // Show PhaseDetailsScreen if a phase is selected
+          : CustomScrollView( // Show initial content if no phase is selected
         slivers: [
           // Big Container with League Name and Logo
           SliverToBoxAdapter(
@@ -99,13 +108,27 @@ class LeagueDetailsScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         // League Name
                         Expanded(
-                          child: Text(
-                            league.leagueName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                this.widget.trophy,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4), // Space between league name and trophy name
+                              Text(
+                                league.leagueName, // Assuming you have trophyName in the League model
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -123,13 +146,9 @@ class LeagueDetailsScreen extends StatelessWidget {
 
                         return GestureDetector(
                           onTap: () {
-                            // Navigate to PhaseDetailsScreen when a phase is selected
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PhaseDetailsScreen(phaseName: phases[index]),
-                              ),
-                            );
+                            setState(() {
+                              selectedPhase = phases[index];
+                            });
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -173,7 +192,7 @@ class LeagueDetailsScreen extends StatelessWidget {
           ),
           // Dynamic Image Grid
           SliverToBoxAdapter(
-            child: AdsBanner()
+              child: AdsBanner()
           ),
           const SliverToBoxAdapter(
             child: SizedBox(height: 20), // Space between the big container and the grid

@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getPage(int selectedIndex) {
     // Show league details if a league is selected
     if (_selectedLeague != null) {
-      return LeagueDetailsScreen(league: _selectedLeague!);
+      return LeagueDetailsScreen(league: _selectedLeague!, trophy: _selectedTrophyName!,);
     }
 
     // Show trophy screen if a trophy is selected

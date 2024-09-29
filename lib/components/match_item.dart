@@ -6,12 +6,13 @@ class MatchItem extends StatelessWidget {
   final Match match;
   final Color backgroundColor;
   final bool isLastItem;
+  final bool isFirstItem;
 
   const MatchItem({
     Key? key,
     required this.match,
     required this.backgroundColor,
-    this.isLastItem = false,
+    this.isLastItem = false,  this.isFirstItem = false,
   }) : super(key: key);
 
   @override
@@ -21,7 +22,9 @@ class MatchItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border(
-          bottom: isLastItem ? BorderSide.none : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          bottom: isLastItem ? BorderSide(color: Color(0xFFFFFFFF), width: 2) : const BorderSide(color: Color(0xFFFFFFFF), width: 1),
+          top:    isFirstItem ? BorderSide(color: Color(0xFFFFFFFF), width: 1) : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+
         ),
       ),
       child: Row(

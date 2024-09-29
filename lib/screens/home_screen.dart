@@ -64,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
     true,  // Story set 1 has been viewed
     false, // Story set 2 has not been viewed
     true,  // Story set 3 has been viewed
+    true,
+    true,
     // Add more statuses as needed
   ];
 
