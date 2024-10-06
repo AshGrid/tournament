@@ -5,14 +5,14 @@ import 'image_slider.dart';
 import 'match_item.dart';
 import 'match_item_live.dart';
 
-class ResultsScreen extends StatefulWidget {
-  const ResultsScreen({Key? key}) : super(key: key);
+class PremierePhaseResultsScreen extends StatefulWidget {
+  const PremierePhaseResultsScreen({Key? key}) : super(key: key);
 
   @override
   _ResultsScreenState createState() => _ResultsScreenState();
 }
 
-class _ResultsScreenState extends State<ResultsScreen> {
+class _ResultsScreenState extends State<PremierePhaseResultsScreen> {
   int selectedDayIndex = 0;
 
   final List<String> days = [

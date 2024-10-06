@@ -23,7 +23,7 @@ class MatchItem extends StatelessWidget {
         color: backgroundColor,
         border: Border(
           bottom: isLastItem ? BorderSide(color: Color(0xFFFFFFFF), width: 2) : const BorderSide(color: Color(0xFFFFFFFF), width: 1),
-          top:    isFirstItem ? BorderSide(color: Color(0xFFFFFFFF), width: 1) : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          top:    isFirstItem ? BorderSide(color: Color(0xFFFFFFFF), width: 2) : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
 
         ),
       ),

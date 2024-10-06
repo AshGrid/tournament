@@ -56,6 +56,7 @@ static const Color nav = Color(0xFF7E2424);
   static const Color matchResultShadow = Color(0xC9C1C1C1);
   static const Color matchResultBorder = Color(0xFFC1C1C1);
   static const Color textShadow = Color(0x40000000);
+  static const Color TableauPhaseItem = Color(0x66D9D9D9);
 
   static const LinearGradient storyViewed = LinearGradient(
     colors: [Color(0xFF450000), Color(0xFFAB0000)], // Change to your desired colors
@@ -80,6 +81,8 @@ static const Color nav = Color(0xFF7E2424);
   static const Color bottomSheetLogo = Color(0xFFCECECE);
   static const Color trophyListTileItemBorder = Color(0x3DC7C7C7);
 
+
+  static const Color favoriteIcon = Color(0xFFFFD700);
 
 // Add more colors as needed
 }

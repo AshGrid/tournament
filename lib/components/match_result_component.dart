@@ -39,7 +39,7 @@ class MatchResultComponent extends StatelessWidget {
                 ),
                 const SizedBox(height: 2), // Space between text and underline
                 Container(
-                  width: 225, // Adjust width for the underline
+                  width: 280, // Adjust width for the underline
                   height: 3, // Thickness of the underline
                   decoration: BoxDecoration(
                     color: Colors.white,

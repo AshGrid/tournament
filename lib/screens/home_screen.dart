@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/colors.dart'; // Import the colors file
 import '../components/story_circle.dart';
+import '../models/news.dart';
 import 'bottom_sheet.dart';
 import '../components/full_story_screen.dart'; // Import FullStoryScreen
 import '../components/image_slider.dart'; // Import the ImageSlider widget
@@ -109,9 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // List of NewsItem objects
     final List<NewsItem> newsItems = [
-      NewsItem(title: 'TITRE DE NEWS 1'),
-      NewsItem(title: 'TITRE DE NEWS 2'),
-      NewsItem(title: 'TITRE DE NEWS 3'),
+      NewsItem(title: 'TITRE DE NEWS 1',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
+      NewsItem(title: 'TITRE DE NEWS 2',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
+      NewsItem(title: 'TITRE DE NEWS 3',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
     ];
 
     List<String> imagePath = [

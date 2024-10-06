@@ -53,6 +53,19 @@ class TrophyScreen extends StatelessWidget {
       ),
 
     ];
+    final List<League> tropheeVeteran = [
+    League(
+    leagueName: 'Ligue Veterans',
+    leagueLogo: 'assets/images/LIGUE SAMEDI.png',
+    matches: [],
+    ),
+    League(
+    leagueName: 'Coupe Veterans',
+    leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
+    matches: [],
+    ),
+
+    ];
 
     List<String> imagePath = [
       'assets/images/image1.jpeg',
@@ -150,9 +163,9 @@ class TrophyScreen extends StatelessWidget {
                   SizedBox(
                     height: 200, // Adjust height if needed
                     child: ListView.builder(
-                      itemCount:trophyName == "TROPHEES IT" ? leaguesIT.length : leagues.length,
+                      itemCount:trophyName == "TROPHEES IT" ? leaguesIT.length : trophyName == "TROPHEES VETERANS" ? tropheeVeteran.length :  trophyName == "TROPHEES DE CARTHAGE" ? leagues.length : leagues.length,
                       itemBuilder: (context, index) {
-                        final league = leagues[index];
+                        final league = trophyName == "TROPHEES IT" ? leaguesIT[index] : trophyName == "TROPHEES VETERANS" ? tropheeVeteran[index] : trophyName == "TROPHEES DE CARTHAGE" ? leagues[index] : leagues[index] ;
                         final backgroundColor = index.isEven ? AppColors.trophyItem1 : Colors.transparent;
 
                         return Container(

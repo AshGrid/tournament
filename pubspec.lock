@@ -131,6 +131,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_tournament_bracket:
+    dependency: "direct main"
+    description:
+      name: flutter_tournament_bracket
+      sha256: "192229f5a63a95fedc1009655a214aa2422cce293afb7c543ddf5e83a1144133"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -152,6 +160,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.17.0"
   json_annotation:
     dependency: transitive
     description:
@@ -390,5 +406,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.3.3 <4.0.0"
+  dart: ">=3.4.3 <4.0.0"
   flutter: ">=3.19.0"

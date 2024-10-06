@@ -40,7 +40,7 @@ class DynamicImageGrid extends StatelessWidget {
               ),
               SizedBox(height: 2), // Space between text and underline
               Container(
-                width: 235, // Adjust the underline length here
+                width: 280, // Adjust the underline length here
                 height: 3, // Thickness of the underline
                 decoration: BoxDecoration(
                   color: Colors.white,
