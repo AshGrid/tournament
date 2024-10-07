@@ -83,6 +83,9 @@ static const Color nav = Color(0xFF7E2424);
 
 
   static const Color favoriteIcon = Color(0xFFFFD700);
+  static const Color matchItemComponent = Color(0x29343C44);
+  static const Color matchItemComponentTeamLogoBorder = Color(0xFFA3A0A0);
+  static const Color matchItemComponentShadow = Color(0x40000000);
 
 // Add more colors as needed
 }

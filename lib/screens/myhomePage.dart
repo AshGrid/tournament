@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/models/news.dart';
 import 'package:untitled/screens/fantasy_screen.dart';
 import 'package:untitled/screens/match_details.dart';
 import 'package:untitled/screens/matches_screen.dart';
@@ -14,6 +15,7 @@ import '../components/custom_appbar.dart';
 import '../models/league.dart';
 import 'LeagueDetailsScreen.dart';
 import 'menu_screen.dart';
+import 'newsDetails.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -27,12 +29,14 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showTrophyScreen = false;
   String? _selectedTrophyName;
   League? _selectedLeague;
+  NewsItem? _selectedNewsItem;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       _showTrophyScreen = false; // Reset trophy screen when switching tabs
       _selectedLeague = null; // Reset league when navigating through the navbar
+      _selectedNewsItem = null;
     });
   }
 
@@ -41,12 +45,20 @@ class _MyHomePageState extends State<MyHomePage> {
       _showTrophyScreen = true;
       _selectedTrophyName = trophyName;
       _selectedLeague = null; // Reset league when selecting a new trophy
+      _selectedNewsItem = null;
     });
   }
 
   void _onLeagueSelected(League league) {
     setState(() {
       _selectedLeague = league; // Update with the selected league
+      _selectedNewsItem = null;
+    });
+  }
+
+  void _onNewsItemSelected(NewsItem news) {
+    setState(() {
+      _selectedNewsItem = news; // Update with the selected league
     });
   }
 
@@ -109,6 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
       return LeagueDetailsScreen(league: _selectedLeague!, trophy: _selectedTrophyName!,);
     }
 
+    if (_selectedNewsItem != null) {
+      return NewsDetails( newsItem: _selectedNewsItem!,);
+    }
+
     // Show trophy screen if a trophy is selected
     if (_showTrophyScreen && _selectedTrophyName != null) {
       return TrophyScreen(
@@ -120,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Return the selected index page
     switch (selectedIndex) {
       case 0:
-        return const HomeScreen();
+        return  HomeScreen(onNewsSelected: _onNewsItemSelected);
       case 1:
         return const MatchesScreen();
       case 2:

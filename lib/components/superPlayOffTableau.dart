@@ -5,6 +5,7 @@ import 'package:untitled/components/CustomMatchCard.dart';
 import 'package:untitled/components/bracketCard.dart';
 import 'package:untitled/components/brackets.dart';
 
+import '../models/Team.dart';
 import '../models/match.dart';
 import 'colors.dart';
 
@@ -27,8 +28,8 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
   final Map<String, List<Match>> matchesByPhase = {
     'QUARTS DE FINALE': [
       Match(
-        homeTeam: 'Monoprix',
-        awayTeam: 'Carrefour',
+        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
         homeScore: 1,
         awayScore: 2,
         matchStatus: 'finished',
@@ -37,8 +38,8 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
         awayTeamLogo: 'assets/images/carrefour.jpg',
       ),
       Match(
-        homeTeam: 'Carrefour',
-        awayTeam: 'Geant',
+        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam:Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
         homeScore: 3,
         awayScore: 1,
         matchStatus: 'finished',
@@ -49,8 +50,8 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
     ],
     'DEMI-FINALE': [
       Match(
-        homeTeam: 'Monoprix',
-        awayTeam: 'Carrefour',
+        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
         homeScore: 1,
         awayScore: 2,
         matchStatus: 'finished',
@@ -61,8 +62,8 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
     ],
     'FINALE': [
       Match(
-        homeTeam: 'Monoprix',
-        awayTeam: 'Carrefour',
+        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
         homeScore: 2,
         awayScore: 1,
         matchStatus: 'live',

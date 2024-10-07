@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../components/LeagueComponent.dart';
+import '../models/MatchEvent.dart';
+import '../models/Team.dart';
 import '../models/league.dart';
 import '../models/match.dart';
+import '../models/player.dart';
 
 class MatchesScreen extends StatefulWidget {
   const MatchesScreen({Key? key}) : super(key: key);
@@ -30,22 +33,35 @@ class _MatchesScreenState extends State<MatchesScreen> {
     League(
       leagueName: 'LIGUE SAMEDI',
       matches: [
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg',players: [
+          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg',team: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),),
+          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          // Add other players as needed
+        ],), awayTeam: Team(name: 'monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg',players: [
+          Player(name: 'Player tet', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          Player(name: 'Player fsf', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          Player(name: 'Player jhjh', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          Player(name: 'Player vbvb', position: 'Forward', image: 'assets/images/ennakl.jpg'),
+          // Add other players as needed
+        ],), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg',matchDate: DateTime.now(),),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
 
       ],
+
       leagueLogo: 'assets/images/LIGUE SAMEDI.png',
     ),
     League(
       leagueName: 'LIGUE DIMANCHE',
       matches: [
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
 
       ],
       leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
@@ -53,13 +69,15 @@ class _MatchesScreenState extends State<MatchesScreen> {
     League(
       leagueName: 'LIGUE IT',
       matches: [
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
       ],
       leagueLogo: 'assets/images/LIGUE IT.png',
     ),
     // Add more leagues as needed
   ];
+
+
 
   @override
   Widget build(BuildContext context) {

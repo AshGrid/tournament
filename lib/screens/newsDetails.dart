@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/components/custom_appbar.dart';
+import '../components/colors.dart';
 import '../models/news.dart';
 
 class NewsDetails extends StatelessWidget {
@@ -9,75 +9,173 @@ class NewsDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "News",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white,width: 2),
-          ),
-          child: Column(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildHeader(context),
+          _buildNewsContent(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(context) {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        children: [
+          Column(
             children: [
-              Row(
-                children: [
-                  Text(
-                    newsItem.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    "date",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+              Text(
+                "News:",
+                style: const TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               Container(
-                child:  ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    newsItem.imageUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Text(
-                          'Image Not Found',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Text(
-                newsItem.content!,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
+                width: MediaQuery.of(context).size.width*0.2,
+                height: 2,
+                color: Colors.white,
+              )
+            ],
+          )
+        ],
+      )
+    );
+  }
+
+  Widget _buildNewsContent(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.95,
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              _buildTitleAndDate(),
+              _buildImage(context),
+              _buildContent(),
             ],
           ),
+          _buildGradientOverlay(),
+        ],
+      ),
+    );
+  }
 
-        )
+  Widget _buildTitleAndDate() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            newsItem.title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Text(
+                // Assuming you have a date field in your NewsItem model
+                _formatDate(newsItem.date!), // Replace with actual date
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white,
+                ),
+              ),
+              Container(
+                width: 85,
+                height: 2,
+                color: Colors.white,
+              )
+            ],
+          )
+        ),
       ],
     );
+  }
+
+  Widget _buildImage(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.85,
+      height: MediaQuery.of(context).size.height * 0.25,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Image.asset(
+          newsItem.imageUrl ?? 'assets/placeholder.png', // Placeholder image
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Text(
+                'Image Not Found',
+                style: TextStyle(color: Colors.red),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        children: [
+          Expanded( // Use Expanded to allow the text to take available space
+            child: Text(
+              newsItem.content ?? 'Content not available',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.left,
+              maxLines: 50, // Set a maximum number of lines
+              overflow: TextOverflow.ellipsis, // Use ellipsis for overflowing text
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildGradientOverlay() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            Colors.white.withOpacity(0.7),
+          ],
+          stops: const [0.3, 1.0], // Adjust gradient stop for better fading
+        ),
+        borderRadius: BorderRadius.circular(20), // Match the border radius
+       
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    // Format the date as needed (e.g., using DateFormat from intl package)
+    return '${date.day}/${date.month}/${date.year}'; // Simple example
   }
 }

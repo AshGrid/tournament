@@ -1,179 +1,195 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/components/colors.dart'; // Ensure AppColors is imported
-import '../models/match.dart';
+import 'package:untitled/components/matchFormation.dart';
+import 'package:untitled/components/matchResume.dart';
+import 'package:untitled/components/scoreBoardItem.dart';
 
-class MatchDetailsPage extends StatelessWidget {
-  final Match match;
 
-  const MatchDetailsPage({Key? key, required this.match}) : super(key: key);
+
+import 'package:untitled/models/match.dart';
+import '../components/calendarContainer.dart';
+import '../components/colors.dart';
+
+import '../components/resultsContainer.dart';
+
+
+class MatchDetailsPage extends StatefulWidget {
+ final Match match;
+
+  const MatchDetailsPage({super.key, required this.match});
+
+  @override
+  _MatchDetailsPageState createState() => _MatchDetailsPageState();
+}
+
+class _MatchDetailsPageState extends State<MatchDetailsPage> {
+
+
+  // Add more quarterfinal matches here...
+
+
+
+
+
+
+  int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+      selectedIndex = 0; // default index
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Gradient background
-          Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.backgroundColor, // Use predefined gradient
-            ),
-          ),
-          // Column to stack the two containers
-          Column(
-            children: [
-              // First container with match details
-              SizedBox(
-                height: 150, // Fixed height
-                width: MediaQuery.of(context).size.width,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Horizontal margin for spacing
-                  padding: const EdgeInsets.all(1.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.6), // 40% transparent background
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.blueAccent, width: 2), // Blue border
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Date and Time
-                      Text(
-                        match.matchTime,
-                        style: TextStyle(fontSize: 10, color: Colors.black54),
-                        textAlign: TextAlign.center,// Adjust font size
-                      ),
-                      SizedBox(height: 4),
-
-                      // Match Status
-                      Center(
-                        child: Text(
-                          match.matchStatus,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: AppColors.backgroundColor
+        ),
+        child: CustomScrollView(
+          slivers: [
+            // Phase Details Header
+            SliverToBoxAdapter(
+              child: Container(
+                margin: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: AppColors.trophyComponent,
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.transparent.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // League Name and Logo in the first container
+                    Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.trophyTitleComponent,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.transparent.withOpacity(0.25),
+                            blurRadius: 4,
+                            offset: const Offset(0, 4),
                           ),
-                        ),
+                        ],
                       ),
-                      SizedBox(height: 5),
-
-                      // Teams and Scores
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Row(
                         children: [
-                          // Home Team
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  match.homeTeam,
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 4),
-                                CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: AssetImage(match.homeTeamLogo), // Load the team logo
-                                  backgroundColor: Colors.transparent,
-                                ),
-                              ],
-                            ),
+                          Container(
+                            child: ScoreboardItem(match: this.widget.match),
                           ),
 
-                          // Scores and Time
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  '${match.homeScore} - ${match.awayScore}',
-                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  match.matchTime,
-                                  style: TextStyle(fontSize: 12, color: Colors.black54),
-                                ),
-                              ],
-                            ),
-                          ),
 
-                          // Away Team
+                          const SizedBox(width: 10),
+                          // League Name
                           Expanded(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  match.awayTeam,
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 4),
-                                CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: AssetImage(match.awayTeamLogo), // Load the team logo
-                                  backgroundColor: Colors.transparent,
-                                ),
+
+                                const SizedBox(height: 4), // Space between league name and trophy name
+
+                                const SizedBox(height: 4), // Space between league name and trophy name
+
                               ],
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 5),
+                    // List of Phases in the same container
+                    SizedBox(
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+
+                            _buildMenuItem('RÉSUMÉ', 0),
+                            const SizedBox(width: 20), // Space between items
+                            _buildMenuItem('FORMATION', 1),
+                            const SizedBox(width: 20), // Space between items
+                            _buildMenuItem('CLASSEMENT', 2),
+
+
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
               ),
-              // Second container with additional details
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 400,
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Horizontal margin for spacing
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.6), // 40% transparent background
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.blueAccent, width: 2), // Blue border
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Additional details like goals and cards
-                        Text(
-                          'Goal Times and Cards',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
-                        // Example content
-                        Text(
-                          'Goal at 23\' - Player 1\nCard: Yellow - Player 2\n...',
-                          style: TextStyle(fontSize: 16, color: Colors.black87),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+            ),
+            // Display the selected content - now below the container
+            SliverToBoxAdapter(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                child: _buildSelectedContent(this.widget.match),
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Method to build each menu item
+  Widget _buildMenuItem(String title, int index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedIndex = index; // Set selected index
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              fontFamily: "oswald",
+            ),
+            textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 2),
+          // Underline only for the selected item
+          if (selectedIndex == index)
+            Container(
+              height: 2,
+              width: title == 'RÉSUMÉ' ? 100 : title == 'FORMATION' ? 80 : title == 'CLASSEMENT' ? 80 : 100,
+              color: Colors.black,
+            ),
         ],
       ),
     );
+  }
+
+  // Method to build the selected content
+  Widget _buildSelectedContent(Match match) {
+    switch (selectedIndex) {
+      case 0:
+        return MatchResume(match: match ); // Display RankingScreen
+      case 1:
+        return MatchFormation(match: match); // Display ResultsScreen
+      case 2:
+        return PremierePhaseCalendarScreen(); // Display CalendarScreen
+
+      default:
+        return Container(); // Fallback case
+    }
   }
 }

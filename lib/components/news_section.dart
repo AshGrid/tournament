@@ -6,8 +6,9 @@ import '../screens/newsDetails.dart';
 
 class NewsSection extends StatelessWidget {
   final List<NewsItem> newsItems;
+  final Function(NewsItem) onNewsSelected;
 
-  const NewsSection({Key? key, required this.newsItems}) : super(key: key);
+  const NewsSection({Key? key, required this.newsItems, required this.onNewsSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,13 +67,8 @@ class NewsSection extends StatelessWidget {
   Widget _buildNewsItem(NewsItem newsItem, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to NewsDetailsPage on tap
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NewsDetails(newsItem: newsItem),
-          ),
-        );
+        onNewsSelected(newsItem); // Pass the selected trophy name
+
       },
       child: Container(
         height: MediaQuery.of(context).size.width > 600

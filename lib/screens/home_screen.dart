@@ -12,7 +12,9 @@ import '../components/dynamic_image_grid.dart';
 import '../components/news_section.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final Function(NewsItem) onNewsSelected;
+  const HomeScreen({Key? key, required this.onNewsSelected}) : super(key: key);
+
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -110,9 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // List of NewsItem objects
     final List<NewsItem> newsItems = [
-      NewsItem(title: 'TITRE DE NEWS 1',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
-      NewsItem(title: 'TITRE DE NEWS 2',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
-      NewsItem(title: 'TITRE DE NEWS 3',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj"),
+      NewsItem(title: 'TITRE DE NEWS 1',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
+      NewsItem(title: 'TITRE DE NEWS 2',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
+      NewsItem(title: 'TITRE DE NEWS 3',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
     ];
 
     List<String> imagePath = [
@@ -214,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Add the NewsSection widget
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: NewsSection(newsItems: newsItems),
+                child: NewsSection(newsItems: newsItems, onNewsSelected:  widget.onNewsSelected,),
               ),
             ],
           ),

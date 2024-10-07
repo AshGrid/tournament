@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/screens/match_details.dart';
+import '../models/MatchEvent.dart';
+import '../models/Team.dart';
 import '../models/match.dart';
 import '../models/league.dart'; // Import your League model
 import 'match_item.dart'; // Import the MatchItem component
@@ -9,6 +12,51 @@ class LeagueComponent extends StatelessWidget {
   final League league;
 
   const LeagueComponent({Key? key, required this.league}) : super(key: key);
+
+  void addMatchEvents(Match match) {
+
+    match.matchEvents.addAll([
+      MatchEvent(
+        description: "Goal",
+        time: DateTime.now().subtract(Duration(minutes: 15)),
+        playerName: 'Player 1',
+        assistPlayerName: 'Player 2',
+        team: match.homeTeam, // Reference team1 for this event
+      ),
+      MatchEvent(
+        description: "Yellow Card",
+        time: DateTime.now().subtract(Duration(minutes: 30)),
+        playerName: 'Player 3',
+        team: match.awayTeam, // Reference team2 for this event
+      ),
+      MatchEvent(
+        description: "Goal",
+        time: DateTime.now().subtract(Duration(minutes: 45)),
+        playerName: 'Player 1',
+        team: match.homeTeam, // Reference team1 for this event
+      ),
+      MatchEvent(
+        description: "Red Card",
+        time: DateTime.now().subtract(Duration(minutes: 60)),
+        playerName: 'Player 3',
+        team: match.awayTeam, // Reference team2 for this event
+      ),
+      MatchEvent(
+        description: "Player Out",
+        time: DateTime.now().subtract(Duration(minutes: 60)),
+        playerName: 'Player 4',
+        team: match.homeTeam, // Reference team1 for this event
+      ),
+      MatchEvent(
+        description: "Player In",
+        time: DateTime.now().subtract(Duration(minutes: 60)),
+        playerName: 'Player 5',
+        team: match.awayTeam, // Reference team2 for this event
+      ),
+    ]);
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +137,23 @@ class LeagueComponent extends StatelessWidget {
             sortedMatches.length,
                 (index) {
               final match = sortedMatches[index];
-              return MatchItemLive(
-                match: match,
-                backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
-                isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+              return GestureDetector(
+                onTap: (){
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MatchDetailsPage(
+                        match: match,
+                      ),
+                    ),
+                  );
+                },
+                child: MatchItemLive(
+                  match: match,
+                  backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
+                  isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+                ),
               );
               // Check if the match is live and return the appropriate widget
               // if (match.matchStatus.toLowerCase() == 'live') {

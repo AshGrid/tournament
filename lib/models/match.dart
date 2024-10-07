@@ -1,6 +1,11 @@
+import 'package:intl/intl.dart';
+import 'package:untitled/models/Team.dart';
+
+import 'MatchEvent.dart';
+
 class Match {
-  final String homeTeam;
-  final String awayTeam;
+  final Team homeTeam;
+  final Team awayTeam;
   final int homeScore;
   final int awayScore;
   final String matchStatus;
@@ -8,6 +13,8 @@ class Match {
   final String homeTeamLogo;
   final String awayTeamLogo;
    String? extraTime;
+   final DateTime? matchDate;
+  final List<MatchEvent> matchEvents;
 
   Match({
     required this.homeTeam,
@@ -17,6 +24,10 @@ class Match {
     required this.matchStatus,
     required this.matchTime,
     required this.homeTeamLogo,
-    required this.awayTeamLogo
+    required this.awayTeamLogo,
+    this.matchEvents = const [],
+    this.matchDate,
   });
+
+  String get formattedDate => DateFormat('yyyy-MM-dd').format(matchDate!);
 }

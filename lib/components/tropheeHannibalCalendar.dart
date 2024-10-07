@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/Team.dart';
 import '../models/match.dart';
 import 'image_slider.dart';
 import 'match_item.dart';
@@ -15,21 +16,21 @@ class _SuperplayoffCalendarState extends State<Tropheehannibalcalendar> {
     {
       'round': 'Quarterfinal',
       'matches': [
-        Match(homeTeam: 'ennakl', awayTeam: 'ennakl', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_a.jpg', awayTeamLogo: 'assets/images/team_b.jpg'),
-        Match(homeTeam: 'ennakl', awayTeam: 'ennakl', homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/team_c.jpg', awayTeamLogo: 'assets/images/team_d.jpg'),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_a.jpg', awayTeamLogo: 'assets/images/team_b.jpg'),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/team_c.jpg', awayTeamLogo: 'assets/images/team_d.jpg'),
       ]
     },
     {
       'round': 'Semifinal',
       'matches': [
-        Match(homeTeam: 'ennakl', awayTeam: 'ennakl', homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/team_e.jpg', awayTeamLogo: 'assets/images/team_f.jpg'),
-        Match(homeTeam: 'ennakl', awayTeam: 'ennakl', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_g.jpg', awayTeamLogo: 'assets/images/team_h.jpg'),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/team_e.jpg', awayTeamLogo: 'assets/images/team_f.jpg'),
+        Match(homeTeam:Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_g.jpg', awayTeamLogo: 'assets/images/team_h.jpg'),
       ]
     },
     {
       'round': 'Final',
       'matches': [
-        Match(homeTeam: 'ennakl', awayTeam: 'ennakl', homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:00', homeTeamLogo: 'assets/images/team_i.jpg', awayTeamLogo: 'assets/images/team_j.jpg'),
+        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:00', homeTeamLogo: 'assets/images/team_i.jpg', awayTeamLogo: 'assets/images/team_j.jpg'),
       ]
     },
   ];

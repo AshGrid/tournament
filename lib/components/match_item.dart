@@ -49,14 +49,14 @@ class MatchItem extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildTeamLogo(match.homeTeamLogo, match.homeTeam),
+                _buildTeamLogo(match.homeTeamLogo, match.homeTeam.name),
                 const SizedBox(width: 10),
                 const Text(
                   '-',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(width: 10),
-                _buildTeamLogo(match.awayTeamLogo, match.awayTeam),
+                _buildTeamLogo(match.awayTeamLogo, match.awayTeam.name),
               ],
             ),
           ),

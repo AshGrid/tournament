@@ -54,10 +54,10 @@ class MatchItemFavorite extends StatelessWidget {
                   children: [
                     const SizedBox(height: 5),
                     // Team 1 logo and name
-                    _buildTeamLogo("assets/images/${match.homeTeam}.jpg", match.homeTeam),
+                    _buildTeamLogo("assets/images/${match.homeTeam}.jpg", match.homeTeam.name),
                     const SizedBox(height: 8), // Space between team 1 and team 2
                     // Team 2 logo and name
-                    _buildTeamLogo("assets/images/${match.awayTeam}.jpg", match.awayTeam),
+                    _buildTeamLogo("assets/images/${match.awayTeam}.jpg", match.awayTeam.name),
                   ],
                 ),
                 const Spacer(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/Team.dart';
 import 'image_slider.dart';
 
 class PremierePhaseRankingScreen extends StatelessWidget {
@@ -146,20 +147,4 @@ class PremierePhaseRankingScreen extends StatelessWidget {
 }
 
 // Mock Team model
-class Team {
-  final int rank;
-  final String name;
-  final int matchesPlayed;
-  final int goals;
-  final int points;
-  final String logo;
 
-  Team({
-    required this.rank,
-    required this.name,
-    required this.matchesPlayed,
-    required this.goals,
-    required this.points,
-    required this.logo,
-  });
-}

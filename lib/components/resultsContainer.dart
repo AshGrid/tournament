@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/phaseMatchResultItem.dart';
+import '../models/Team.dart';
 import '../models/match.dart';
 import 'image_slider.dart';
 import 'match_item.dart';
@@ -31,18 +32,30 @@ class _ResultsScreenState extends State<PremierePhaseResultsScreen> {
   ];
 
   List<Match> matches = [
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'monoprix', awayTeam: 'ennakl', homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'monoprix', awayTeam: 'ennakl', homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'ennakl', awayTeam: 'monoprix', homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'monoprix', awayTeam: 'ennakl', homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
-    Match(homeTeam: 'monoprix', awayTeam: 'ennakl', homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam:Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
+    Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+        awayTeam: Team(name: 'Monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/monoprix.jpg'),
   ];
 
   @override

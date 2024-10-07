@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../components/colors.dart';
 import '../components/leagueFavoriteComponent.dart';
+import '../models/Team.dart';
 import '../models/league.dart';
 import '../models/match.dart';
 
@@ -19,8 +20,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       leagueName: 'LIGUE SAMEDI',
       matches: [
         Match(
-          homeTeam: 'ennakl',
-          awayTeam: 'monoprix',
+          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
           homeScore: 1,
           awayScore: 2,
           matchStatus: 'finished',
@@ -29,8 +30,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           awayTeamLogo: 'assets/images/ennakl.jpg',
         ),
         Match(
-          homeTeam: 'ennakl',
-          awayTeam: 'monoprix',
+          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
           homeScore: 1,
           awayScore: 2,
           matchStatus: 'live',
@@ -46,8 +47,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       leagueName: 'LIGUE DIMANCHE',
       matches: [
         Match(
-          homeTeam: 'ennakl',
-          awayTeam: 'monoprix',
+          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
           homeScore: 1,
           awayScore: 2,
           matchStatus: 'live',
@@ -56,8 +57,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           awayTeamLogo: 'assets/images/ennakl.jpg',
         ),
         Match(
-          homeTeam: 'ennakl',
-          awayTeam: 'monoprix',
+          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
           homeScore: 1,
           awayScore: 2,
           matchStatus: 'finished',
@@ -73,8 +74,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       leagueName: 'LIGUE IT',
       matches: [
         Match(
-          homeTeam: 'ennakl',
-          awayTeam: 'monoprix',
+          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
+          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
           homeScore: 1,
           awayScore: 2,
           matchStatus: 'live',
