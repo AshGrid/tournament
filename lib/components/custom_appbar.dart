@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled/components/colors.dart';
 import '../screens/bottom_sheet.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function(String) onTrophySelected;
+  final Function() onNotifPressed;
 
-  const CustomAppBar({Key? key, required this.onTrophySelected}) : super(key: key);
+  const CustomAppBar({Key? key, required this.onTrophySelected, required this.onNotifPressed}) : super(key: key);
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -71,8 +73,9 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
           ],
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             SizedBox(height: MediaQuery.of(context).size.height * 0.05), // Fixed space
+             SizedBox(height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height * 0.962 ), // Fixed space
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -106,7 +109,8 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                         IconButton(
                           icon: const Icon(Icons.notifications, color: Colors.white),
                           onPressed: () {
-                            print('Notification icon pressed');
+
+                            widget.onNotifPressed();
                           },
                         ),
                       ],
@@ -166,6 +170,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                       width: _isSearching ? MediaQuery.of(context).size.width * 0.5 : 0, // Set width conditionally based on state
                       height: 45,
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 1.0),
+                      padding: EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.transparent.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(25.0),
@@ -177,7 +182,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Recherche ...',
-                          hintStyle: const TextStyle(color: Colors.white54),
+                          hintStyle: const TextStyle(color: Colors.white54,wordSpacing: 10),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                           prefixIcon: Image.asset(

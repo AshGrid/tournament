@@ -11,7 +11,9 @@ import 'package:untitled/components/colors.dart'; // Ensure AppColors is correct
 class LeagueComponent extends StatelessWidget {
   final League league;
 
-  const LeagueComponent({Key? key, required this.league}) : super(key: key);
+  final Function(Match) onMatchSelected;
+
+  const LeagueComponent({Key? key, required this.league, required this.onMatchSelected}) : super(key: key);
 
   void addMatchEvents(Match match) {
 
@@ -139,15 +141,9 @@ class LeagueComponent extends StatelessWidget {
               final match = sortedMatches[index];
               return GestureDetector(
                 onTap: (){
+                  onMatchSelected(match);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MatchDetailsPage(
-                        match: match,
-                      ),
-                    ),
-                  );
+
                 },
                 child: MatchItemLive(
                   match: match,

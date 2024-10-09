@@ -9,10 +9,10 @@ class BottomSheetContent extends StatelessWidget {
 
   // Static data for trophies
   final List<Trophy> trophies = [
-    Trophy(name: 'TROPHEES DE CARTHAGE'),
-    Trophy(name: 'TROPHEES VETERANS'),
-    Trophy(name: 'TROPHEES IT'),
-    Trophy(name: 'TUNISIA CORPORATE CUP'),
+    Trophy(name: 'TROPHÉES DE CARTHAGE'.toUpperCase()),
+    Trophy(name: 'TROPHÉES VÉTÉRANS'.toUpperCase()),
+    Trophy(name: 'TROPHÉES IT'.toUpperCase()),
+    Trophy(name: 'TUNISIA CORPORATE CUP'.toUpperCase()),
     // Add more trophies as needed
   ];
 
@@ -85,7 +85,7 @@ class BottomSheetContent extends StatelessWidget {
                 ),
               ),
               title: Text(
-                trophy.name,
+                trophy.name.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20, // Adjust font size as needed

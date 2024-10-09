@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 
 
-class playerCard extends StatelessWidget {
+class playerCardAway extends StatelessWidget {
   final String playerName;
-  //final String playerPosition;
+ // final String playerPosition;
   final String playerImage; // Image path or URL
 
-  const playerCard({
+  const playerCardAway({
     Key? key,
     required this.playerName,
     //required this.playerPosition,
@@ -26,28 +26,16 @@ class playerCard extends StatelessWidget {
 
       ),
       child: Row(
+
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           // Player Image
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(color: Colors.grey,width: 1),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.0), // Circular image
-              child: Image.asset(
-                playerImage, // Ensure the image path is valid
-                width: 50.0,  // Set image size
-                height: 50.0,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          SizedBox(width: 5.0), // Add some space between image and text
+
+
 
           // Player Name and Position
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 playerName,
@@ -66,6 +54,22 @@ class playerCard extends StatelessWidget {
               //   ),
               // ),
             ],
+          ),
+          SizedBox(width: 5.0),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(color: Colors.grey,width: 1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15.0), // Circular image
+              child: Image.asset(
+                playerImage, // Ensure the image path is valid
+                width: 50.0,  // Set image size
+                height: 50.0,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
         ],
       ),

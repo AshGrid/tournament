@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/screens/ReelsPage.dart';
 import 'colors.dart';
 
 class DynamicImageGrid extends StatelessWidget {
   final List<String> imagePaths;
   final List<String> captions;
+  final String text;
 
   const DynamicImageGrid({
     Key? key,
     required this.imagePaths,
     required this.captions,
+    required this.text,
   }) : super(key: key);
 
   @override
@@ -23,7 +26,7 @@ class DynamicImageGrid extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'MEILLEURS MOMENTS',
+                text.toUpperCase(),
                 style: TextStyle(
                   fontSize: 24,
                   fontFamily: "oswald",
@@ -40,7 +43,7 @@ class DynamicImageGrid extends StatelessWidget {
               ),
               SizedBox(height: 2), // Space between text and underline
               Container(
-                width: 280, // Adjust the underline length here
+                width: text.toUpperCase().length*13, // Adjust the underline length here
                 height: 3, // Thickness of the underline
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -87,41 +90,49 @@ class DynamicImageGrid extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.asset(
-                              imagePaths[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Center(
-                                  child: Text(
-                                    'Image Not Found',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          // Gradient overlay for the fading effect
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.white.withOpacity(0.7),
-                                ],
-                                stops: const [0.3, 1.0], // Adjust gradient stop for better fading
-                              ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ReelsPage()), // Replace with your main screen
+                          );
+                        },
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
-                              border: Border.all(color: AppColors.imageGridItem, width: 2.5),
+                              child: Image.asset(
+                                imagePaths[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Text(
+                                      'Image Not Found',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                            // Gradient overlay for the fading effect
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.white.withOpacity(0.7),
+                                  ],
+                                  stops: const [0.3, 1.0], // Adjust gradient stop for better fading
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(color: AppColors.imageGridItem, width: 2.5),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4.0),

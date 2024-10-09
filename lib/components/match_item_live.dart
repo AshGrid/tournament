@@ -6,22 +6,26 @@ class MatchItemLive extends StatelessWidget {
   final Match match;
   final Color backgroundColor;
   final bool isLastItem;
+  final bool isFirstItem;
 
   const MatchItemLive({
     Key? key,
     required this.match,
     required this.backgroundColor,
     this.isLastItem = false,
+    this.isFirstItem = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 90,
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border(
-          bottom: isLastItem ? BorderSide.none : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          bottom: isLastItem ?  BorderSide(color: Color(0xFFFFFFFF), width: 2) :  BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          top: !isFirstItem ? BorderSide.none : const BorderSide(color: Color(0xFFFFFFFF), width: 2),
         ),
       ),
       child: Row(

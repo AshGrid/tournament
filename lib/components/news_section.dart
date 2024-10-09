@@ -38,7 +38,7 @@ class NewsSection extends StatelessWidget {
               ),
               SizedBox(height: 2), // Space between text and underline
               Container(
-                width: 68, // Adjust width for underline
+                width: 60, // Adjust width for underline
                 height: 3, // Thickness of the underline
                 decoration: BoxDecoration(
                   color: Colors.white,

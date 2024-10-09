@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/match_item_live.dart';
 import '../models/Team.dart';
 import '../models/match.dart';
 import 'image_slider.dart';
@@ -108,7 +109,7 @@ class _SuperplayoffCalendarState extends State<Tropheehannibalcalendar> {
                     return Container();
                   }
                   final match = matches[index];
-                  return MatchItem(
+                  return MatchItemLive(
                     match: match,
                     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
                     isLastItem: index == matches.length - 1,

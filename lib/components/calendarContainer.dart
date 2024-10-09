@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/match_item_live.dart';
 import '../models/Team.dart';
 import '../models/match.dart';
 import 'image_slider.dart';
@@ -98,10 +99,13 @@ class _ResultsScreenState extends State<PremierePhaseCalendarScreen> {
           // Display each day and its matches
           for (var i = 0; i < displayedDays && i < daysWithMatches.length; i++) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 1),
+              padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 12),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+
                 children: [
+                  SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start, // Aligns the row items to the left
                     children: [
@@ -119,7 +123,7 @@ class _ResultsScreenState extends State<PremierePhaseCalendarScreen> {
                   // Underline
                   Container(
                     height: 2, // Height of the underline
-                    width: 100,
+                    width: daysWithMatches[i]['day'].length *8.0,
                     color: Colors.white, // Color of the underline
                     margin: const EdgeInsets.only(top: 4), // Space between text and underline
                   ),
@@ -128,8 +132,9 @@ class _ResultsScreenState extends State<PremierePhaseCalendarScreen> {
             ),
             // List of matches for the current day
             Container(
-              height: MediaQuery.of(context).size.height * 0.27, // Adjust the height as needed
+              height: MediaQuery.of(context).size.height * 0.25, // Adjust the height as needed
               width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(bottom: 0),
               child: ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: daysWithMatches[i]['matches']?.length ?? 0, // Safeguard against null
@@ -140,7 +145,7 @@ class _ResultsScreenState extends State<PremierePhaseCalendarScreen> {
                     return Container(); // Return an empty container if no matches are found
                   }
                   final match = matches[index];
-                  return MatchItem(
+                  return MatchItemLive(
                     match: match,
                     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
                     isLastItem: index == matches.length - 1, // Check if it's the last item

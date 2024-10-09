@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/TeamItem.dart';
+import 'package:untitled/components/colors.dart';
 
 import '../models/Team.dart';
 import 'image_slider.dart';
@@ -29,15 +31,18 @@ class PremierePhaseRankingScreen extends StatelessWidget {
     // Add more teams here...
   ];
 
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.all(0.0),
       child: Column(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(8),
+
+            padding: EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -47,11 +52,11 @@ class PremierePhaseRankingScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(width: 40, child: Text('#', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-                      Expanded(child: Text('EQUIPE', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.bold))),
-                      SizedBox(width: 60, child: Text('MJ', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
+                      SizedBox(width: 140,child: Text('EQUIPE', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.bold))),
+                      SizedBox(width: 60, child: Text('MJ', textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.bold))),
                       SizedBox(width: 60, child: Text('B', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
                       SizedBox(width: 60, child: Text('PTS', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
                     ],
@@ -68,65 +73,10 @@ class PremierePhaseRankingScreen extends StatelessWidget {
                         int index = entry.key;
                         Team team = entry.value;
 
-                        Color boxColor = index < 8 ? Colors.blue : Colors.red; // Set color based on rank
-                        Color textColor = Colors.white; // Text color inside the box
+                         // Set color based on rank
+                         // Text color inside the box
 
-                        return Container(
-                          color: index.isEven ? Colors.grey[200] : Colors.white, // Alternate background colors
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: boxColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.all(8), // Padding inside the box
-                                  child: SizedBox(
-                                    width: 20,
-                                    child: Text(
-                                      team.rank.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(color: textColor),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5), // Rounded borders
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: Image.asset(
-                                          team.logo,
-                                          width: 30, // Adjust the logo size as needed
-                                          height: 30,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8), // Add some space between logo and team name
-                                    Text(team.name),
-                                  ],
-                                ),
-                                SizedBox(width: 60, child: Text(team.matchesPlayed.toString(), textAlign: TextAlign.right)),
-                                SizedBox(width: 60, child: Text(team.goals.toString(), textAlign: TextAlign.center)),
-                                SizedBox(width: 60, child: Text(team.points.toString(), textAlign: TextAlign.center)),
-                              ],
-                            ),
-                          ),
-                        );
+                        return TeamItem(team: team,index:index);
                       }).toList(),
                     ),
                   ),

@@ -26,7 +26,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
     final List<String> phases = [
       'PREMIERE PHASE',
       'SUPER PLAY-OFF',
-      'TROPHEE HANNIBAL',
+      'TROPHÉE HANNIBAL',
     ];
 
     // Static list of images for demonstration
@@ -46,7 +46,8 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
           SliverToBoxAdapter(
             child: Container(
               height: 350,
-              margin: const EdgeInsets.all(12.0),
+              margin: const  EdgeInsets.only(left: 12,right: 12,top: 12,bottom: 12),
+              padding: const EdgeInsets.only(left: 0,right: 0,top: 0,bottom: 0),
               decoration: BoxDecoration(
                 color: AppColors.trophyComponent,
                 borderRadius: BorderRadius.circular(12.0),
@@ -97,7 +98,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                'assets/images/${league.leagueName.toUpperCase()}.png',
+                                '${league.leagueLogo}',
                                 fit: BoxFit.contain,
                                 width: 80,
                                 height: 80,
@@ -134,10 +135,10 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+
                   // List of Phases in the second container
                   SizedBox(
-                    height: 200,
+                    height: 215,
                     child: ListView.builder(
                       itemCount: phases.length,
                       itemBuilder: (context, index) {
@@ -165,16 +166,32 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                                 ),
                               ),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                                title: Text(
-                                  phases[index],
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    fontFamily: "oswald",
-                                  ),
-                                  textAlign: TextAlign.center,
+                                contentPadding: const EdgeInsets.only(left: 8, right: 8, top: 1, bottom: 1),
+                                title: Stack(
+                                  alignment: Alignment.center, // Center the text
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 3.0), // Add space between text and underline
+                                      child: Text(
+                                        phases[index],
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          fontFamily: "Oswald",
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0, // Position the underline a bit lower
+                                      child: Container(
+                                        width: phases[index].length * 8.0, // Adjust underline width based on text length
+                                        height: 2, // Height of the underline
+                                        color: Colors.black, // Underline color
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -182,7 +199,9 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                         );
                       },
                     ),
-                  ),
+                  )
+
+
                 ],
               ),
             ),

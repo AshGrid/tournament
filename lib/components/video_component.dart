@@ -98,7 +98,7 @@ class _VideoComponentState extends State<VideoComponent> {
               ),
               const SizedBox(height: 2), // Space between text and underline
               Container(
-                width: 125, // Adjust width for underline
+                width: widget.title.length*12, // Adjust width for underline
                 height: 3, // Thickness of the underline
                 decoration: BoxDecoration(
                   color: Colors.white,

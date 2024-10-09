@@ -29,5 +29,5 @@ class Match {
     this.matchDate,
   });
 
-  String get formattedDate => DateFormat('yyyy-MM-dd').format(matchDate!);
+  String get formattedDate => DateFormat('yyyy-MM-dd hh:mm').format(matchDate!);
 }

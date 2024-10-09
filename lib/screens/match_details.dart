@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/matchFormation.dart';
 import 'package:untitled/components/matchResume.dart';
+import 'package:untitled/components/rankingContainer.dart';
 import 'package:untitled/components/scoreBoardItem.dart';
 
 
@@ -10,52 +11,43 @@ import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 
 import '../components/resultsContainer.dart';
+import '../models/Team.dart';
 
 
 class MatchDetailsPage extends StatefulWidget {
  final Match match;
-
-  const MatchDetailsPage({super.key, required this.match});
+ final Function(Team) onTeamSelected;
+  const MatchDetailsPage({super.key, required this.match, required this.onTeamSelected});
 
   @override
   _MatchDetailsPageState createState() => _MatchDetailsPageState();
 }
 
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
-
-
-  // Add more quarterfinal matches here...
-
-
-
-
-
-
   int selectedIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
 
-      selectedIndex = 0; // default index
 
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+
         decoration: BoxDecoration(
             gradient: AppColors.backgroundColor
         ),
         child: CustomScrollView(
+
           slivers: [
             // Phase Details Header
             SliverToBoxAdapter(
               child: Container(
+
                 margin: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                  color: AppColors.trophyComponent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12.0),
                   boxShadow: [
                     BoxShadow(
@@ -70,7 +62,7 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                   children: [
                     // League Name and Logo in the first container
                     Container(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(6.0),
                       decoration: BoxDecoration(
                         color: AppColors.trophyTitleComponent,
                         borderRadius: BorderRadius.circular(12.0),
@@ -85,46 +77,37 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                       child: Row(
                         children: [
                           Container(
-                            child: ScoreboardItem(match: this.widget.match),
+                            child: ScoreboardItem(match: this.widget.match, onTeamSelected: widget.onTeamSelected,),
                           ),
 
 
                           const SizedBox(width: 10),
                           // League Name
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
 
-                                const SizedBox(height: 4), // Space between league name and trophy name
-
-                                const SizedBox(height: 4), // Space between league name and trophy name
-
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 5),
-                    // List of Phases in the same container
+
                     SizedBox(
-                      height: 50,
+                      height: 40,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+
                         children: [
 
+
                             _buildMenuItem('RÉSUMÉ', 0),
-                            const SizedBox(width: 20), // Space between items
+                            const SizedBox(width: 40), // Space between items
                             _buildMenuItem('FORMATION', 1),
-                            const SizedBox(width: 20), // Space between items
+                            const SizedBox(width: 40), // Space between items
                             _buildMenuItem('CLASSEMENT', 2),
 
 
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+
                   ],
                 ),
               ),
@@ -153,7 +136,7 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             title,
@@ -162,15 +145,16 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
               fontWeight: FontWeight.bold,
               fontSize: 13,
               fontFamily: "oswald",
+              letterSpacing: 1,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           // Underline only for the selected item
           if (selectedIndex == index)
             Container(
               height: 2,
-              width: title == 'RÉSUMÉ' ? 100 : title == 'FORMATION' ? 80 : title == 'CLASSEMENT' ? 80 : 100,
+              width: title == "FORMATION" ? 70: title =="CLASSEMENT"? 75 : 50,
               color: Colors.black,
             ),
         ],
@@ -186,7 +170,7 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
       case 1:
         return MatchFormation(match: match); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(); // Display CalendarScreen
+        return PremierePhaseRankingScreen(); // Display CalendarScreen
 
       default:
         return Container(); // Fallback case

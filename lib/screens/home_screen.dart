@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:story_view/story_view.dart';
+import 'package:untitled/models/match.dart';
+import 'package:untitled/screens/Story.dart';
 import '../components/colors.dart'; // Import the colors file
 import '../components/story_circle.dart';
 import '../models/news.dart';
@@ -13,6 +16,7 @@ import '../components/news_section.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(NewsItem) onNewsSelected;
+
   const HomeScreen({Key? key, required this.onNewsSelected}) : super(key: key);
 
 
@@ -59,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ];
 
+  List<StoryItem> storyitems = [];
   // Initialize viewedStatuses for each story
 
 
@@ -77,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const FullStoryScreen(),
+        builder: (context) =>  Story(),
       ),
     );
   }
@@ -174,11 +179,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               // Use the MatchResultComponent widget here
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 8),
-                child: MatchResultComponent(
-                  matchResults: matchResults,
-                ),
+              MatchResultComponent(
+                matchResults: matchResults,
+                text: "Dernier résultat",
               ),
               // Adds the ad banner with padding to the layout
               Padding(
@@ -194,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: DynamicImageGrid(
                     imagePaths: imagePath,
                     captions: ['Caption 1', 'Caption 2', 'Caption 3'],
+                    text: "Meilleurs moments",
                   ),
                 ),
               ),

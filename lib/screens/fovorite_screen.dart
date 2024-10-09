@@ -98,7 +98,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         // Vertically scrollable container for leagues
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.only(left: 0,right: 0,top: 8,bottom: 7),
             itemCount: leagues.length,
             itemBuilder: (context, index) {
               final league = leagues[index];
@@ -107,8 +107,11 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     // Display formatted date
-                    Text(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
                       DateFormat('MMMM d, yyyy').format(league.date!),
                       style: const TextStyle(
                         fontSize: 20.0,
@@ -122,7 +125,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                           ),
                         ],
                       ),
-                    ),
+                    ),),
                     const SizedBox(height: 20),
                     // League component
                     LeagueFavoriteComponent(league: league),

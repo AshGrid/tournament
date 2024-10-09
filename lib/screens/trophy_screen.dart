@@ -43,25 +43,25 @@ class TrophyScreen extends StatelessWidget {
     final List<League> leaguesIT = [
       League(
         leagueName: 'Ligue IT',
-        leagueLogo: 'assets/images/LIGUE SAMEDI.png',
+        leagueLogo: 'assets/images/TROPHÉES IT.png',
         matches: [],
       ),
       League(
         leagueName: 'Coupe IT',
-        leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
+        leagueLogo: 'assets/images/TROPHÉES IT.png',
         matches: [],
       ),
 
     ];
     final List<League> tropheeVeteran = [
     League(
-    leagueName: 'Ligue Veterans',
-    leagueLogo: 'assets/images/LIGUE SAMEDI.png',
+    leagueName: 'Ligue Vétérans',
+    leagueLogo: 'assets/images/TROPHÉES VÉTÉRANS.png',
     matches: [],
     ),
     League(
-    leagueName: 'Coupe Veterans',
-    leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
+    leagueName: 'Coupe Vétérans',
+    leagueLogo: 'assets/images/TROPHÉES VÉTÉRANS.png',
     matches: [],
     ),
 
@@ -72,8 +72,8 @@ class TrophyScreen extends StatelessWidget {
       'assets/images/image2.jpeg',
       'assets/images/image1.jpeg',
     ];
-
-
+     double height = 300;
+     trophyName== "TROPHÉES DE CARTHAGE" ? height = 430 : trophyName== "TROPHÉES IT" ? height=300: 200 ;
 
     return Scaffold(
       backgroundColor: AppColors.secondaryBackground, // Custom background color
@@ -83,8 +83,9 @@ class TrophyScreen extends StatelessWidget {
           // Big Container with Trophy Name and Logo
           SliverToBoxAdapter(
             child: Container(
-              height: 350,
-              margin: const EdgeInsets.all(12.0),
+              height: height,
+              margin: const EdgeInsets.only(left: 12,right: 12,top: 12,bottom: 12),
+              padding: const EdgeInsets.only(left: 0,right: 0,top: 0,bottom: 0),
               decoration: BoxDecoration(
                 color: AppColors.trophyComponent, // Use your component background color
                 borderRadius: BorderRadius.circular(12.0), // Rounded corners
@@ -119,6 +120,7 @@ class TrophyScreen extends StatelessWidget {
                         Container(
                           width: 100,
                           height: 100,
+                          margin: EdgeInsets.only(bottom: 0,left: 12,right: 12,top: 0),
                           decoration: BoxDecoration(
                             color: Colors.white, // Background color of the container
                             borderRadius: BorderRadius.circular(15.0),
@@ -143,7 +145,7 @@ class TrophyScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 2),
                         // Trophy Name
                         Expanded(
                           child: Text(
@@ -158,14 +160,14 @@ class TrophyScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+
                   // List of Leagues in the second container
                   SizedBox(
-                    height: 200, // Adjust height if needed
+                    height: height-130, // Adjust height if needed
                     child: ListView.builder(
-                      itemCount:trophyName == "TROPHEES IT" ? leaguesIT.length : trophyName == "TROPHEES VETERANS" ? tropheeVeteran.length :  trophyName == "TROPHEES DE CARTHAGE" ? leagues.length : leagues.length,
+                      itemCount:trophyName == "TROPHÉES IT" ? leaguesIT.length : trophyName == "TROPHÉES VÉTÉRANS" ? tropheeVeteran.length :  trophyName == "TROPHÉES DE CARTHAGE" ? leagues.length : leagues.length,
                       itemBuilder: (context, index) {
-                        final league = trophyName == "TROPHEES IT" ? leaguesIT[index] : trophyName == "TROPHEES VETERANS" ? tropheeVeteran[index] : trophyName == "TROPHEES DE CARTHAGE" ? leagues[index] : leagues[index] ;
+                        final league = trophyName == "TROPHÉES IT" ? leaguesIT[index] : trophyName == "TROPHÉES VÉTÉRANS" ? tropheeVeteran[index] : trophyName == "TROPHÉES DE CARTHAGE" ? leagues[index] : leagues[index] ;
                         final backgroundColor = index.isEven ? AppColors.trophyItem1 : Colors.transparent;
 
                         return Container(
@@ -189,10 +191,7 @@ class TrophyScreen extends StatelessWidget {
                               ),
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                                horizontal: 8.0,
-                              ),
+                              contentPadding: const EdgeInsets.only(left: 8,right: 8,top: 4,bottom: 4),
                               leading: Container(
                                 width: 55,
                                 height: 55,
@@ -220,7 +219,7 @@ class TrophyScreen extends StatelessWidget {
                                 ),
                               ),
                               title: Text(
-                                league.leagueName,
+                                league.leagueName.toUpperCase(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,

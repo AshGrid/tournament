@@ -32,10 +32,17 @@ class NewsDetails extends StatelessWidget {
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 4.0,
+                      color: AppColors.textShadow,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width*0.2,
+                width: MediaQuery.of(context).size.width*0.16,
                 height: 2,
                 color: Colors.white,
               )
@@ -55,16 +62,11 @@ class NewsDetails extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white, width: 2),
       ),
-      child: Stack(
+      child: Column(
         children: [
-          Column(
-            children: [
-              _buildTitleAndDate(),
-              _buildImage(context),
-              _buildContent(),
-            ],
-          ),
-          _buildGradientOverlay(),
+          _buildTitleAndDate(),
+          _buildImage(context),
+          _buildContent(),
         ],
       ),
     );
@@ -79,8 +81,15 @@ class NewsDetails extends StatelessWidget {
             newsItem.title,
             style: const TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
+              shadows: [
+                Shadow(
+                  blurRadius: 4.0,
+                  color: AppColors.textShadow,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
           ),
         ),
@@ -94,8 +103,15 @@ class NewsDetails extends StatelessWidget {
                 _formatDate(newsItem.date!), // Replace with actual date
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 4.0,
+                      color: AppColors.textShadow,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -142,7 +158,7 @@ class NewsDetails extends StatelessWidget {
               newsItem.content ?? 'Content not available',
               style: const TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 color: Colors.white,
               ),
               textAlign: TextAlign.left,

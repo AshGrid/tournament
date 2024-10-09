@@ -86,6 +86,12 @@ static const Color nav = Color(0xFF7E2424);
   static const Color matchItemComponent = Color(0x29343C44);
   static const Color matchItemComponentTeamLogoBorder = Color(0xFFA3A0A0);
   static const Color matchItemComponentShadow = Color(0x40000000);
+  static const Color teamRankContainer = Color(0xFF2130BB);
+  static const Color teamRankContainerLast8 = Color(0xFFB83535);
+
+
+
+
 
 // Add more colors as needed
 }

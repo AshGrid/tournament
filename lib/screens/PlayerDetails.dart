@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/PlayerMatches.dart';
+import 'package:untitled/components/TeamPlayers.dart';
+import 'package:untitled/components/TeamResults.dart';
 
 
 import 'package:untitled/components/superPlayOffCalendar.dart';
@@ -7,53 +10,43 @@ import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
 import 'package:untitled/models/league.dart';
+import 'package:untitled/models/player.dart';
+import 'package:untitled/screens/matches_screen.dart';
+import '../components/PlayrCarriere.dart';
+import '../components/TeamLeagueComponent.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
 import '../components/superPlayOffTableau.dart';
+import '../models/Team.dart';
 
-class PhaseDetailsScreen extends StatefulWidget {
-  final String phaseName;
-  final League league;
-  final String trophyName;
+class PlayerDetails extends StatefulWidget {
+  final Player player;
 
-  const PhaseDetailsScreen({super.key, required this.phaseName, required this.league, required this.trophyName});
+  const PlayerDetails({super.key, required this.player});
 
   @override
-  _PhaseDetailsScreenState createState() => _PhaseDetailsScreenState();
+  _PlayerDetailsState createState() => _PlayerDetailsState();
 }
 
-class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
-
-
-      // Add more quarterfinal matches here...
-
-
-
-
-
+class _PlayerDetailsState extends State<PlayerDetails> {
 
   int selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    if (this.widget.phaseName == "SUPER PLAY-OFF") {
-      selectedIndex = 3; // or whatever index you need
-    } else if (this.widget.phaseName == "TROPHÉE HANNIBAL") {
-      selectedIndex = 6; // assign the corresponding index
-    } else {
-      selectedIndex = 0; // default index
-    }
+    selectedIndex = 1;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          gradient: AppColors.backgroundColor
+            gradient: AppColors.backgroundColor
         ),
         child: CustomScrollView(
           slivers: [
@@ -62,7 +55,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
               child: Container(
                 margin: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                  color: AppColors.trophyComponent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12.0),
                   boxShadow: [
                     BoxShadow(
@@ -109,9 +102,9 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                             ),
                             child: Center(
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(50.0),
                                 child: Image.asset(
-                                  'assets/images/${widget.league.leagueName.toUpperCase()}.png',
+                                  'assets/images/${widget.player.name}.jpg',
                                   fit: BoxFit.contain,
                                   width: 80,
                                   height: 80,
@@ -126,7 +119,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.trophyName,
+                                  widget.player.name,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -134,21 +127,34 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4), // Space between league name and trophy name
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Age: ${widget.player.age.toString()}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4), // Space between league name and trophy name
+                                    Text(
+                                      " (${widget.player.formattedDate})",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
                                 Text(
-                                  widget.league.leagueName,
+                                  " ${widget.player.position}",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 4), // Space between league name and trophy name
-                                Text(
-                                  widget.phaseName,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
@@ -164,31 +170,17 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (this.widget.phaseName == "PREMIERE PHASE") ...[
-                            _buildMenuItem('CLASSEMENT', 0),
-                            const SizedBox(width: 20), // Space between items
-                            _buildMenuItem('RESULTATS', 1),
-                            const SizedBox(width: 20), // Space between items
-                            _buildMenuItem('CALENDRIER', 2),
-                          ],
-                          if (this.widget.phaseName == "SUPER PLAY-OFF") ...[
-                            _buildMenuItem('TABLEAU', 3),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('RESULTATS', 4),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('CALENDRIER', 5),
-                          ],
-                          if (this.widget.phaseName == "TROPHÉE HANNIBAL") ...[
-                            _buildMenuItem('TABLEAU', 6),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('RESULTATS', 7),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('CALENDRIER', 8),
-                          ],
+
+                          _buildMenuItem('MATCHS', 0),
+
+                          _buildMenuItem('CARRIERE', 1),
+
+
+
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+
                   ],
                 ),
               ),
@@ -197,7 +189,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
             SliverToBoxAdapter(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                padding:  selectedIndex == 1 ? EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0):EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 child: _buildSelectedContent(),
               ),
             ),
@@ -234,7 +226,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
           if (selectedIndex == index)
             Container(
               height: 2,
-              width: title.length * 8.0,
+              width: title == 'MATCHS' ? 50 : title == 'CARRIERE' ? 60 : 70,
               color: Colors.black,
             ),
         ],
@@ -245,24 +237,11 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   // Method to build the selected content
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
-       case 0:
-         return PremierePhaseRankingScreen(); // Display RankingScreen
+      case 0:
+        return PlayerMatches(); // Display RankingScreen
       case 1:
-        return PremierePhaseResultsScreen(); // Display ResultsScreen
-      case 2:
-        return PremierePhaseCalendarScreen(); // Display CalendarScreen
-      case 3:
-        return SuperPlayOffTableau();
-      case 4:
-        return Superplayoffresultats();
-      case 5:
-        return Superplayoffcalendar();
-      case 6:
-        return Tropheehannibaltableau();
-      case 7:
-        return Tropheehannibalresultats();
-      case 8:
-        return Tropheehannibalcalendar();
+        return PlayrCarriere(); // Display ResultsScreen
+
       default:
         return Container(); // Fallback case
     }

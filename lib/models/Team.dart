@@ -11,6 +11,7 @@ class Team {
   final String logo;
   final List<Player>? players;
   final List<Player>? remplacanats;
+  final String? league;
 
   Team({
     required this.rank,
@@ -21,5 +22,6 @@ class Team {
     required this.logo,
     this.players,
     this.remplacanats,
+    this.league,
   });
 }
