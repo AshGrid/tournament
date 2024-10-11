@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
+import 'package:untitled/components/match_item_live.dart';
 import '../models/Team.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 import 'image_slider.dart';
 import 'match_item.dart';
 
@@ -15,23 +17,15 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
   final List<Map<String, dynamic>> roundsWithMatches = [
     {
       'round': 'Quarterfinal',
-      'matches': [
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_a.jpg', awayTeamLogo: 'assets/images/team_b.jpg'),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/team_c.jpg', awayTeamLogo: 'assets/images/team_d.jpg'),
-      ]
+      'matches': MockData.mockMatches
     },
     {
       'round': 'Semifinal',
-      'matches': [
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/team_e.jpg', awayTeamLogo: 'assets/images/team_f.jpg'),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/team_g.jpg', awayTeamLogo: 'assets/images/team_h.jpg'),
-      ]
+      'matches': MockData.mockMatches
     },
     {
       'round': 'Final',
-      'matches': [
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'live', matchTime: '19:00', homeTeamLogo: 'assets/images/team_i.jpg', awayTeamLogo: 'assets/images/team_j.jpg'),
-      ]
+      'matches': MockData.mockMatches
     },
   ];
 
@@ -50,8 +44,8 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
     for (var round in roundsWithMatches) {
       List<Match> sortedMatches = List.from(round['matches']);
       sortedMatches.sort((a, b) {
-        bool aIsLive = a.matchStatus.toLowerCase() == 'live';
-        bool bIsLive = b.matchStatus.toLowerCase() == 'live';
+        bool aIsLive = a.status!.toLowerCase() == 'live';
+        bool bIsLive = b.status!.toLowerCase() == 'live';
 
         if (aIsLive && !bIsLive) return -1;
         if (!aIsLive && bIsLive) return 1;
@@ -109,7 +103,7 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
                     return Container();
                   }
                   final match = matches[index];
-                  return MatchItem(
+                  return MatchItemLive(
                     match: match,
                     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
                     isLastItem: index == matches.length - 1,

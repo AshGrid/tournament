@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
 import '../components/LeagueComponent.dart';
+import '../models/Club.dart';
 import '../models/MatchEvent.dart';
 import '../models/Position.dart';
 import '../models/Team.dart';
-import '../models/league.dart';
-import '../models/match.dart';
-import '../models/player.dart';
+import '../models/League.dart';
+import '../models/Match.dart';
+import '../models/Player.dart';
 import 'TeamLeagueComponent.dart';
 import 'TeamPositionComponent.dart';
 
 class TeamPlayers extends StatefulWidget {
-  final Team team;
+  final Club team;
   final Function(Player) onPlayerSelected;
 
   const TeamPlayers({Key? key, required this.team, required this.onPlayerSelected}) : super(key: key);
@@ -23,31 +25,9 @@ class _TeamPlayersState extends State<TeamPlayers> {
   // Sample list of leagues
   List<Position> positions = [
     Position(name: 'Guardiens',
-      players: [
-        Player(age:25,dateNaissance:  DateTime(1999, 7, 15),name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg',team: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),),
-
-        Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-    ],),
-    Position(name: 'Défenseurs',  players: [
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      // Add more players as needed
-    ],),
-    Position(name: 'Défenseurs',  players: [
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      Player(name: 'Player B1', position: 'Guardien', image: 'assets/images/monoprix.jpg'),
-      // Add more players as needed
-    ],
+      players: MockData.invitedPlayersList,),
+    Position(name: 'Défenseurs',  players: MockData.invitedPlayersList ,),
+    Position(name: 'Défenseurs',  players: MockData.invitedPlayersList,
 
 
     )

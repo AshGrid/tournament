@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:story_view/story_view.dart';
-import 'package:untitled/models/match.dart';
+import 'package:untitled/Service/mock_data.dart';
+import 'package:untitled/models/Match.dart';
 import 'package:untitled/screens/Story.dart';
+import '../Service/data_service.dart';
 import '../components/colors.dart'; // Import the colors file
 import '../components/story_circle.dart';
-import '../models/news.dart';
+import '../models/News.dart';
+import 'StoryViewScreen.dart';
 import 'bottom_sheet.dart';
 import '../components/full_story_screen.dart'; // Import FullStoryScreen
 import '../components/image_slider.dart'; // Import the ImageSlider widget
@@ -13,11 +16,12 @@ import '../components/match_result_component.dart'; // Import MatchResultCompone
 import '../components/ads_banner.dart'; // Import AdsBanner widget
 import '../components/dynamic_image_grid.dart';
 import '../components/news_section.dart';
+import '../models/Stream.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Function(NewsItem) onNewsSelected;
-
-  const HomeScreen({Key? key, required this.onNewsSelected}) : super(key: key);
+  final Function(News) onNewsSelected;
+  final StoryController _storyController = StoryController();
+  HomeScreen({Key? key, required this.onNewsSelected }) : super(key: key);
 
 
   @override
@@ -25,6 +29,57 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isLoading = true; // Added loading state
+  bool isMatchesLoading = true; // Loading state for matches
+  final DataService dataService = DataService();
+  List<News> newsList = [];
+  List<Match> matchesList = [];
+  List<StreamItem> streamItems = [];
+  @override
+  void initState() {
+    super.initState();
+    _fetchNews();
+    _fetchMatches();
+    _fetchStream();
+  }
+
+  Future<void> _fetchStream() async {
+    final streamItem = await dataService.fetchStream();
+    setState(() {
+      streamItems = streamItem;
+
+    });
+  }
+
+  Future<void> _fetchNews() async {
+    try {
+      final fetchedNews = await dataService.fetchNews();
+      setState(() {
+        newsList = fetchedNews;
+        isLoading = false; // Set loading to false after fetching
+      });
+    } catch (e) {
+      // Handle errors here, e.g., show a SnackBar or an error message
+      setState(() {
+        isLoading = false; // Stop loading on error
+      });
+    }
+  }
+  Future<void> _fetchMatches() async {
+    try {
+      final fetchedMatches = await dataService.fetchPlayedMatches();
+      setState(() {
+        matchesList = fetchedMatches;
+        isMatchesLoading = false; // Set loading to false after fetching matches
+      });
+    } catch (e) {
+      // Handle errors here
+      setState(() {
+        isMatchesLoading = false; // Stop loading on error
+      });
+    }
+  }
+
   // List of image paths
   List<List<String>> imagePaths = [
     [
@@ -63,7 +118,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ];
 
-  List<StoryItem> storyitems = [];
+  final List<List<Map<String, String>>> allStories = [
+    [
+      {'type': 'image', 'url': 'assets/images/image1.jpeg'},
+      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
+      {'type': 'image', 'url': 'assets/images/image2.jpeg'},
+    ],
+    [
+      {'type': 'image', 'url': 'assets/images/image3.jpg'},
+      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
+    ],
+    [
+      {'type': 'image', 'url': 'assets/images/image3.jpg'},
+      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
+    ],
+    [
+      {'type': 'image', 'url': 'assets/image3.jpg'},
+      {'type': 'video', 'url': 'https://your-video-url.com/video2.mp4'},
+    ],
+    [
+      {'type': 'image', 'url': 'assets/image3.jpg'},
+      {'type': 'video', 'url': 'https://your-video-url.com/video2.mp4'},
+    ],
+  ];
+
+  final List<List<StoryItem>> storyItemsList = [
+    [
+      StoryItem.text(
+        title: "First Story of User A",
+        backgroundColor: Colors.red,
+      ),
+      StoryItem.inlineImage(
+        url: "https://your-image-url.com/image1.jpg",
+        controller: StoryController(),
+        caption: Text("A great goal!"),
+      ),
+    ],
+    [
+      StoryItem.text(
+        title: "Breaking news!",
+        backgroundColor: Colors.blueAccent,
+      ),
+      StoryItem.inlineImage(
+        url: "https://media.giphy.com/media/l0HUpt2s9Pclgt9Vm/giphy.gif",
+        controller: StoryController(),
+        caption: Text("Celebration GIF"),
+      ),
+    ],
+    // Add more story sets for other users
+  ];
+
   // Initialize viewedStatuses for each story
 
 
@@ -82,152 +186,210 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>  Story(),
+        builder: (context) =>  StoryViewScreen(
+          storyItems: [
+            StoryItem.text(
+              title: "Hello world!\nHave a look at some great Ghanaian delicacies. I'm sorry if your mouth waters. \n\nTap!",
+              backgroundColor: Colors.orange,
+              roundedTop: true,
+            ),
+            StoryItem.inlineImage(
+              url: "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
+              controller: widget._storyController,
+              caption: Text(
+                "Omotuo & Nkatekwan; You will love this meal if taken as supper.",
+                style: TextStyle(
+                  color: Colors.white,
+                  backgroundColor: Colors.black54,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+            StoryItem.inlineImage(
+              url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",
+              controller: widget._storyController,
+              caption: Text(
+                "Hektas, sektas and skatad",
+                style: TextStyle(
+                  color: Colors.white,
+                  backgroundColor: Colors.black54,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+          ],
+          controller: widget._storyController,
+        ),
       ),
     );
   }
+  List<String> imagePath = [
+    'assets/images/image1.jpeg',
+    'assets/images/image2.jpeg',
+    'assets/images/image1.jpeg',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // List of MatchResult objects
-    final List<MatchResult> matchResults = [
-      MatchResult(
-        team1Logo: 'assets/images/ennakl.jpg',
-        team2Logo: 'assets/images/monoprix.jpg',
-        result: '2 - 1',
-        dateTime: '2024-08-30 20:00',
-        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
-      ),
-      MatchResult(
-        team1Logo: 'assets/images/ennakl.jpg',
-        team2Logo: 'assets/images/monoprix.jpg',
-        result: '1 - 3',
-        dateTime: '2024-08-31 18:00',
-        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
-      ),
-      MatchResult(
-        team1Logo: 'assets/images/ennakl.jpg',
-        team2Logo: 'assets/images/monoprix.jpg',
-        result: '1 - 1',
-        dateTime: '2024-08-31 18:00',
-        stadiumName: 'Five stars club', team1Name: 'ennakl', team2Name: 'monoprix',
-      ),
-      // Add more MatchResult objects as needed
-    ];
-
-    // List of NewsItem objects
-    final List<NewsItem> newsItems = [
-      NewsItem(title: 'TITRE DE NEWS 1',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
-      NewsItem(title: 'TITRE DE NEWS 2',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
-      NewsItem(title: 'TITRE DE NEWS 3',imageUrl: 'assets/images/monoprix.jpg',content: "ojwojdwojdowjdowjdowj",date: DateTime(2024, 10, 6),),
-    ];
-
-    List<String> imagePath = [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ];
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: AppColors.backgroundColor, // Use the gradient here
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Horizontal scrollable list of StoryCircle widgets with text below
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-                child: SizedBox(
-                  height: 92, // Adjust height to accommodate text below circles
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: imagePaths.length, // Use the length of the outer list
-                    separatorBuilder: (context, index) => const SizedBox(width: 10),
-                    itemBuilder: (context, index) {
-                      final images = imagePaths[index]; // Access the list of images for each story
-                      return GestureDetector(
-                        onTap: () {
-                          _openFullStory(context); // Open full-screen story on tap
-                        },
-                        child: Column(
-                          children: [
-                            StoryCircle(
-                              imageUrls: imagePaths, // Pass the list of images to the StoryCircle
-                              userNames: users, // Example user names
-                              isFirst: index == 0, // Set isFirst to true for the first circle
-                              viewedStatuses: viewedStatuses, // Pass the viewed statuses
-                              currentIndex: index,
-                            ),
-                            const SizedBox(height: 4), // Space between circle and text
-                            Text(
-                              users[index], // Example text below each story circle
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "oswald",
-                                color: Colors.white,
+        child: ListView.builder(
+          itemCount: 8, // You can adjust this number based on your components
+          itemBuilder: (context, index) {
+            switch (index) {
+              case 0:
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: SizedBox(
+                    height: 92, // Adjust height to accommodate text below circles
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: imagePaths.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        final images = imagePaths[index]; // Access the list of images for each story
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StoryDetailsPage(
+                                  storyItems: storyItemsList[index],
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis, // Prevent text overflow
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              StoryCircle(
+                                userNames: users,
+                                isFirst: index == 0,
+                                viewedStatuses: viewedStatuses,
+                                currentIndex: index,
+                                imageUrls: imagePaths,
+                              ),
+                              const SizedBox(height: 4), // Space between circle and text
+                              Text(
+                                users[index],
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "oswald",
+                                  color: Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ),
-              // Use the MatchResultComponent widget here
-              MatchResultComponent(
-                matchResults: matchResults,
-                text: "Dernier résultat",
-              ),
-              // Adds the ad banner with padding to the layout
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: const AdsBanner(),
-              ),
-              // Dynamic Image Grid
-              SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.8),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height*0.9 ,
-                  child: DynamicImageGrid(
+                );
+              case 1:
+                return isMatchesLoading // Check loading state for matches
+                    ? Center(
+                  heightFactor: 2,
+                    child: CircularProgressIndicator(color: Colors.white,)) // Show loading indicator
+                    : MatchResultComponent(
+                  matchResults: matchesList,
+                  text: "Derniers résultats",
+                );
+              case 2:
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: const AdsBanner(),
+                );
+              case 3:
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 0.8),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: DynamicImageGrid(
+                      imagePaths: imagePath,
+                      captions: ['Caption 1', 'Caption 2', 'Caption 3'],
+                      text: "Meilleurs moments",
+                    ),
+                  ),
+                );
+              case 4:
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: ImageSlider(
                     imagePaths: imagePath,
-                    captions: ['Caption 1', 'Caption 2', 'Caption 3'],
-                    text: "Meilleurs moments",
                   ),
-                ),
-              ),
-              // Add the ImageSlider widget
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: ImageSlider(
-                  imagePaths: imagePath,
-                ),
-              ),
-              // Add the VideoComponent widget
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: VideoComponent(
-                  videoUrl: 'assets/videos/videofoot.mp4', // Provide the path to your video
-                  title: 'Streaming',
-                  description: '',
-                ),
-              ),
-              // Add the NewsSection widget
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: NewsSection(newsItems: newsItems, onNewsSelected:  widget.onNewsSelected,),
-              ),
+                );
+
+              case 5:
+                return Padding(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            Row(
+            mainAxisAlignment: MainAxisAlignment.start, // Aligns items to the start (left)
+            children: [
+            Text(
+            "Streaming",
+            style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: "oswald",
+            color: Colors.white,
+            shadows: [
+            Shadow(
+            blurRadius: 4.0,
+            color: AppColors.textShadow,
+            offset: Offset(0, 4),
+            ),
             ],
-          ),
+            ),
+            ),
+            ],
+            ),
+            const SizedBox(height: 2),
+            Container(
+            width: "Streaming".length * 11.5, // Adjust the width for the underline
+            height: 3,
+            decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+            BoxShadow(
+            color: AppColors.textShadow,
+            spreadRadius: 0,
+            blurRadius: 4,
+            offset: Offset(0, 4),
+            ),
+            ],
+            ),
+            ),
+
+            ],
+            ),
+            );
+              case 6:
+            return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: VideoComponent(),
+            );
+              case 7:
+                return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: NewsSection( onNewsSelected:  widget.onNewsSelected, newsList: newsList, isLoading: isLoading,),
+            );
+            // You can add more cases here for additional widgets
+              default:
+                return SizedBox(); // Return an empty box for unhandled cases
+            }
+          },
         ),
       ),
     );
   }
+
 }
 
 

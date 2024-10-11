@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
 import 'package:untitled/components/colors.dart';
-import '../models/trophy.dart';
+import '../models/Trophy.dart';
 
 class BottomSheetContent extends StatelessWidget {
-  final Function(String) onTrophySelected; // Callback function
+  final Function(String) onTrophySelected;
+  final List<Trophy> trophies;// Callback function
 
-  BottomSheetContent({Key? key, required this.onTrophySelected}) : super(key: key);
+  BottomSheetContent({Key? key, required this.onTrophySelected,required this.trophies }) : super(key: key);
 
   // Static data for trophies
-  final List<Trophy> trophies = [
-    Trophy(name: 'TROPHÉES DE CARTHAGE'.toUpperCase()),
-    Trophy(name: 'TROPHÉES VÉTÉRANS'.toUpperCase()),
-    Trophy(name: 'TROPHÉES IT'.toUpperCase()),
-    Trophy(name: 'TUNISIA CORPORATE CUP'.toUpperCase()),
-    // Add more trophies as needed
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +75,13 @@ class BottomSheetContent extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0), // Padding inside the box
                   child: Image.asset(
-                    'assets/images/${trophy.name}.png', // Adjust path as needed
+                    'assets/images/${trophy.name!.toUpperCase()}.png', // Adjust path as needed
                     fit: BoxFit.scaleDown, // Adjust image fit
                   ),
                 ),
               ),
               title: Text(
-                trophy.name.toUpperCase(),
+                trophy.name!.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20, // Adjust font size as needed
@@ -101,7 +97,8 @@ class BottomSheetContent extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                onTrophySelected(trophy.name); // Pass the selected trophy name
+                print(trophy.name!.toUpperCase());
+                onTrophySelected(trophy.name!); // Pass the selected trophy name
                 Navigator.pop(context); // Close the bottom sheet
               },
             ),

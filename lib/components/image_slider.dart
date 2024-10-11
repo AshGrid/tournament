@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/colors.dart';
 
 class ImageSlider extends StatefulWidget {
   final List<String> imagePaths;
@@ -76,8 +77,8 @@ class _ImageSliderState extends State<ImageSlider> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _currentPage == index
-                      ? Colors.black
-                      : Colors.grey,
+                      ? AppColors.leagueTitleComponent
+                      : Colors.white,
                 ),
               ),
             ),

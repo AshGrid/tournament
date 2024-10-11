@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 import 'colors.dart'; // Ensure the Match class is correctly imported
 
 class PhaseMatchResultItem extends StatelessWidget {
@@ -55,10 +55,10 @@ class PhaseMatchResultItem extends StatelessWidget {
                   children: [
                     SizedBox(height: 5),
                     // Team 1 logo and name
-                    _buildTeamLogo("assets/images/${match.homeTeam}.jpg", match.homeTeam.name),
+                    _buildTeamLogo(match.home!.logo!, match.home!.name),
                     const SizedBox(height: 8), // Space between team 1 and team 2
                     // Team 2 logo and name
-                    _buildTeamLogo("assets/images/${match.awayTeam}.jpg", match.awayTeam.name),
+                    _buildTeamLogo("${match.away!.logo}", match.away!.name),
                   ],
                 ),
                 // Conditional match time or line separator
@@ -80,7 +80,7 @@ class PhaseMatchResultItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "${match.homeScore}", // Home team score
+                          "${match.home_first_half_score!+match.home_second_half_score!}", // Home team score
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         const Text(
@@ -88,7 +88,7 @@ class PhaseMatchResultItem extends StatelessWidget {
                           style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         Text(
-                          "${match.awayScore}", // Away team score
+                          "${match.away_first_half_score!+match.away_second_half_score!}", // Away team score
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ],

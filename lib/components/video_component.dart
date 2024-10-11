@@ -1,158 +1,178 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:video_player/video_player.dart';
-
-import 'colors.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+import '../Service/data_service.dart';
+import '../models/Stream.dart';
 
 class VideoComponent extends StatefulWidget {
-  final String videoUrl;
-  final String title;
-  final String description;
-
-  const VideoComponent({
-    Key? key,
-    required this.videoUrl,
-    required this.title,
-    required this.description,
-  }) : super(key: key);
+  const VideoComponent({Key? key}) : super(key: key);
 
   @override
   _VideoComponentState createState() => _VideoComponentState();
 }
 
 class _VideoComponentState extends State<VideoComponent> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController _videoController;
+  late YoutubePlayerController _youtubeController;
   bool _isError = false;
-  bool _isPlaying = false;
+  bool _isLoading = true;
+  bool _isYoutube = false;
+  bool _isVisible = true; // Track visibility
+
+  final DataService dataService = DataService();
+  List<StreamItem> streamItems = [];
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {
-          _isPlaying = _controller.value.isPlaying;
-        });
-      }).catchError((error) {
-        setState(() {
-          _isError = true;
-        });
-        print('VideoPlayer error: $error'); // Print the error for debugging
+    _fetchStream();
+  }
+
+  Future<void> _fetchStream() async {
+    try {
+      final streamItem = await dataService.fetchStream();
+      setState(() {
+        streamItems = streamItem;
+        _isLoading = false;
       });
 
-    _controller.addListener(() {
-      if (_controller.value.isPlaying != _isPlaying) {
-        setState(() {
-          _isPlaying = _controller.value.isPlaying;
-        });
+      // Check if the URL is a valid YouTube link
+      String videoUrl = streamItems[0].url;
+      if (YoutubePlayer.convertUrlToId(videoUrl) != null) {
+        _isYoutube = true;
+        String videoId = YoutubePlayer.convertUrlToId(videoUrl)!;
+        _youtubeController = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(
+            autoPlay: false, // Changed to false for manual control
+            mute: false,
+          ),
+        );
+      } else {
+        _isYoutube = false;
+        _videoController = VideoPlayerController.network(videoUrl);
+        await _videoController.initialize();
+        setState(() {});
       }
-    });
+    } catch (error) {
+      setState(() {
+        _isError = true;
+        _isLoading = false;
+      });
+      print('Error fetching stream: $error');
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_isYoutube) {
+      _youtubeController.dispose();
+    } else {
+      _videoController.dispose();
+    }
     super.dispose();
   }
 
-  void _togglePlayPause() {
+  void _onVisibilityChanged(VisibilityInfo info) {
+    // Check if the video component is visible
     setState(() {
-      if (_controller.value.isPlaying) {
-        _controller.pause();
-      } else {
-        _controller.play();
-      }
-      _isPlaying = _controller.value.isPlaying;
+      _isVisible = info.visibleFraction > 0;
     });
+
+    // Play or pause based on visibility
+    if (_isYoutube) {
+      if (_isVisible) {
+        _youtubeController.play();
+      } else {
+        _youtubeController.pause();
+      }
+    } else {
+      if (_isVisible) {
+        _videoController.play();
+      } else {
+        _videoController.pause();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isError) {
-      return Center(child: Text('Failed to load video.'));
+      return Center(
+        child: Text(
+          'Failed to load video.',
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    }
+
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: Colors.white,),
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 16),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  fontSize: 24, // Adjust font size as needed
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "oswald",
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: AppColors.textShadow,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 2), // Space between text and underline
-              Container(
-                width: widget.title.length*12, // Adjust width for underline
-                height: 3, // Thickness of the underline
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.textShadow,
-                      spreadRadius: 0,
-                      blurRadius: 4,
-                      offset: Offset(0, 4), // Shadow position for the underline
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        ////YOU CAN ADD PADDING HERE
-        SizedBox(
-          height: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.height * 0.7 :  MediaQuery.of(context).size.height * 0.225, // Adjust height as needed
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12.0), // Set the border radius for rounded corners
-            child: Stack(
-              children: [
-                _controller.value.isInitialized
-                    ? VideoPlayer(_controller)
-                    : Center(child: CircularProgressIndicator()),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.black54,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            _isPlaying ? Icons.pause : Icons.play_arrow,
-                            color: Colors.white,
+        VisibilityDetector(
+          key: Key('video-key'),
+          onVisibilityChanged: _onVisibilityChanged,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.width > 600
+                ? MediaQuery.of(context).size.height * 0.7
+                : MediaQuery.of(context).size.height * 0.225,
+            child: _isYoutube
+                ? YoutubePlayer(
+              controller: _youtubeController,
+              showVideoProgressIndicator: true,
+              onReady: () {
+                // Optional: Add your logic here if needed
+              },
+            )
+                : ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Stack(
+                children: [
+                  VideoPlayer(_videoController),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Colors.black54,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              _videoController.value.isPlaying
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _videoController.value.isPlaying
+                                    ? _videoController.pause()
+                                    : _videoController.play();
+                              });
+                            },
                           ),
-                          onPressed: _togglePlayPause,
-                        ),
-                        Expanded(
-                          child: VideoProgressIndicator(
-                            _controller,
-                            allowScrubbing: true,
-                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          Expanded(
+                            child: VideoProgressIndicator(
+                              _videoController,
+                              allowScrubbing: true,
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

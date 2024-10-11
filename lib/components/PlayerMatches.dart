@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
 import '../components/LeagueComponent.dart';
 import '../models/MatchEvent.dart';
 import '../models/Team.dart';
-import '../models/league.dart';
-import '../models/match.dart';
-import '../models/player.dart';
+import '../models/League.dart';
+import '../models/Match.dart';
+import '../models/Player.dart';
 import 'TeamLeagueComponent.dart';
 import 'match_item_live.dart';
 
@@ -19,41 +20,7 @@ class PlayerMatches extends StatefulWidget {
 
 class _PlayerMatchesState extends State<PlayerMatches> {
   // Sample list of matches
-  List<Match> matches = [
-    // Define your Match objects here
-    Match(
-      homeTeam: Team(
-        name: 'Ennakl',
-        rank: 1,
-        matchesPlayed: 12,
-        goals: 15,
-        points: 25,
-        logo: 'assets/images/ennakl.jpg',
-        players: [
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-        ],
-      ),
-      awayTeam: Team(
-        name: 'Monoprix',
-        rank: 1,
-        matchesPlayed: 12,
-        goals: 15,
-        points: 25,
-        logo: 'assets/images/monoprix.jpg',
-        players: [
-          Player(name: 'Player B1', position: 'Forward', image: 'assets/images/monoprix.jpg'),
-        ],
-      ),
-      homeScore: 1,
-      awayScore: 2,
-      matchStatus: 'finished',
-      matchTime: '19:00',
-      homeTeamLogo: 'assets/images/ennakl.jpg',
-      awayTeamLogo: 'assets/images/monoprix.jpg',
-      matchDate: DateTime.now(),
-    ),
-    // Add more matches as needed
-  ];
+  List<Match> matches = MockData.mockMatches;
 
   @override
   Widget build(BuildContext context) {

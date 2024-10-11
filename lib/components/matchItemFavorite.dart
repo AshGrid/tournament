@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/match.dart';
+import 'package:intl/intl.dart';
+import '../models/Match.dart';
 import 'colors.dart'; // Ensure the Match class is correctly imported
 
 class MatchItemFavorite extends StatelessWidget {
@@ -13,6 +14,8 @@ class MatchItemFavorite extends StatelessWidget {
     required this.backgroundColor,
     this.isLastItem = false,
   }) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +57,15 @@ class MatchItemFavorite extends StatelessWidget {
                   children: [
                     const SizedBox(height: 5),
                     // Team 1 logo and name
-                    _buildTeamLogo("assets/images/${match.homeTeam}.jpg", match.homeTeam.name),
+                    _buildTeamLogo("${match.home!.logo}", match.home!.name),
                     const SizedBox(height: 8), // Space between team 1 and team 2
                     // Team 2 logo and name
-                    _buildTeamLogo("assets/images/${match.awayTeam}.jpg", match.awayTeam.name),
+                    _buildTeamLogo("${match.away!.logo}", match.away!.name),
                   ],
                 ),
                 const Spacer(),
 Text(
-  match.matchTime,
+  "${ DateFormat('MMMM d, yyyy').format(match.date!)}",
   style: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.white),),
                 // Score on the far right
                 Padding(
@@ -79,7 +82,7 @@ Text(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "${match.homeScore}", // Home team score
+                          "${match.home_first_half_score!+match.home_second_half_score!}", // Home team score
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         const Text(
@@ -87,7 +90,7 @@ Text(
                           style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         Text(
-                          "${match.awayScore}", // Away team score
+                          "${match.away_first_half_score!+match.away_second_half_score!}", // Away team score
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ],

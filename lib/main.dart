@@ -9,7 +9,7 @@ import 'package:untitled/screens/trophy_screen.dart';
 import 'components/bottom_navigation.dart';
 import 'components/colors.dart';
 import 'components/custom_appbar.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 
 void main() {
   runApp(const MyApp());

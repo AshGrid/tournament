@@ -1,6 +1,6 @@
 // player_info.dart
 import 'package:flutter/material.dart';
-import 'package:untitled/models/player.dart';
+import 'package:untitled/models/Player.dart';
 
 import 'colors.dart';
 

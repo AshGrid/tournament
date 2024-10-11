@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import '../Service/data_service.dart';
 import '../components/colors.dart';
-import '../models/news.dart';
-import '../screens/newsDetails.dart';
+import '../models/News.dart';
+
+class NewsSection extends StatefulWidget {
+  final Function(News) onNewsSelected;
+  final List<News> newsList;
+  final bool isLoading;
+
+  const NewsSection({Key? key, required this.onNewsSelected,required this.newsList,required this.isLoading}) : super(key: key);
+
+  @override
+  _NewsSectionState createState() => _NewsSectionState();
+}
+
+class _NewsSectionState extends State<NewsSection> {
+  // Added loading state
 
 
-class NewsSection extends StatelessWidget {
-  final List<NewsItem> newsItems;
-  final Function(NewsItem) onNewsSelected;
 
-  const NewsSection({Key? key, required this.newsItems, required this.onNewsSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +66,24 @@ class NewsSection extends StatelessWidget {
           ),
         ),
 
-        // List of news items
-        Column(
-          children: newsItems.map((newsItem) => _buildNewsItem(newsItem, context)).toList(),
+        // Display loading indicator or news items
+        widget.isLoading
+            ? Center(
+          child: CircularProgressIndicator(color: Colors.white,), // Loading indicator
+        )
+            : Column(
+          children: widget.newsList.map((newsItem) => _buildNewsItem(newsItem, context)).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildNewsItem(NewsItem newsItem, BuildContext context) {
+  Widget _buildNewsItem(News newsItem, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onNewsSelected(newsItem); // Pass the selected trophy name
-
+        print("title");
+        print(newsItem.content);
+        widget.onNewsSelected(newsItem); // Pass the selected news item
       },
       child: Container(
         height: MediaQuery.of(context).size.width > 600
@@ -91,9 +106,22 @@ class NewsSection extends StatelessWidget {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset(
-                  newsItem.imageUrl!,
+                child: Image.network(
+                  newsItem.image!, // Assuming this now holds a URL string
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(child: Icon(Icons.error)); // Display an error icon if the image fails to load
+                  },
                 ),
               ),
             ),
@@ -115,6 +143,7 @@ class NewsSection extends StatelessWidget {
                     ),
                   ],
                 ),
+                textDirection: TextDirection.ltr, // Set text direction to left-to-right
               ),
             ),
           ],

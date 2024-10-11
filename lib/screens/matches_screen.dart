@@ -1,27 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
+import '../Service/data_service.dart';
 import '../components/LeagueComponent.dart';
+import '../components/colors.dart';
+import '../components/match_item.dart';
+import '../components/match_item_live.dart';
 import '../models/MatchEvent.dart';
 import '../models/Team.dart';
-import '../models/league.dart';
-import '../models/match.dart';
-import '../models/player.dart';
+import '../models/League.dart';
+import '../models/Match.dart';
+import '../models/Player.dart';
+import '../models/Trophy.dart';
+import 'package:collection/collection.dart';
 
 class MatchesScreen extends StatefulWidget {
-
   final Function(Match) onMatchSelected;
 
-
-  const MatchesScreen({Key? key,   required this.onMatchSelected}) : super(key: key);
+  const MatchesScreen({Key? key, required this.onMatchSelected}) : super(key: key);
 
   @override
   _MatchesScreenState createState() => _MatchesScreenState();
 }
 
 class _MatchesScreenState extends State<MatchesScreen> {
-  // Track the selected day
   int selectedDayIndex = 0;
 
-  // Sample list of days to display
+  final DataService dataService = DataService();
+  List<Trophy> trophiesList = [];
+  List<League> leagues = MockData.mockLeagues; // Your mock data for leagues
+  List<Match> matches = []; // Your mock data for matches
+  bool isTrophiesLoading = true; // For tracking trophies loading state
+  bool isMatchesLoading = true; // For tracking matches loading state
+
+  Future<void> _fetchTrophies() async {
+    try {
+      final fetchedTrophies = await dataService.fetchTrophies();
+      setState(() {
+        trophiesList = fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
+        isTrophiesLoading = false; // Set to false once trophies are loaded
+      });
+    } catch (error) {
+      setState(() {
+        isTrophiesLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchMatches() async {
+    try {
+      final fetchedMatches = await dataService.fetchPlayedMatches();
+      final fetchedUpcomingMatches = await dataService.fetchUpcomingMatches();
+      setState(() {
+        matches = [...fetchedMatches];  // Initialize matches with fetchedMatches
+        matches.addAll(fetchedUpcomingMatches);  // Append upcoming matches
+        isMatchesLoading = false; // Set to false once matches are loaded
+      });
+    } catch (error) {
+      setState(() {
+        isMatchesLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTrophies();
+    _fetchMatches();
+  }
+
   final List<String> days = [
     'Journée 1',
     'Journée 2',
@@ -32,107 +79,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
     'Journée 7',
   ];
 
-  // Sample list of leagues
-  List<League> leagues = [
-    League(
-      leagueName: 'LIGUE SAMEDI',
-      matches: [
-        Match(homeTeam: Team(name: 'Ennakl Auto', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg',players: [
-          Player(age:25,dateNaissance:  DateTime(1999, 7, 15),name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg',team: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player A1', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          // Add other players as needed
-        ],league: "TrophéesDe Carthage"), awayTeam: Team(name: 'monoprix', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/monoprix.jpg',players: [
-          Player(name: 'Player tet', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player fsf', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player jhjh', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          Player(name: 'Player vbvb', position: 'Forward', image: 'assets/images/ennakl.jpg'),
-          // Add other players as needed
-        ],), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg',matchDate: DateTime.now(),),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-
-      ],
-
-      leagueLogo: 'assets/images/LIGUE SAMEDI.png',
-    ),
-    League(
-      leagueName: 'LIGUE DIMANCHE',
-      matches: [
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-
-      ],
-      leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
-    ),
-    League(
-      leagueName: 'LIGUE IT',
-      matches: [
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-        Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19\`', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'/* match details */),
-      ],
-      leagueLogo: 'assets/images/LIGUE IT.png',
-    ),
-    // Add more leagues as needed
-  ];
-
-  void addMatchEvents(Match match) {
-
-    match.matchEvents.addAll([
-      MatchEvent(
-        description: "Goal",
-        time: DateTime.now().subtract(Duration(minutes: 15)),
-        playerName: 'Player 1',
-        assistPlayerName: 'Player 2',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Yellow Card",
-        time: DateTime.now().subtract(Duration(minutes: 30)),
-        playerName: 'Player 3',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-      MatchEvent(
-        description: "Goal",
-        time: DateTime.now().subtract(Duration(minutes: 45)),
-        playerName: 'Player 1',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Red Card",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 3',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-      MatchEvent(
-        description: "Player Out",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 4',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Player In",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 5',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-    ]);
-
-  }
-
   @override
   Widget build(BuildContext context) {
+    bool isLoading = isTrophiesLoading || isMatchesLoading; // Determine if still loading
     return Column(
       children: [
         // Horizontally scrollable container for days
@@ -167,9 +116,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         if (isSelected)
                           Container(
                             margin: const EdgeInsets.only(top: 5),
-                            width: day.length * 7.0, // Adjust this to match the desired underline width
-                            height: 2,  // Height of the underline
-                            color: Colors.white, // Underline color
+                            width: day.length * 7.0,
+                            height: 2,
+                            color: Colors.white,
                           ),
                       ],
                     ),
@@ -178,22 +127,191 @@ class _MatchesScreenState extends State<MatchesScreen> {
               }).toList(),
             ),
           ),
-        )
+        ),
 
-        ,
-        // Vertically scrollable container for leagues
+        // Vertically scrollable container for leagues/trophies
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            children: leagues.map((league) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                child: LeagueComponent(league: league, onMatchSelected: widget.onMatchSelected,),
+          child: isLoading
+              ? Center(child: CircularProgressIndicator(color: Colors.white))
+              : ListView.builder(
+            itemCount: trophiesList.length,
+            itemBuilder: (context, trophyIndex) {
+              final trophy = trophiesList[trophyIndex];
+
+              // Filter the leagues where league.trophy.id equals trophy.id
+              final filteredLeagues = leagues.where((league) {
+                return league.trophy?.id == trophy.id;
+              }).toList();
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.bottomSheetItem,
+                      border: Border(
+                        bottom: BorderSide(color: Color(0xFFFFFFFF), width: 2),
+                        top: BorderSide(color: Color(0xFFFFFFFF), width: 2),
+                      ),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                      leading: Container(
+                        width: 55,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                          border: Border.all(
+                            color: AppColors.bottomSheetLogo,
+                            width: 1.0,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 4.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Image.asset(
+                            'assets/images/${trophy.name?.toUpperCase() ?? 'default'}.png',
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        trophy.name?.toUpperCase() ?? 'UNKNOWN TROPHY',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "oswald",
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4.0,
+                              color: AppColors.textShadow,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Display the list of leagues filtered by trophy id
+                  if (filteredLeagues.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: filteredLeagues.map((league) {
+                          // Filter the matches based on league.trophy.id == match.trophy.id
+                          final filteredMatches = matches.where((match) {
+                            return match.home?.league == league.id;
+                          }).toList();
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  league.name!.toUpperCase() ?? 'Unknown League',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Oswald',
+                                  ),
+                                ),
+                                leading: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    border: Border.all(
+                                      color: AppColors.bottomSheetLogo,
+                                      width: 1.0,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.25),
+                                        blurRadius: 4.0,
+                                        spreadRadius: 0.0,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Image.asset(
+                                      'assets/images/${league.name!.toUpperCase()}.png',
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (filteredMatches.isNotEmpty)
+                                Column(
+                                  children: filteredMatches.mapIndexed((index, match) {
+                                    bool isFirstItem = index == 0;
+                                    bool isLastItem = index == filteredMatches.length - 1;
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            widget.onMatchSelected(match);
+                                          },
+                                          child:
+                                          MatchItem(
+                                            match: match,
+                                            backgroundColor: Colors.transparent,
+                                            isFirstItem: isFirstItem,
+                                            isLastItem: isLastItem,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              if (filteredMatches.isEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 8.0),
+                                  child: Text(
+                                    'aucun match disponible pour cette ligue',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  if (filteredLeagues.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Text(
+                        'No leagues available for this trophy',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                ],
               );
-            }).toList(),
+            },
           ),
         ),
       ],
     );
   }
 }
+

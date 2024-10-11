@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
-import '../models/news.dart';
+import '../models/News.dart';
 
 class NewsDetails extends StatelessWidget {
-  final NewsItem newsItem;
+  final News newsItem;
 
   const NewsDetails({Key? key, required this.newsItem}) : super(key: key);
 
@@ -73,11 +73,13 @@ class NewsDetails extends StatelessWidget {
   }
 
   Widget _buildTitleAndDate() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align title to the start (left)
+        children: [
+          // Title on the left
+          Text(
             newsItem.title,
             style: const TextStyle(
               fontSize: 20,
@@ -92,39 +94,46 @@ class NewsDetails extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
+          const SizedBox(height: 8), // Add some space between title and date
+          // Date on the right
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end, // Align date to the right
             children: [
-              Text(
-                // Assuming you have a date field in your NewsItem model
-                _formatDate(newsItem.date!), // Replace with actual date
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: AppColors.textShadow,
-                      offset: Offset(0, 4),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    _formatDate(newsItem.date!),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4.0,
+                          color: AppColors.textShadow,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 2), // Optional: space between date and underline
+                  Container(
+                    width: 85,
+                    height: 2,
+                    color: Colors.white, // Underline below the date
+                  ),
+                ],
               ),
-              Container(
-                width: 85,
-                height: 2,
-                color: Colors.white,
-              )
             ],
-          )
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
+
+
+
 
   Widget _buildImage(BuildContext context) {
     return Container(
@@ -133,7 +142,7 @@ class NewsDetails extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
         child: Image.asset(
-          newsItem.imageUrl ?? 'assets/placeholder.png', // Placeholder image
+          newsItem.image ?? 'assets/placeholder.png', // Placeholder image
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const Center(

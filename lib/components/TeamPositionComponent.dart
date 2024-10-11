@@ -5,9 +5,9 @@ import 'package:untitled/screens/PlayerDetails.dart';
 import '../models/MatchEvent.dart';
 import '../models/Position.dart';
 import '../models/Team.dart';
-import '../models/match.dart';
-import '../models/league.dart';
-import '../models/player.dart';
+import '../models/Match.dart';
+import '../models/League.dart';
+import '../models/Player.dart';
 import 'match_item.dart'; // Import the MatchItem component
 import 'match_item_live.dart'; // Import the MatchItemLive component
 import 'package:untitled/components/colors.dart'; // Ensure AppColors is correctly imported
@@ -46,7 +46,7 @@ class TeamPositionComponent extends StatelessWidget {
 
                 const SizedBox(width: 12),
                 Text(
-                  position.name,
+                  position.name!,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
                 ),
               ],
@@ -66,12 +66,12 @@ class TeamPositionComponent extends StatelessWidget {
               return GestureDetector(
                 onTap: (){
 onPlayerSelected(player);
-print(player.name);
+print(player.firstName);
                 },
                 child: Effectifitem(
                   player: player,
-                  playerName: player.name,
-                  playerImage: player.image,
+                  playerName: player.firstName!,
+                  playerImage: player.avatar!,
                   isLastItem: isLastItem, // You can pass this to the widget if needed
                 ),
               );

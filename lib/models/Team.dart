@@ -1,7 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'Player.dart'; // Assuming Player model is defined
 
+part 'Team.g.dart'; // Name of the generated file
 
-import 'package:untitled/models/player.dart';
-
+@JsonSerializable() // Enable JSON serialization
 class Team {
   final int rank;
   final String name;
@@ -24,4 +26,8 @@ class Team {
     this.remplacanats,
     this.league,
   });
+
+  // JSON serialization methods
+  factory Team.fromJson(Map<String, dynamic> json) => _$TeamFromJson(json);
+  Map<String, dynamic> toJson() => _$TeamToJson(this);
 }

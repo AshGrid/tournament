@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/ads_banner.dart';
-import 'package:untitled/models/league.dart';
+import 'package:untitled/models/League.dart';
 import 'package:untitled/screens/phaseDetailsScreen.dart';
 import '../components/colors.dart';
 import '../components/image_slider.dart';
@@ -98,7 +98,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                '${league.leagueLogo}',
+                                'assets/images/${league.name!.toUpperCase()}.png', // Assuming you have leagueLogo in the League model
                                 fit: BoxFit.contain,
                                 width: 80,
                                 height: 80,
@@ -122,7 +122,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                               ),
                               const SizedBox(height: 4), // Space between league name and trophy name
                               Text(
-                                league.leagueName, // Assuming you have trophyName in the League model
+                                league.name!, // Assuming you have trophyName in the League model
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

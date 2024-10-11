@@ -8,19 +8,21 @@ import 'package:untitled/components/superPlayOffResultats.dart';
 import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
-import 'package:untitled/models/league.dart';
+import 'package:untitled/models/League.dart';
 import 'package:untitled/screens/matches_screen.dart';
+import '../Service/data_service.dart';
 import '../components/TeamLeagueComponent.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
 import '../components/superPlayOffTableau.dart';
-import '../models/player.dart';
+import '../models/Club.dart';
+import '../models/Player.dart';
 import '../models/Team.dart';
 
 class TeamPage extends StatefulWidget {
-  final Team team;
+  final Club team;
   final Function(Player) onPlayerSelected;
 
   const TeamPage({super.key, required this.team, required this.onPlayerSelected});
@@ -34,9 +36,23 @@ class _TeamPageState extends State<TeamPage> {
 
   int selectedIndex = 0;
 
+  List<Club> clubsList= [];
+
+  final DataService dataService = DataService();
+
+
+
+  Future<void> _fetchClubs() async {
+    final fetchedClubs= await dataService.fetchClubs();
+    setState(() {
+      clubsList = fetchedClubs;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _fetchClubs();
      selectedIndex = 1;
   }
 
@@ -130,7 +146,7 @@ class _TeamPageState extends State<TeamPage> {
                                 ),
                                 const SizedBox(height: 4), // Space between league name and trophy name
                                 Text(
-                                  widget.team.league!,
+                                  widget.team.name!,
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -226,7 +242,7 @@ class _TeamPageState extends State<TeamPage> {
       case 0:
         return TeamResults(); // Display RankingScreen
        case 1:
-         return PremierePhaseRankingScreen(); // Display ResultsScreen
+         return PremierePhaseRankingScreen(clubs: clubsList,); // Display ResultsScreen
       case 2:
         return PremierePhaseCalendarScreen(); // Display CalendarScreen
       case 3:

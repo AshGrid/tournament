@@ -9,8 +9,8 @@ import 'package:untitled/components/superPlayOffResultats.dart';
 import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
-import 'package:untitled/models/league.dart';
-import 'package:untitled/models/player.dart';
+import 'package:untitled/models/League.dart';
+import 'package:untitled/models/Player.dart';
 import 'package:untitled/screens/matches_screen.dart';
 import '../components/PlayrCarriere.dart';
 import '../components/TeamLeagueComponent.dart';
@@ -33,6 +33,19 @@ class PlayerDetails extends StatefulWidget {
 class _PlayerDetailsState extends State<PlayerDetails> {
 
   int selectedIndex = 0;
+  int calculateAge(DateTime birthDate) {
+    final DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+
+    // Adjust age if the birthday hasn't occurred yet this year
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
+  }
+
 
   @override
   void initState() {
@@ -104,7 +117,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50.0),
                                 child: Image.asset(
-                                  'assets/images/${widget.player.name}.jpg',
+                                  '${widget.player.avatar}',
                                   fit: BoxFit.contain,
                                   width: 80,
                                   height: 80,
@@ -119,7 +132,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.player.name,
+                                  "${widget.player.firstName} ${widget.player.lastName}",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -130,7 +143,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                 Row(
                                   children: [
                                     Text(
-                                      "Age: ${widget.player.age.toString()}",
+                                      "Age: ${calculateAge(widget.player.birthday!)}",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -139,7 +152,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                     ),
                                     const SizedBox(width: 4), // Space between league name and trophy name
                                     Text(
-                                      " (${widget.player.formattedDate})",
+                                      " (${widget.player.birthday})",
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,

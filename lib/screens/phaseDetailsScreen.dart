@@ -6,12 +6,14 @@ import 'package:untitled/components/superPlayOffResultats.dart';
 import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
-import 'package:untitled/models/league.dart';
+import 'package:untitled/models/League.dart';
+import '../Service/data_service.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
 import '../components/superPlayOffTableau.dart';
+import '../models/Club.dart';
 
 class PhaseDetailsScreen extends StatefulWidget {
   final String phaseName;
@@ -26,19 +28,25 @@ class PhaseDetailsScreen extends StatefulWidget {
 
 class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
 
-
-      // Add more quarterfinal matches here...
-
-
-
-
-
-
   int selectedIndex = 0;
+
+  List<Club> clubsList= [];
+
+  final DataService dataService = DataService();
+
+
+
+  Future<void> _fetchClubs() async {
+    final fetchedClubs= await dataService.fetchClubs();
+    setState(() {
+      clubsList = fetchedClubs;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _fetchClubs();
     if (this.widget.phaseName == "SUPER PLAY-OFF") {
       selectedIndex = 3; // or whatever index you need
     } else if (this.widget.phaseName == "TROPHÉE HANNIBAL") {
@@ -111,7 +119,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.asset(
-                                  'assets/images/${widget.league.leagueName.toUpperCase()}.png',
+                                  'assets/images/${widget.league.name!.toUpperCase()}.png',
                                   fit: BoxFit.contain,
                                   width: 80,
                                   height: 80,
@@ -135,7 +143,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                 ),
                                 const SizedBox(height: 4), // Space between league name and trophy name
                                 Text(
-                                  widget.league.leagueName,
+                                  widget.league.name!,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -246,7 +254,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
        case 0:
-         return PremierePhaseRankingScreen(); // Display RankingScreen
+         return PremierePhaseRankingScreen(clubs: clubsList,); // Display RankingScreen
       case 1:
         return PremierePhaseResultsScreen(); // Display ResultsScreen
       case 2:

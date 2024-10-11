@@ -3,20 +3,23 @@ import 'package:untitled/components/matchFormation.dart';
 import 'package:untitled/components/matchResume.dart';
 import 'package:untitled/components/rankingContainer.dart';
 import 'package:untitled/components/scoreBoardItem.dart';
+import 'package:untitled/models/Club.dart';
 
 
 
-import 'package:untitled/models/match.dart';
+import 'package:untitled/models/Match.dart';
+import '../Service/data_service.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 
+import '../components/matchStats.dart';
 import '../components/resultsContainer.dart';
 import '../models/Team.dart';
 
 
 class MatchDetailsPage extends StatefulWidget {
  final Match match;
- final Function(Team) onTeamSelected;
+ final Function(Club) onTeamSelected;
   const MatchDetailsPage({super.key, required this.match, required this.onTeamSelected});
 
   @override
@@ -25,9 +28,24 @@ class MatchDetailsPage extends StatefulWidget {
 
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
   int selectedIndex = 0;
+  List<Club> clubsList= [];
 
+  final DataService dataService = DataService();
 
+  @override
+  void initState() {
+    super.initState();
 
+    _fetchClubs();
+
+  }
+
+  Future<void> _fetchClubs() async {
+    final fetchedClubs= await dataService.fetchClubs();
+    setState(() {
+      clubsList = fetchedClubs;
+    });
+  }
 
 
   @override
@@ -81,27 +99,29 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                           ),
 
 
-                          const SizedBox(width: 10),
+
                           // League Name
 
                         ],
                       ),
                     ),
-                    const SizedBox(height: 5),
+
 
                     SizedBox(
                       height: 40,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
                         children: [
 
 
                             _buildMenuItem('RÉSUMÉ', 0),
-                            const SizedBox(width: 40), // Space between items
+
                             _buildMenuItem('FORMATION', 1),
-                            const SizedBox(width: 40), // Space between items
+
                             _buildMenuItem('CLASSEMENT', 2),
+
+                          _buildMenuItem('STATISTIQUE', 3),
 
 
                         ],
@@ -154,7 +174,7 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
           if (selectedIndex == index)
             Container(
               height: 2,
-              width: title == "FORMATION" ? 70: title =="CLASSEMENT"? 75 : 50,
+              width: title == "FORMATION" ? 70: title =="CLASSEMENT"? 75 : title =="STATISTIQUE"? 75 : 50,
               color: Colors.black,
             ),
         ],
@@ -170,7 +190,9 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
       case 1:
         return MatchFormation(match: match); // Display ResultsScreen
       case 2:
-        return PremierePhaseRankingScreen(); // Display CalendarScreen
+        return PremierePhaseRankingScreen(clubs: clubsList,); // Display CalendarScreen
+      case 3:
+        return MatchStats(match: match,); // Display CalendarScreen
 
       default:
         return Container(); // Fallback case

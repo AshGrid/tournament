@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/colors.dart';
+import '../models/Match.dart';
 
 class MatchResultComponent extends StatelessWidget {
-  final List<MatchResult> matchResults;
+  final List<Match> matchResults;
   final String text;
 
   const MatchResultComponent({
@@ -41,7 +42,7 @@ class MatchResultComponent extends StatelessWidget {
                 ),
                 const SizedBox(height: 2), // Space between text and underline
                 Container(
-                  width: text.toUpperCase().length*12, // Adjust width for the underline
+                  width: text.toUpperCase().length * 12, // Adjust width for the underline
                   height: 3, // Thickness of the underline
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -93,7 +94,7 @@ class MatchResultComponent extends StatelessWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              result.dateTime,
+                              '${result.date ?? DateTime.now()}', // Default to current date if null
                               style: const TextStyle(
                                 fontSize: 13.0,
                                 fontWeight: FontWeight.bold,
@@ -133,15 +134,15 @@ class MatchResultComponent extends StatelessWidget {
                                         ),
                                       ),
                                       padding: const EdgeInsets.all(4.0),
-                                      child: Image.asset(
-                                        "assets/images/${result.team1Name}.jpg",
+                                      child: Image.network(
+                                        result.home?.logo ?? 'assets/images/default_logo.png', // Default logo if null
                                         height: 50,
                                         width: 50,
                                       ),
                                     ),
                                     const SizedBox(height: 4.0),
                                     Text(
-                                      result.team1Name,
+                                      result.home?.name ?? 'Home Team', // Default team name if null
                                       style: TextStyle(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.bold,
@@ -177,7 +178,7 @@ class MatchResultComponent extends StatelessWidget {
                                     height: 40,
                                     alignment: Alignment.center,
                                     child: Text(
-                                      result.result,
+                                      "${(result.home_first_half_score ?? 0) + (result.home_second_half_score ?? 0)} - ${(result.away_first_half_score ?? 0) + (result.away_second_half_score ?? 0)}", // Default to 0 if null
                                       style: const TextStyle(
                                         fontSize: 22.0,
                                         fontWeight: FontWeight.normal,
@@ -205,15 +206,15 @@ class MatchResultComponent extends StatelessWidget {
                                         ),
                                       ),
                                       padding: const EdgeInsets.all(4.0),
-                                      child: Image.asset(
-                                        "assets/images/${result.team2Name}.jpg",
+                                      child: Image.network(
+                                        result.away?.logo ?? 'assets/images/default_logo.png', // Default logo if null
                                         height: 50,
                                         width: 50,
                                       ),
                                     ),
                                     const SizedBox(height: 4.0),
                                     Text(
-                                      result.team2Name,
+                                      result.away?.name ?? 'Away Team', // Default team name if null
                                       style: TextStyle(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.bold,
@@ -239,7 +240,7 @@ class MatchResultComponent extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -275,11 +276,10 @@ class MatchResultComponent extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
                                 const SizedBox(width: 6.0),
                                 Flexible(
                                   child: Text(
-                                    result.stadiumName,
+                                    result.venue?.name ?? 'Default Venue', // Default venue if null
                                     style: TextStyle(
                                       fontSize: 11.0,
                                       fontWeight: FontWeight.bold,
@@ -288,7 +288,6 @@ class MatchResultComponent extends StatelessWidget {
                                       shadows: [
                                         Shadow(
                                           blurRadius: 4.0,
-
                                           color: AppColors.textShadow,
                                           offset: Offset(0, 4),
                                         ),
@@ -313,24 +312,4 @@ class MatchResultComponent extends StatelessWidget {
       ),
     );
   }
-}
-
-class MatchResult {
-  final String team1Logo;
-  final String team2Logo;
-  final String team1Name;
-  final String team2Name;
-  final String result;
-  final String dateTime;
-  final String stadiumName;
-
-  MatchResult({
-    required this.team1Logo,
-    required this.team2Logo,
-    required this.team1Name,
-    required this.team2Name,
-    required this.result,
-    required this.dateTime,
-    required this.stadiumName,
-  });
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Service/mock_data.dart';
 
 import '../components/image_slider.dart'; // Your image slider component
 import '../components/colors.dart'; // Import your custom colors
-import '../models/league.dart'; // League model
+import '../models/League.dart'; // League model
+import 'package:flutter/services.dart' show rootBundle;
 
 class TrophyScreen extends StatelessWidget {
   final String trophyName;
@@ -16,56 +18,34 @@ class TrophyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+    Future<String> getLeagueImage(String leagueName) async {
+      String lowerCasePath = 'assets/images/${leagueName.toLowerCase()}.png';
+      String upperCasePath = 'assets/images/${leagueName.toUpperCase()}.png';
+
+      // Check if the lowercase version exists
+      try {
+        await rootBundle.load(lowerCasePath);
+        return lowerCasePath;
+      } catch (e) {
+        // If not, check if the uppercase version exists
+        try {
+          await rootBundle.load(upperCasePath);
+          return upperCasePath;
+        } catch (e) {
+          // Handle the case where neither file exists
+          throw Exception('Image not found for league $leagueName');
+        }
+      }
+    }
+
     // Static list of leagues for demonstration
-    final List<League> leagues = [
-      League(
-        leagueName: 'Ligue Samedi',
-        leagueLogo: 'assets/images/LIGUE SAMEDI.png',
-        matches: [],
-      ),
-      League(
-        leagueName: 'Ligue Dimanche',
-        leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
-        matches: [],
-      ),
-      League(
-        leagueName: 'Coupe Samedi',
-        leagueLogo: 'assets/images/COUPE SAMEDI.png',
-        matches: [],
-      ),
-      League(
-        leagueName: 'Coupe Dimanche',
-        leagueLogo: 'assets/images/COUPE DIMANCHE.png',
-        matches: [],
-      ),
-    ];
+    final List<League> leagues = MockData.mockLeagues;
 
-    final List<League> leaguesIT = [
-      League(
-        leagueName: 'Ligue IT',
-        leagueLogo: 'assets/images/TROPHÉES IT.png',
-        matches: [],
-      ),
-      League(
-        leagueName: 'Coupe IT',
-        leagueLogo: 'assets/images/TROPHÉES IT.png',
-        matches: [],
-      ),
-
-    ];
-    final List<League> tropheeVeteran = [
-    League(
-    leagueName: 'Ligue Vétérans',
-    leagueLogo: 'assets/images/TROPHÉES VÉTÉRANS.png',
-    matches: [],
-    ),
-    League(
-    leagueName: 'Coupe Vétérans',
-    leagueLogo: 'assets/images/TROPHÉES VÉTÉRANS.png',
-    matches: [],
-    ),
-
-    ];
+    final List<League> leaguesIT = MockData.mockLeaguesIT;
+    final List<League> tropheeVeteran = MockData.mockLeaguesVeterans;
+    final List<League> tropheeCorporate = MockData.mockLeaguesCorporate;
 
     List<String> imagePath = [
       'assets/images/image1.jpeg',
@@ -73,7 +53,7 @@ class TrophyScreen extends StatelessWidget {
       'assets/images/image1.jpeg',
     ];
      double height = 300;
-     trophyName== "TROPHÉES DE CARTHAGE" ? height = 430 : trophyName== "TROPHÉES IT" ? height=300: 200 ;
+     trophyName.toUpperCase()== "TROPHÉES DE CARTHAGE" ? height = 430 : trophyName.toUpperCase()== "TROPHÉES IT" ? height=300: 200 ;
 
     return Scaffold(
       backgroundColor: AppColors.secondaryBackground, // Custom background color
@@ -137,7 +117,7 @@ class TrophyScreen extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                'assets/images/$trophyName.png', // Adjust path
+                                'assets/images/${trophyName.toUpperCase()}.png', // Adjust path
                                 fit: BoxFit.contain,
                                 width: 80,
                                 height: 80,
@@ -165,9 +145,9 @@ class TrophyScreen extends StatelessWidget {
                   SizedBox(
                     height: height-130, // Adjust height if needed
                     child: ListView.builder(
-                      itemCount:trophyName == "TROPHÉES IT" ? leaguesIT.length : trophyName == "TROPHÉES VÉTÉRANS" ? tropheeVeteran.length :  trophyName == "TROPHÉES DE CARTHAGE" ? leagues.length : leagues.length,
+                      itemCount:trophyName.toUpperCase() == "TROPHÉES IT" ? leaguesIT.length : trophyName.toUpperCase()  == "TROPHÉES VÉTERANS" ? tropheeVeteran.length :  trophyName.toUpperCase()  == "TROPHÉES DE CARTHAGE" ? leagues.length : tropheeCorporate.length,
                       itemBuilder: (context, index) {
-                        final league = trophyName == "TROPHÉES IT" ? leaguesIT[index] : trophyName == "TROPHÉES VÉTÉRANS" ? tropheeVeteran[index] : trophyName == "TROPHÉES DE CARTHAGE" ? leagues[index] : leagues[index] ;
+                        final league = trophyName.toUpperCase() == "TROPHÉES IT" ? leaguesIT[index] : trophyName.toUpperCase()  == "TROPHÉES VÉTERANS" ? tropheeVeteran[index] : trophyName.toUpperCase()  == "TROPHÉES DE CARTHAGE" ? leagues[index] : tropheeCorporate[index] ;
                         final backgroundColor = index.isEven ? AppColors.trophyItem1 : Colors.transparent;
 
                         return Container(
@@ -213,13 +193,13 @@ class TrophyScreen extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Image.asset(
-                                    league.leagueLogo,
+                                    "assets/images/${league.name!.toUpperCase()}.png",
                                     fit: BoxFit.scaleDown,
                                   ),
                                 ),
                               ),
                               title: Text(
-                                league.leagueName.toUpperCase(),
+                                league.name!.toUpperCase(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,

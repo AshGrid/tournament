@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../Service/data_service.dart';
 import '../components/colors.dart';
 import '../components/leagueFavoriteComponent.dart';
 import '../models/Team.dart';
-import '../models/league.dart';
-import '../models/match.dart';
+import '../models/League.dart';
+import '../models/Match.dart';
+import '../Service/mock_data.dart'; // Import your mock data
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
@@ -14,83 +16,27 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  // Sample list of leagues with DateTime type for the date
-  final List<League> leagues = [
-    League(
-      leagueName: 'LIGUE SAMEDI',
-      matches: [
-        Match(
-          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          homeScore: 1,
-          awayScore: 2,
-          matchStatus: 'finished',
-          matchTime: '19`',
-          homeTeamLogo: 'assets/images/ennakl.jpg',
-          awayTeamLogo: 'assets/images/ennakl.jpg',
-        ),
-        Match(
-          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          homeScore: 1,
-          awayScore: 2,
-          matchStatus: 'live',
-          matchTime: '19`',
-          homeTeamLogo: 'assets/images/ennakl.jpg',
-          awayTeamLogo: 'assets/images/ennakl.jpg',
-        ),
-      ],
-      date: DateTime(2024, 10, 6),
-      leagueLogo: 'assets/images/LIGUE SAMEDI.png',
-    ),
-    League(
-      leagueName: 'LIGUE DIMANCHE',
-      matches: [
-        Match(
-          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          homeScore: 1,
-          awayScore: 2,
-          matchStatus: 'live',
-          matchTime: '19`',
-          homeTeamLogo: 'assets/images/ennakl.jpg',
-          awayTeamLogo: 'assets/images/ennakl.jpg',
-        ),
-        Match(
-          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          homeScore: 1,
-          awayScore: 2,
-          matchStatus: 'finished',
-          matchTime: '19`',
-          homeTeamLogo: 'assets/images/ennakl.jpg',
-          awayTeamLogo: 'assets/images/ennakl.jpg',
-        ),
-      ],
-      date: DateTime(2024, 10, 6),
-      leagueLogo: 'assets/images/LIGUE DIMANCHE.png',
-    ),
-    League(
-      leagueName: 'LIGUE IT',
-      matches: [
-        Match(
-          homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-          homeScore: 1,
-          awayScore: 2,
-          matchStatus: 'live',
-          matchTime: '19`',
-          homeTeamLogo: 'assets/images/ennakl.jpg',
-          awayTeamLogo: 'assets/images/ennakl.jpg',
-        ),
-      ],
-      date: DateTime(2024, 10, 6),
-      leagueLogo: 'assets/images/LIGUE IT.png',
-    ),
-  ];
+  final matchesGroupedByDate = MockData.mockLeagues;
+  final DataService dataService = DataService();
+  List<Match> matchesList = [];
+  @override
+  void initState() {
+    super.initState();
+    _fetchMatches();
+  }
+  Future<void> _fetchMatches() async {
+    final fetchedMatches = await dataService.fetchPlayedMatches();
+    setState(() {
+      matchesList = fetchedMatches;
+
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+
     return Column(
       children: [
         // Horizontally scrollable container for days (if needed, add this here),
@@ -98,37 +44,40 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         // Vertically scrollable container for leagues
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.only(left: 0,right: 0,top: 8,bottom: 7),
-            itemCount: leagues.length,
+            padding: const EdgeInsets.only(left: 0, right: 0, top: 8, bottom: 7),
+            itemCount: matchesGroupedByDate.length,
             itemBuilder: (context, index) {
-              final league = leagues[index];
+              //final date = matchesGroupedByDate[index].matches.first.date;
+              final league = matchesGroupedByDate[index];
+
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     // Display formatted date
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Text(
-                      DateFormat('MMMM d, yyyy').format(league.date!),
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 3.0,
-                            color: AppColors.textShadow,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                      child: Text(
+                        //DateFormat('MMMM d, yyyy').format(matchesList[index].date!),
+                        DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 3.0,
+                              color: AppColors.textShadow,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),),
+                    ),
                     const SizedBox(height: 20),
                     // League component
-                    LeagueFavoriteComponent(league: league),
+                     LeagueFavoriteComponent(league: league)
                   ],
                 ),
               );

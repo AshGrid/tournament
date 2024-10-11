@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tournament_bracket/flutter_tournament_bracket.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 import 'colors.dart'; // Update the import according to your project structure
  // Update this import according to your color utility path
 

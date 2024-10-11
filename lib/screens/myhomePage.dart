@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/models/Club.dart';
 import 'package:untitled/models/Team.dart';
-import 'package:untitled/models/news.dart';
-import 'package:untitled/models/player.dart';
+import 'package:untitled/models/News.dart';
+import 'package:untitled/models/Player.dart';
+import 'package:untitled/models/Trophy.dart';
 import 'package:untitled/screens/PlayerDetails.dart';
 import 'package:untitled/screens/fantasy_screen.dart';
 import 'package:untitled/screens/match_details.dart';
@@ -14,12 +16,13 @@ import 'package:untitled/screens/splash_screen.dart';
 import 'package:untitled/screens/teamPage.dart';
 import 'package:untitled/screens/trophy_screen.dart';
 
+import '../Service/data_service.dart';
 import '../components/bottom_navigation.dart';
 import '../components/colors.dart';
 import '../components/custom_appbar.dart';
 import '../models/Notif.dart';
-import '../models/league.dart';
-import '../models/match.dart';
+import '../models/League.dart';
+import '../models/Match.dart';
 import 'LeagueDetailsScreen.dart';
 import 'menu_screen.dart';
 import 'newsDetails.dart';
@@ -36,11 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showTrophyScreen = false;
   String? _selectedTrophyName;
   League? _selectedLeague;
-  NewsItem? _selectedNewsItem;
+  News? _selectedNewsItem;
   bool _notifPressed = false;
   Match? _selectedMatch;
-  Team? _selectedTeam;
+  Club? _selectedTeam;
   Player? _selectedPlayer;
+
+
 
   final List<Notif> mockNotifications = [
     Notif(
@@ -116,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onNewsItemSelected(NewsItem news) {
+  void _onNewsItemSelected(News news) {
     setState(() {
       _selectedNewsItem = news; // Update with the selected league
     });
@@ -127,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onTeamItemSelected(Team team) {
+  void _onTeamItemSelected(Club team) {
     setState(() {
       _selectedTeam = team;
       _selectedMatch = null;

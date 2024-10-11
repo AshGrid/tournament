@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/phaseMatchResultItem.dart';
+import '../Service/mock_data.dart';
 import '../models/Team.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 import 'image_slider.dart';
 
 class Superplayoffresultats extends StatefulWidget {
@@ -28,22 +29,9 @@ class _ResultsScreenState extends State<Superplayoffresultats> {
 
   // Organize matches by phase
   Map<String, List<Match>> matchesByPhase = {
-    'Quarterfinals': [
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      // Add more quarterfinal matches here...
-    ],
-    'Semifinals': [
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 0, awayScore: 3, matchStatus: 'finished', matchTime: '21:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 1, awayScore: 2, matchStatus: 'finished', matchTime: '19:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      // Add more semifinal matches here...
-    ],
-    'Final': [
-      Match(homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'), homeScore: 2, awayScore: 1, matchStatus: 'live', matchTime: '20:00', homeTeamLogo: 'assets/images/ennakl.jpg', awayTeamLogo: 'assets/images/ennakl.jpg'),
-      // Add more final matches here...
-    ],
+    'Quarterfinals': MockData.mockMatches,
+    'Semifinals': MockData.mockMatches,
+    'Final': MockData.mockMatches,
   };
 
   @override
@@ -51,8 +39,8 @@ class _ResultsScreenState extends State<Superplayoffresultats> {
     List<Match> sortedMatches = matchesByPhase[phases[selectedDayIndex]] ?? [];
 
     sortedMatches.sort((a, b) {
-      bool aIsLive = a.matchStatus.toLowerCase() == 'live';
-      bool bIsLive = b.matchStatus.toLowerCase() == 'live';
+      bool aIsLive = a.status!.toLowerCase() == 'live';
+      bool bIsLive = b.status!.toLowerCase() == 'live';
 
       if (aIsLive && !bIsLive) return -1;
       if (!aIsLive && bIsLive) return 1;

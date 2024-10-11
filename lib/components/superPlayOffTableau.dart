@@ -5,8 +5,9 @@ import 'package:untitled/components/CustomMatchCard.dart';
 import 'package:untitled/components/bracketCard.dart';
 import 'package:untitled/components/brackets.dart';
 
+import '../Service/mock_data.dart';
 import '../models/Team.dart';
-import '../models/match.dart';
+import '../models/Match.dart';
 import 'colors.dart';
 
 class SuperPlayOffTableau extends StatefulWidget {
@@ -26,52 +27,9 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
   ];
 
   final Map<String, List<Match>> matchesByPhase = {
-    'QUARTS DE FINALE': [
-      Match(
-        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        homeScore: 1,
-        awayScore: 2,
-        matchStatus: 'finished',
-        matchTime: '19:00',
-        homeTeamLogo: 'assets/images/ennakl.jpg',
-        awayTeamLogo: 'assets/images/carrefour.jpg',
-      ),
-      Match(
-        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        awayTeam:Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        homeScore: 3,
-        awayScore: 1,
-        matchStatus: 'finished',
-        matchTime: '18:00',
-        homeTeamLogo: 'assets/images/carrefour.jpg',
-        awayTeamLogo: 'assets/images/geant.jpg',
-      ),
-    ],
-    'DEMI-FINALE': [
-      Match(
-        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        homeScore: 1,
-        awayScore: 2,
-        matchStatus: 'finished',
-        matchTime: '19:00',
-        homeTeamLogo: 'assets/images/ennakl.jpg',
-        awayTeamLogo: 'assets/images/carrefour.jpg',
-      ),
-    ],
-    'FINALE': [
-      Match(
-        homeTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        awayTeam: Team(name: 'Ennakl', rank: 1, matchesPlayed: 12, goals: 15, points: 25, logo: 'assets/images/ennakl.jpg'),
-        homeScore: 2,
-        awayScore: 1,
-        matchStatus: 'live',
-        matchTime: '20:00',
-        homeTeamLogo: 'assets/images/ennakl.jpg',
-        awayTeamLogo: 'assets/images/carrefour.jpg',
-      ),
-    ],
+    'QUARTS DE FINALE': MockData.mockMatches,
+    'DEMI-FINALE': MockData.mockMatches,
+    'FINALE':MockData.mockMatches,
   };
 
 

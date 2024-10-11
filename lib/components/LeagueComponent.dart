@@ -1,73 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/screens/match_details.dart';
+import '../Service/data_service.dart';
 import '../models/MatchEvent.dart';
 import '../models/Team.dart';
-import '../models/match.dart';
-import '../models/league.dart'; // Import your League model
+import '../models/Match.dart';
+import '../models/League.dart'; // Import your League model
 import 'match_item.dart'; // Import the MatchItem component
 import 'match_item_live.dart'; // Import the MatchItemLive component
 import 'package:untitled/components/colors.dart'; // Ensure AppColors is correctly imported
 
-class LeagueComponent extends StatelessWidget {
+class LeagueComponent extends StatefulWidget {
   final League league;
-
   final Function(Match) onMatchSelected;
 
   const LeagueComponent({Key? key, required this.league, required this.onMatchSelected}) : super(key: key);
 
-  void addMatchEvents(Match match) {
+  @override
+  _LeagueComponentState createState() => _LeagueComponentState();
+}
 
-    match.matchEvents.addAll([
-      MatchEvent(
-        description: "Goal",
-        time: DateTime.now().subtract(Duration(minutes: 15)),
-        playerName: 'Player 1',
-        assistPlayerName: 'Player 2',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Yellow Card",
-        time: DateTime.now().subtract(Duration(minutes: 30)),
-        playerName: 'Player 3',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-      MatchEvent(
-        description: "Goal",
-        time: DateTime.now().subtract(Duration(minutes: 45)),
-        playerName: 'Player 1',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Red Card",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 3',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-      MatchEvent(
-        description: "Player Out",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 4',
-        team: match.homeTeam, // Reference team1 for this event
-      ),
-      MatchEvent(
-        description: "Player In",
-        time: DateTime.now().subtract(Duration(minutes: 60)),
-        playerName: 'Player 5',
-        team: match.awayTeam, // Reference team2 for this event
-      ),
-    ]);
+class _LeagueComponentState extends State<LeagueComponent> {
+
+
+  final DataService dataService = DataService();
+
+  List<Match> matchesList = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchMatches();
 
   }
 
 
+
+  Future<void> _fetchMatches() async {
+    final fetchedMatches = await dataService.fetchPlayedMatches();
+    setState(() {
+      matchesList = fetchedMatches;
+
+    });
+  }
+
+
+  void addMatchEvents(Match match) {
+    // Your logic for adding match events (if needed)
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sort matches to put live matches first
-    List<Match> sortedMatches = List.from(league.matches);
+    List<Match> sortedMatches = List.from(matchesList);
     sortedMatches.sort((a, b) {
       // Check if the match is live or not
-      bool aIsLive = a.matchStatus.toLowerCase() == 'live';
-      bool bIsLive = b.matchStatus.toLowerCase() == 'live';
+      bool aIsLive = a.status!.toLowerCase() == 'live';
+      bool bIsLive = b.status!.toLowerCase() == 'live';
 
       // Prioritize live matches
       if (aIsLive && !bIsLive) return -1;
@@ -92,7 +81,7 @@ class LeagueComponent extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (league.leagueLogo != null) const SizedBox(width: 12),
+              const SizedBox(width: 12),
               // Container for the League Logo with border and shadow
               Container(
                 width: 65, // Adjust the width and height as needed
@@ -114,7 +103,7 @@ class LeagueComponent extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown, // Ensure the image scales down to fit inside
                     child: Image.asset(
-                      league.leagueLogo,
+                      "assets/images/${widget.league.name!.toUpperCase()}.png",
                       width: 55, // Adjust the size here
                       height: 55,
                     ),
@@ -123,7 +112,7 @@ class LeagueComponent extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                league.leagueName,
+                widget.league.name!.toUpperCase(),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -140,10 +129,8 @@ class LeagueComponent extends StatelessWidget {
                 (index) {
               final match = sortedMatches[index];
               return GestureDetector(
-                onTap: (){
-                  onMatchSelected(match);
-
-
+                onTap: () {
+                  widget.onMatchSelected(match);
                 },
                 child: MatchItemLive(
                   match: match,
@@ -151,20 +138,6 @@ class LeagueComponent extends StatelessWidget {
                   isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
                 ),
               );
-              // Check if the match is live and return the appropriate widget
-              // if (match.matchStatus.toLowerCase() == 'live') {
-              //   return MatchItemLive(
-              //     match: match,
-              //     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
-              //     isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
-              //   );
-              // } else {
-              //   return MatchItemLive(
-              //     match: match,
-              //     backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
-              //     isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
-              //   );
-              // }
             },
           ),
         ),

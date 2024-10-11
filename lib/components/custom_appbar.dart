@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:untitled/components/colors.dart';
+import '../Service/data_service.dart';
+import '../models/Trophy.dart';
 import '../screens/bottom_sheet.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -21,9 +23,26 @@ class _CustomAppBarState extends State<CustomAppBar> with SingleTickerProviderSt
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
 
+
+
+  final DataService dataService = DataService();
+  List<Trophy> trophiesList = [];
+
+
+
+  Future<void> _fetchTrophies() async {
+    final fetchedTrophies = await dataService.fetchTrophies();
+    setState(() {
+      trophiesList = fetchedTrophies;
+      trophiesList = fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
+
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _fetchTrophies();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -277,7 +296,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
        // If the content might scroll
       backgroundColor: Colors.transparent, // Optional: to match your design
       builder: (BuildContext context) {
-        return BottomSheetContent(onTrophySelected: widget.onTrophySelected);
+        return BottomSheetContent(onTrophySelected: widget.onTrophySelected, trophies: trophiesList);
       },
     );
   }

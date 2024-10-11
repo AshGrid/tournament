@@ -1,26 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../Service/data_service.dart';
+import '../models/Match.dart';
+import '../models/League.dart'; // Import your League model
 import 'package:untitled/components/matchItemFavorite.dart';
-import '../models/match.dart';
-import '../models/league.dart'; // Import your League model
-
 import 'package:untitled/components/colors.dart'; // Ensure AppColors is correctly imported
 
-class LeagueFavoriteComponent extends StatelessWidget {
+class LeagueFavoriteComponent extends StatefulWidget {
   final League league;
 
   const LeagueFavoriteComponent({Key? key, required this.league}) : super(key: key);
 
   @override
+  _LeagueFavoriteComponentState createState() => _LeagueFavoriteComponentState();
+}
 
+class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
+
+
+  final DataService dataService = DataService();
+
+  List<Match> matchesList = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchMatches();
+
+  }
+
+
+
+  Future<void> _fetchMatches() async {
+    final fetchedMatches = await dataService.fetchPlayedMatches();
+    setState(() {
+      matchesList = fetchedMatches;
+
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('MMMM d, yyyy').format(league.date!);
+    String formattedDate = DateFormat('MMMM d, yyyy').format(matchesList.first.date!);
+
     // Sort matches to put live matches first
-    List<Match> sortedMatches = List.from(league.matches);
+    List<Match> sortedMatches = List.from(matchesList);
     sortedMatches.sort((a, b) {
       // Check if the match is live or not
-      bool aIsLive = a.matchStatus.toLowerCase() == 'live';
-      bool bIsLive = b.matchStatus.toLowerCase() == 'live';
+      bool aIsLive = a.status!.toLowerCase() == 'live';
+      bool bIsLive = b.status!.toLowerCase() == 'live';
 
       // Prioritize live matches
       if (aIsLive && !bIsLive) return -1;
@@ -33,7 +63,6 @@ class LeagueFavoriteComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         // League Name and Logo Container
         Container(
           height: 80,
@@ -46,7 +75,7 @@ class LeagueFavoriteComponent extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (league.leagueLogo != null) const SizedBox(width: 12),
+              const SizedBox(width: 12),
               // Container for the League Logo with border and shadow
               Container(
                 width: 65, // Adjust the width and height as needed
@@ -68,7 +97,7 @@ class LeagueFavoriteComponent extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown, // Ensure the image scales down to fit inside
                     child: Image.asset(
-                      league.leagueLogo,
+                      "assets/images/${widget.league.name}.png",
                       width: 55, // Adjust the size here
                       height: 55,
                     ),
@@ -77,7 +106,7 @@ class LeagueFavoriteComponent extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                league.leagueName,
+                widget.league.name!,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

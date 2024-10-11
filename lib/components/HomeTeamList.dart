@@ -24,9 +24,9 @@ physics: NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
           alignment: Alignment.centerLeft,
           child: playerCard(
-            playerName: player.name,
+            playerName: player.firstName!,
             //playerPosition: player.position,
-            playerImage: player.image,
+            playerImage: player.avatar!,
           ),
         );
       },
