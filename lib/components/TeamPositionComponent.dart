@@ -66,11 +66,11 @@ class TeamPositionComponent extends StatelessWidget {
               return GestureDetector(
                 onTap: (){
 onPlayerSelected(player);
-print(player.firstName);
+print(player.first_name);
                 },
                 child: Effectifitem(
                   player: player,
-                  playerName: player.firstName!,
+                  playerName: player.first_name!,
                   playerImage: player.avatar!,
                   isLastItem: isLastItem, // You can pass this to the widget if needed
                 ),

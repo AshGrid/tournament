@@ -13,7 +13,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => Card(
           ? null
           : Player.fromJson(json['player'] as Map<String, dynamic>),
       min: json['min'] as String?,
-      secondYellow: json['secondYellow'] as bool,
+      secondYellow: json['secondYellow'] as bool?,
       match: json['match'] == null
           ? null
           : Match.fromJson(json['match'] as Map<String, dynamic>),

@@ -25,9 +25,9 @@ class _TeamPlayersState extends State<TeamPlayers> {
   // Sample list of leagues
   List<Position> positions = [
     Position(name: 'Guardiens',
-      players: MockData.invitedPlayersList,),
-    Position(name: 'Défenseurs',  players: MockData.invitedPlayersList ,),
-    Position(name: 'Défenseurs',  players: MockData.invitedPlayersList,
+      players: [],),
+    Position(name: 'Défenseurs',  players: [] ,),
+    Position(name: 'Défenseurs',  players: [],
 
 
     )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/models/TeamRanking.dart';
 import '../models/Club.dart';
 import '../models/Team.dart';
 import 'colors.dart'; // Adjust the path as necessary to import your Team model
@@ -6,8 +7,9 @@ import 'colors.dart'; // Adjust the path as necessary to import your Team model
 class TeamItem extends StatelessWidget {
   final Club club;
   final int index;
+  final TeamRanking ranking;
 
-  const TeamItem({Key? key, required this.club, required this.index}) : super(key: key);
+  const TeamItem({Key? key, required this.club, required this.index, required  this.ranking}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class TeamItem extends StatelessWidget {
               child: SizedBox(
                 width: 20,
                 child: Text(
-                  club.order_main_page.toString(),
+                  (index+1).toString(),
                   textAlign: TextAlign.center,
                   style: TextStyle(color: textColor),
                 ),
@@ -91,9 +93,9 @@ class TeamItem extends StatelessWidget {
                 ),)
               ],
             ),
-            SizedBox(width: 60, child: Text(/*team.matchesPlayed.toString()*/"4", textAlign: TextAlign.right)),
-            SizedBox(width: 60, child: Text(/*team.goals.toString()*/'6', textAlign: TextAlign.center)),
-            SizedBox(width: 60, child: Text(/*team.points.toString()*/'7', textAlign: TextAlign.center)),
+            SizedBox(width: 60, child: Text((ranking.win!+ranking.loose!).toString(), textAlign: TextAlign.right)),
+            SizedBox(width: 60, child: Text(ranking.goals_for.toString(), textAlign: TextAlign.center)),
+            SizedBox(width: 60, child: Text(ranking.points.toString(), textAlign: TextAlign.center)),
           ],
         ),
       ),

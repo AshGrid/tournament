@@ -25,6 +25,13 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+  static const LinearGradient newsGradient = LinearGradient(
+    colors: [Color(0x13FFFFFF), Color(0xFFFFFFFF)], // Change to your desired colors
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+
   static const LinearGradient trophyButton = LinearGradient(
     colors: [Color(0xFFB91313), Color(0xFF530909)], // Change to your desired colors
     begin: Alignment.topCenter,

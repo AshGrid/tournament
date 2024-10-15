@@ -7,13 +7,16 @@ import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
 import 'package:untitled/models/League.dart';
+import 'package:untitled/models/SuperPlayOff.dart';
 import '../Service/data_service.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
+import '../components/superPlayOffCalendar.dart';
 import '../components/superPlayOffTableau.dart';
 import '../models/Club.dart';
+import '../models/TeamRanking.dart';
 
 class PhaseDetailsScreen extends StatefulWidget {
   final String phaseName;
@@ -27,26 +30,48 @@ class PhaseDetailsScreen extends StatefulWidget {
 }
 
 class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
-
+  final DataService dataService = DataService();
   int selectedIndex = 0;
 
+  List<String> years = List.generate(7, (index) => (19 + index).toString()); // Years from 2010 to 2024
+  String selectedYear = '24'; // Default selected year
+
+
+
   List<Club> clubsList= [];
+  List<TeamRanking> clubsListPremierePhase= [];
+  SuperPlayOff? superPlayoffList;
 
-  final DataService dataService = DataService();
 
 
 
-  Future<void> _fetchClubs() async {
-    final fetchedClubs= await dataService.fetchClubs();
+   // Future<void> _fetchClubs() async {
+   //   final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
+   //   setState(() {
+   //     clubsList = fetchedClubs;
+   //   });
+   // }
+  Future<void> _fetchClubsByPremierePhase() async {
+    final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
+    print("fetched clubs premirephase");
     setState(() {
-      clubsList = fetchedClubs;
+      clubsListPremierePhase = fetchedClubs;
+    });
+  }
+  Future<void> _fetchsuperPlayoff() async {
+    final fetchedClubs= await dataService.fetchSuperPlayoff(widget.league.id!);
+    print("fetched clubs premirephase");
+    setState(() {
+      superPlayoffList = fetchedClubs;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchClubs();
+    _fetchClubsByPremierePhase();
+    _fetchsuperPlayoff();
+   // _fetchClubs();
     if (this.widget.phaseName == "SUPER PLAY-OFF") {
       selectedIndex = 3; // or whatever index you need
     } else if (this.widget.phaseName == "TROPHÉE HANNIBAL") {
@@ -151,13 +176,46 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4), // Space between league name and trophy name
-                                Text(
-                                  widget.phaseName,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      widget.phaseName,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    // DropdownButton for Year Selection
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                      width: 50,
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(4.0),
+                                        border: Border.all(color: Colors.grey, width: 1),
+
+                                      ),
+                                      child: DropdownButton<String>(
+                                        value: selectedYear,
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        underline: Container(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedYear = newValue!;
+                                          });
+                                        },
+                                        items: years.map<DropdownMenuItem<String>>((String year) {
+                                          return DropdownMenuItem<String>(
+                                            value: year,
+                                            child: Text(year, style: TextStyle(fontSize: 12, color: Colors.black)),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ],
                             ),
@@ -254,17 +312,17 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
        case 0:
-         return PremierePhaseRankingScreen(clubs: clubsList,); // Display RankingScreen
+         return PremierePhaseRankingScreen(clubs: clubsListPremierePhase,); // Display RankingScreen
       case 1:
-        return PremierePhaseResultsScreen(); // Display ResultsScreen
+        return PremierePhaseResultsScreen(league: widget.league); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(); // Display CalendarScreen
+        return PremierePhaseCalendarScreen(league: widget.league.id!); // Display CalendarScreen
       case 3:
         return SuperPlayOffTableau();
       case 4:
         return Superplayoffresultats();
       case 5:
-        return Superplayoffcalendar();
+        return SuperPlayoffCalendar(superPlayOff: superPlayoffList!,);
       case 6:
         return Tropheehannibaltableau();
       case 7:

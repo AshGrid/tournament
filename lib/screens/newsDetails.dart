@@ -7,6 +7,8 @@ class NewsDetails extends StatelessWidget {
 
   const NewsDetails({Key? key, required this.newsItem}) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -56,7 +58,7 @@ class NewsDetails extends StatelessWidget {
   Widget _buildNewsContent(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.95,
-      height: MediaQuery.of(context).size.height * 0.8,
+
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
@@ -141,9 +143,9 @@ class NewsDetails extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.25,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
-        child: Image.asset(
+        child: Image.network(
           newsItem.image ?? 'assets/placeholder.png', // Placeholder image
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
           errorBuilder: (context, error, stackTrace) {
             return const Center(
               child: Text(

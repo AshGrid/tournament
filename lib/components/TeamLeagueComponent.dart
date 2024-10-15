@@ -34,12 +34,23 @@ class _TeamLeagueComponentState extends State<TeamLeagueComponent> {
 
 
   Future<void> _fetchMatches() async {
-    final fetchedMatches = await dataService.fetchPlayedMatches();
-    setState(() {
-      matchesList = fetchedMatches;
+    try {
+      final fetchedMatches = await dataService.fetchPlayedMatches();
 
-    });
+      // Filter matches where match.home.league equals widget.league.id
+      final filteredMatches = fetchedMatches.where((match) {
+        return match.home!.league == widget.league.id;
+      }).toList();
+
+      setState(() {
+        matchesList = filteredMatches;
+      });
+    } catch (error) {
+      print("Error fetching matches: $error");
+      // Handle the error as needed
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +96,7 @@ class _TeamLeagueComponentState extends State<TeamLeagueComponent> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset("assets/images/${widget.league.name}.png", fit: BoxFit.cover),
+                  child: Image.asset("assets/images/${widget.league.name!.toUpperCase()}.png", fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(width: 12),

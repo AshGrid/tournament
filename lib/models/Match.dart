@@ -18,7 +18,7 @@ class Match {
   final DateTime? date;
   final Venue? venue; // Venue can be nullable
   final List<Arbitre>? arbitres;
-  final List<Supervisor>? supervisors; // Nullable field
+  final Supervisor? supervisors; // Nullable field
   final int? home_first_half_score;
   final int? away_first_half_score;
   final int? home_second_half_score;

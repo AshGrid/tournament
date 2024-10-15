@@ -15,6 +15,7 @@ import '../components/colors.dart';
 import '../components/matchStats.dart';
 import '../components/resultsContainer.dart';
 import '../models/Team.dart';
+import '../models/TeamRanking.dart';
 
 
 class MatchDetailsPage extends StatefulWidget {
@@ -28,7 +29,8 @@ class MatchDetailsPage extends StatefulWidget {
 
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
   int selectedIndex = 0;
-  List<Club> clubsList= [];
+  List<TeamRanking> clubsList= [];
+  List<Club> clubs=[];
 
   final DataService dataService = DataService();
 
@@ -37,15 +39,29 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
     super.initState();
 
     _fetchClubs();
+    _fetchClubsList();
 
   }
 
   Future<void> _fetchClubs() async {
-    final fetchedClubs= await dataService.fetchClubs();
+    //final fetchedClubs= await dataService.fetchRankingByLeague(widget);
+    final fetchedClubs= await dataService.fetchRankingByLeague(widget.match.home!.league!);
     setState(() {
       clubsList = fetchedClubs;
+
     });
   }
+  Future<void> _fetchClubsList() async {
+    final fetchedClubs= await dataService.fetchClubs();
+    final filteredClubs = fetchedClubs.where((club) {
+      return club.league == widget.match.home!.league; // Adjust this based on your club and match model
+    }).toList();
+    setState(() {
+      clubs = filteredClubs;
+    });
+  }
+
+
 
 
   @override

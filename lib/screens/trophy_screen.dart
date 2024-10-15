@@ -1,74 +1,123 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/Service/mock_data.dart';
-
+import 'package:untitled/models/Coupe8.dart';
+import '../Service/data_service.dart'; // Your data service
 import '../components/image_slider.dart'; // Your image slider component
 import '../components/colors.dart'; // Import your custom colors
 import '../models/League.dart'; // League model
-import 'package:flutter/services.dart' show rootBundle;
+import '../models/Coupe.dart'; // Coupe model
+import '../models/Trophy.dart';
+import 'coupeDetailsScreen.dart';
+import 'coupe_8_details.dart'; // Import your CoupeDetailsScreen
 
-class TrophyScreen extends StatelessWidget {
+class TrophyScreen extends StatefulWidget {
   final String trophyName;
+
   final void Function(League league) onLeagueSelected;
+  final void Function(Coupe coupe) onCoupeSelected;
+  final void Function(Coupe8 coupe8) onCoupe8Selected;
 
   const TrophyScreen({
     super.key,
+
     required this.trophyName,
-    required this.onLeagueSelected, // Assigning the callback
-  });
+    required this.onLeagueSelected,
+    required this.onCoupeSelected,
+    required this.onCoupe8Selected,  });
+
+  @override
+  _TrophyScreenState createState() => _TrophyScreenState();
+}
+
+class _TrophyScreenState extends State<TrophyScreen> {
+  final DataService dataService = DataService();
+
+  List<League> leaguesList = [];
+  List<Coupe> coupesList = []; // List for Coupes
+  List<Coupe8> coupes8List = []; // List for Coupe8
+
+  Future<void> _fetchLeagues() async {
+    final fetchedLeagues = await dataService.fetchLeagues();
+    setState(() {
+      leaguesList = fetchedLeagues;
+    });
+  }
+
+  Future<void> _fetchCoupes() async {
+    final fetchedCoupes = await dataService.fetchCoupes();
+    setState(() {
+      coupesList = fetchedCoupes;
+
+      for (var coupe in coupes8List) {
+        print("Coupe name: ${coupe.season?.league?.trophy?.name}");
+      }
+    });
+  }
+
+  Future<void> _fetchCoupes8() async {
+    final fetchedCoupes8 = await dataService.fetchCoupes8();
+    setState(() {
+      coupes8List = fetchedCoupes8;
+
+      // Print the names of all the fetched coupes
+      for (var coupe in coupes8List) {
+        print("Coupe8 name: ${coupe.season?.league?.trophy?.name}");
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLeagues();
+    _fetchCoupes();
+    _fetchCoupes8(); // Fetch Coupes8
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Filtering leagues based on the trophy name
+    List<League> filteredLeagues = leaguesList
+        .where((league) => league.trophy!.name == widget.trophyName)
+        .toList();
+          print("filteredLeagues: $filteredLeagues");
+    // Filtering coupes based on the trophy name
+    List<Coupe> filteredCoupes = coupesList
+        .where((coupe) => coupe.season!.league?.trophy!.name!.toUpperCase() == widget.trophyName.toUpperCase())
+        .toList();
+print("coupe: $filteredCoupes");
+    // Filtering coupes8 based on the trophy name
+    List<Coupe8> filteredCoupes8 = coupes8List
+        .where((coupe8) => coupe8.season!.league?.trophy!.name!.toUpperCase() == widget.trophyName.toUpperCase())
+        .toList();
+    print("coupe8: $filteredCoupes8");
+    // Create a combined list of TrophyItems
+    List<TrophyItem> combinedItems = [];
+    combinedItems.addAll(filteredLeagues.map((league) => TrophyItem(league: league)));
+    combinedItems.addAll(filteredCoupes.map((coupe) => TrophyItem(coupe: coupe)));
+    combinedItems.addAll(filteredCoupes8.map((coupe8) => TrophyItem(coupe8: coupe8)));
 
-
-    Future<String> getLeagueImage(String leagueName) async {
-      String lowerCasePath = 'assets/images/${leagueName.toLowerCase()}.png';
-      String upperCasePath = 'assets/images/${leagueName.toUpperCase()}.png';
-
-      // Check if the lowercase version exists
-      try {
-        await rootBundle.load(lowerCasePath);
-        return lowerCasePath;
-      } catch (e) {
-        // If not, check if the uppercase version exists
-        try {
-          await rootBundle.load(upperCasePath);
-          return upperCasePath;
-        } catch (e) {
-          // Handle the case where neither file exists
-          throw Exception('Image not found for league $leagueName');
-        }
-      }
-    }
-
-    // Static list of leagues for demonstration
-    final List<League> leagues = MockData.mockLeagues;
-
-    final List<League> leaguesIT = MockData.mockLeaguesIT;
-    final List<League> tropheeVeteran = MockData.mockLeaguesVeterans;
-    final List<League> tropheeCorporate = MockData.mockLeaguesCorporate;
-
+    // Image paths for the slider
     List<String> imagePath = [
       'assets/images/image1.jpeg',
       'assets/images/image2.jpeg',
       'assets/images/image1.jpeg',
     ];
-     double height = 300;
-     trophyName.toUpperCase()== "TROPHÉES DE CARTHAGE" ? height = 430 : trophyName.toUpperCase()== "TROPHÉES IT" ? height=300: 200 ;
+
+    double height = widget.trophyName.toUpperCase() == "TROPHÉES DE CARTHAGE" ? 430 : 350;
 
     return Scaffold(
-      backgroundColor: AppColors.secondaryBackground, // Custom background color
-
+      backgroundColor: AppColors.secondaryBackground,
       body: CustomScrollView(
         slivers: [
           // Big Container with Trophy Name and Logo
           SliverToBoxAdapter(
             child: Container(
               height: height,
-              margin: const EdgeInsets.only(left: 12,right: 12,top: 12,bottom: 12),
-              padding: const EdgeInsets.only(left: 0,right: 0,top: 0,bottom: 0),
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(0),
               decoration: BoxDecoration(
-                color: AppColors.trophyComponent, // Use your component background color
-                borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                color: AppColors.trophyComponent,
+                borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -80,11 +129,11 @@ class TrophyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Trophy Name and Logo in the first container
+                  // Trophy Name and Logo
                   Container(
                     padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
-                      color: AppColors.trophyTitleComponent, // Light background
+                      color: AppColors.trophyTitleComponent,
                       borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
@@ -96,13 +145,13 @@ class TrophyScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        // Trophy Image in a rounded container
+                        // Trophy Image
                         Container(
                           width: 100,
                           height: 100,
-                          margin: EdgeInsets.only(bottom: 0,left: 12,right: 12,top: 0),
+                          margin: const EdgeInsets.only(left: 12, right: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white, // Background color of the container
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(15.0),
                             border: Border.all(color: Colors.black12, width: 1),
                             boxShadow: [
@@ -117,7 +166,7 @@ class TrophyScreen extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                'assets/images/${trophyName.toUpperCase()}.png', // Adjust path
+                                'assets/images/${widget.trophyName.toUpperCase()}.png',
                                 fit: BoxFit.contain,
                                 width: 80,
                                 height: 80,
@@ -129,7 +178,7 @@ class TrophyScreen extends StatelessWidget {
                         // Trophy Name
                         Expanded(
                           child: Text(
-                            trophyName,
+                            widget.trophyName.toUpperCase(),
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -141,76 +190,66 @@ class TrophyScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // List of Leagues in the second container
+                  // List of Leagues, Coupes, and Coupes8
                   SizedBox(
-                    height: height-130, // Adjust height if needed
+                    height: height - 130,
                     child: ListView.builder(
-                      itemCount:trophyName.toUpperCase() == "TROPHÉES IT" ? leaguesIT.length : trophyName.toUpperCase()  == "TROPHÉES VÉTERANS" ? tropheeVeteran.length :  trophyName.toUpperCase()  == "TROPHÉES DE CARTHAGE" ? leagues.length : tropheeCorporate.length,
+                      itemCount: combinedItems.length,
                       itemBuilder: (context, index) {
-                        final league = trophyName.toUpperCase() == "TROPHÉES IT" ? leaguesIT[index] : trophyName.toUpperCase()  == "TROPHÉES VÉTERANS" ? tropheeVeteran[index] : trophyName.toUpperCase()  == "TROPHÉES DE CARTHAGE" ? leagues[index] : tropheeCorporate[index] ;
-                        final backgroundColor = index.isEven ? AppColors.trophyItem1 : Colors.transparent;
+                        final item = combinedItems[index];
+                        final backgroundColor =
+                        index.isEven ? AppColors.trophyItem1 : Colors.transparent;
 
                         return Container(
                           decoration: BoxDecoration(
                             color: backgroundColor,
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: const BorderSide(
-                                  color: AppColors.trophyListTileItemBorder,
-                                  width: 2,
-                                ),
-                                top: index == 0
-                                    ? const BorderSide(
-                                  color: AppColors.trophyListTileItemBorder,
-                                  width: 2,
-                                )
-                                    : BorderSide.none,
-                              ),
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.only(left: 8,right: 8,top: 4,bottom: 4),
-                              leading: Container(
-                                width: 55,
-                                height: 55,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  border: Border.all(
-                                    color: AppColors.bottomSheetLogo,
-                                    width: 1.0,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.25),
-                                      blurRadius: 4.0,
-                                      offset: const Offset(0, 4),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                leading: Container(
+                                  width: 55,
+                                  height: 55,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    border: Border.all(
+                                      color: AppColors.bottomSheetLogo,
+                                      width: 1.0,
                                     ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Image.asset(
-                                    "assets/images/${league.name!.toUpperCase()}.png",
-                                    fit: BoxFit.scaleDown,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.25),
+                                        blurRadius: 4.0,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Image.asset(
+                                      item.imagePath(),
+                                      fit: BoxFit.scaleDown,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              title: Text(
-                                league.name!.toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                  fontFamily: "oswald",
+                                title: Text(
+                                  item.displayName(),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    fontFamily: "oswald",
+                                  ),
                                 ),
+                                onTap: () {
+                                  item.onTap(context, widget);
+                                },
                               ),
-                              onTap: () {
-                                onLeagueSelected(league); // Call the callback
-                              },
-                            ),
+                              Divider(color: AppColors.trophyListTileItemBorder),
+                            ],
                           ),
                         );
                       },
@@ -221,9 +260,8 @@ class TrophyScreen extends StatelessWidget {
             ),
           ),
           const SliverToBoxAdapter(
-            child: SizedBox(height: 20), // Space between the big container and the grid
+            child: SizedBox(height: 20),
           ),
-          // Dynamic Image Grid
           SliverToBoxAdapter(
             child: ImageSlider(
               imagePaths: imagePath,
@@ -232,5 +270,48 @@ class TrophyScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class TrophyItem {
+  final League? league;
+  final Coupe? coupe;
+  final Coupe8? coupe8;
+
+  TrophyItem({this.league, this.coupe, this.coupe8});
+
+  bool get isLeague => league != null;
+  bool get isCoupe => coupe != null;
+  bool get isCoupe8 => coupe8 != null;
+
+  String imagePath() {
+    if (isLeague) {
+      return "assets/images/${league!.name!.toUpperCase()}.png";
+    } else if (isCoupe) {
+      return "assets/images/${coupe!.name!.toUpperCase()}.png";
+    } else {
+      return "assets/images/${coupe8!.name!.toUpperCase()}.png";
+    }
+  }
+
+  String displayName() {
+    if (isLeague) {
+      return league!.name!.toUpperCase();
+    } else if (isCoupe) {
+      return coupe!.name!.toUpperCase();
+    } else {
+      return coupe8!.name!.toUpperCase();
+    }
+  }
+
+  void onTap(BuildContext context, TrophyScreen widget) {
+    if (isLeague) {
+      widget.onLeagueSelected(league!);
+    } else if (isCoupe) {
+      widget.onCoupeSelected(coupe!);
+
+    } else if (isCoupe8) {
+      widget.onCoupe8Selected(coupe8!);
+    }
   }
 }

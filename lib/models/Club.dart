@@ -8,7 +8,7 @@ part 'Club.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Club {
-  final int id;
+  final int? id;
   final String name;
   final String? abbreviation;
   final String? logo;

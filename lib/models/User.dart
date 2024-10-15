@@ -4,7 +4,7 @@ part 'User.g.dart'; // Name of the generated file
 
 @JsonSerializable() // Enable JSON serialization
 class User {
-  final int id;
+  final int? id;
   final String? email;
   final String? firstName;
   final String? lastName;

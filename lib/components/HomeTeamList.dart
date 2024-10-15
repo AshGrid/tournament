@@ -24,7 +24,7 @@ physics: NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
           alignment: Alignment.centerLeft,
           child: playerCard(
-            playerName: player.firstName!,
+            playerName: player.first_name!,
             //playerPosition: player.position,
             playerImage: player.avatar!,
           ),

@@ -10,7 +10,7 @@ class Card {
   final String? type;
   final Player? player;
   final String? min;
-  final bool secondYellow;
+  final bool? secondYellow;
   final Match? match;
 
   Card({

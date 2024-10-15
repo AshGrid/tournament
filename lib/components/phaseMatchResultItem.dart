@@ -124,7 +124,7 @@ class PhaseMatchResultItem extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(6.0),
-            child: Image.asset(
+            child: Image.network(
               logoPath,
               fit: BoxFit.scaleDown,
               width: 50,

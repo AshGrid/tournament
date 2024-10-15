@@ -6,47 +6,47 @@ part 'Player.g.dart'; // Name of the generated file
 @JsonSerializable() // Enable JSON serialization
 class Player {
   final int? id;
-  final String? firstName;
-  final String? lastName;
+  final String? first_name;
+  final String? last_name;
   final String? position;
   final String? nationality;
   final String? number;
   final String? avatar;
-  final String? cinImage;
+  final String? cin_image;
   final String? cin;
   final DateTime? birthday;
   final String? attestation;
-  final String? medicalCertificate;
+  final String? medical_certificate;
   final String? taille;
-  final Club? club; // Ensure Club is serializable
+  final int? club; // Ensure Club is serializable
   final bool? captain;
   final bool? verified;
-  final String? declineReason;
-  final bool? pendingVerification;
+  final String? decline_reason;
+  final bool? pending_verification;
   final bool? suspended;
-  final int? suspensionDuration;
+  final int? suspension_duration;
 
   Player({
     required this.id,
-    required this.firstName,
-    required this.lastName,
+    required this.first_name,
+    required this.last_name,
     required this.position,
     required this.nationality,
     required this.number,
     required this.avatar,
-    required this.cinImage,
+    required this.cin_image,
     required this.cin,
     required this.birthday,
     required this.attestation,
-    required this.medicalCertificate,
+    required this.medical_certificate,
     required this.taille,
     required this.club,
     required this.captain,
     required this.verified,
-    required this.declineReason,
-    required this.pendingVerification,
+    required this.decline_reason,
+    required this.pending_verification,
     required this.suspended,
-    required this.suspensionDuration,
+    required this.suspension_duration,
   });
 
   // JSON serialization methods

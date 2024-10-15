@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/Service/mock_data.dart';
 import 'package:untitled/components/match_item_live.dart';
-import '../models/Team.dart';
-import '../models/Match.dart';
+import '../models/SuperPlayOff.dart'; // Updated import
 import 'image_slider.dart';
-import 'match_item.dart';
+import '../models/Match.dart'; // Updated import
 
-class Superplayoffcalendar extends StatefulWidget {
-  const Superplayoffcalendar({Key? key}) : super(key: key);
+class SuperPlayoffCalendar extends StatefulWidget {
+  final SuperPlayOff superPlayOff; // Changed to SuperPlayOff
+  const SuperPlayoffCalendar({Key? key, required this.superPlayOff}) : super(key: key);
 
   @override
-  _SuperplayoffCalendarState createState() => _SuperplayoffCalendarState();
+  _SuperPlayoffCalendarState createState() => _SuperPlayoffCalendarState();
 }
 
-class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
-  final List<Map<String, dynamic>> roundsWithMatches = [
-    {
-      'round': 'Quarterfinal',
-      'matches': MockData.mockMatches
-    },
-    {
-      'round': 'Semifinal',
-      'matches': MockData.mockMatches
-    },
-    {
-      'round': 'Final',
-      'matches': MockData.mockMatches
-    },
-  ];
+int selectedDayIndex = 0;
+
+final List<String> phases = [
+  'Quarterfinals',
+  'Semifinals',
+  'Final',
+];
+
+class _SuperPlayoffCalendarState extends State<SuperPlayoffCalendar> {
+  int displayedRounds = 2; // Variable to track how many rounds to display
 
   List<String> imagePath = [
     'assets/images/image1.jpeg',
@@ -35,28 +30,49 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
     'assets/images/image1.jpeg',
   ];
 
-  // Variable to track how many rounds to display
-  int displayedRounds = 2;
-
   @override
   Widget build(BuildContext context) {
-    // Sort matches within each round
-    for (var round in roundsWithMatches) {
-      List<Match> sortedMatches = List.from(round['matches']);
-      sortedMatches.sort((a, b) {
-        bool aIsLive = a.status!.toLowerCase() == 'live';
-        bool bIsLive = b.status!.toLowerCase() == 'live';
+    // Get organized matches by phase from the SuperPlayOff class
+    List<Match?> sortedMatches = [];
 
-        if (aIsLive && !bIsLive) return -1;
-        if (!aIsLive && bIsLive) return 1;
-
-        return 0;
-      });
-      round['matches'] = sortedMatches;
+    switch (phases[selectedDayIndex]) {
+      case 'Quarterfinals':
+        sortedMatches = [
+          widget.superPlayOff.quarter_final_1_home,
+          widget.superPlayOff.quarter_final_1_away,
+          widget.superPlayOff.quarter_final_2_home,
+          widget.superPlayOff.quarter_final_2_away,
+          widget.superPlayOff.quarter_final_3_home,
+          widget.superPlayOff.quarter_final_3_away,
+          widget.superPlayOff.quarter_final_4_home,
+          widget.superPlayOff.quarter_final_4_away,
+        ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+        break;
+      case 'Semifinals':
+        sortedMatches = [
+          widget.superPlayOff.semi_final_1_home,
+          widget.superPlayOff.semi_final_1_away,
+          widget.superPlayOff.semi_final_2_home,
+          widget.superPlayOff.semi_final_2_away,
+        ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+        break;
+      case 'Final':
+        sortedMatches = [
+          widget.superPlayOff.finalmatch,
+        ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+        break;
     }
 
-    return Container(
+    // Create a list of rounds with their respective matches
+    List<Map<String, dynamic>> roundsWithMatches = [
+      {
+        'round': phases[selectedDayIndex],
+        'matches': sortedMatches,
+      }
+    ];
 
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8), // Padding for better spacing
       child: Column(
         children: [
           // Display each round and its matches
@@ -83,7 +99,8 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
                   // Underline
                   Container(
                     height: 2,
-                    width: roundsWithMatches[i]['round'] == "Quarterfinal" ?  110 : roundsWithMatches[i]['round'] == "Semifinal" ? 90 : 50,
+                    width: roundsWithMatches[i]['round'] == "Quarterfinals" ? 110 :
+                    roundsWithMatches[i]['round'] == "Semifinals" ? 90 : 50,
                     color: Colors.white,
                     margin: const EdgeInsets.only(top: 4),
                   ),
@@ -91,9 +108,8 @@ class _SuperplayoffCalendarState extends State<Superplayoffcalendar> {
               ),
             ),
             // List of matches for the current round
-            Container(
-              height: MediaQuery.of(context).size.height * 0.27,
-              width: MediaQuery.of(context).size.width,
+            SizedBox(
+              height: MediaQuery.of(context).size.height, // Height adjustment
               child: ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: roundsWithMatches[i]['matches']?.length ?? 0,

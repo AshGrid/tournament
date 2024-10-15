@@ -56,8 +56,8 @@ class BracketMatchCard extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          "assets/images/${item.teamA}.jpg",
+                        child: Image.network(
+                          "${item.teamAImage}",
                           fit: BoxFit.scaleDown,
                           width: 55,
                           height: 40,
@@ -96,8 +96,8 @@ class BracketMatchCard extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          "assets/images/${item.teamB}.jpg",
+                        child: Image.network(
+                          "${item.teamBImage}",
                           fit: BoxFit.scaleDown,
                           width: 55,
                           height: 40,

@@ -5,6 +5,8 @@ import 'package:untitled/models/News.dart';
 import 'package:untitled/models/Player.dart';
 import 'package:untitled/models/Trophy.dart';
 import 'package:untitled/screens/PlayerDetails.dart';
+import 'package:untitled/screens/StreamingScreen.dart';
+import 'package:untitled/screens/bestMoments.dart';
 import 'package:untitled/screens/fantasy_screen.dart';
 import 'package:untitled/screens/match_details.dart';
 import 'package:untitled/screens/matches_screen.dart';
@@ -20,12 +22,17 @@ import '../Service/data_service.dart';
 import '../components/bottom_navigation.dart';
 import '../components/colors.dart';
 import '../components/custom_appbar.dart';
+import '../models/Coupe.dart';
+import '../models/Coupe8.dart';
 import '../models/Notif.dart';
 import '../models/League.dart';
 import '../models/Match.dart';
 import 'LeagueDetailsScreen.dart';
+import 'coupeDetailsScreen.dart';
+import 'coupe_8_details.dart';
 import 'menu_screen.dart';
 import 'newsDetails.dart';
+import 'newsScreen.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -39,34 +46,20 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showTrophyScreen = false;
   String? _selectedTrophyName;
   League? _selectedLeague;
+  Coupe? _selectedCoupe;
+  Coupe8? _selectedCoupe8;
   News? _selectedNewsItem;
   bool _notifPressed = false;
   Match? _selectedMatch;
   Club? _selectedTeam;
   Player? _selectedPlayer;
+  bool _newsPage = false;
+  bool _streamPage = false;
+  bool _MomentsPage = false;
 
 
 
   final List<Notif> mockNotifications = [
-    Notif(
-      title: " Matches cette semaine pour une compétition",
-      description: "Cette semaine, ne manquez pas les rencontres de la [Nom de la Compétition]. De grands moments de football vous attendent !",
-      image: "assets/images/monoprix.jpg",
-
-    ),
-    Notif(
-      title: "Matches demain pour une compétition",
-      description: "Préparez-vous pour demain ! Les matches de la [Nom de la Compétition] approchent à grands pas.",
-      image: "assets/images/monoprix.jpg",
-
-    ),
-    Notif(
-      title: " Club préféré a marqué un but",
-      description: "Goooal pour [Nom du Club] ! Votre équipe favorite prend l’avantage. Continuez à suivre le match ! .",
-      image: "assets/images/monoprix.jpg",
-
-    ),
-
   ];
 
 
@@ -82,6 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedTeam = null;
       _selectedPlayer = null;
       _notifPressed = false;
+      _selectedCoupe = null;
+      _selectedCoupe8 = null;
+      _newsPage = false;
+      _streamPage = false;
+      _MomentsPage = false;
     });
   }
 
@@ -95,6 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedTeam = null;
       _notifPressed = false;
       _selectedPlayer = null;
+      _selectedCoupe = null;
+      _selectedCoupe8 = null;
+      _newsPage = false;
+      _streamPage = false;
+      _MomentsPage = false;
     });
   }
 
@@ -106,7 +109,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedMatch = null;
       _selectedTeam = null;
       _notifPressed = true;
+      _selectedCoupe = null;
+      _selectedCoupe8 = null;
       _selectedPlayer = null;
+      _newsPage = false;
+      _streamPage = false;
+      _MomentsPage = false;
     });
   }
 
@@ -120,6 +128,30 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedPlayer = null;
     });
   }
+  void _onCoupeSelected(Coupe coupe) {
+    setState(() {
+      _selectedLeague = null; // Update with the selected league
+      _selectedNewsItem = null;
+      _selectedMatch = null;
+      _selectedTeam = null;
+      _notifPressed = false;
+      _selectedPlayer = null;
+      _selectedCoupe = coupe;
+    });
+  }
+
+  void _onCoupe8Selected(Coupe8 coupe) {
+    setState(() {
+      _selectedLeague = null; // Update with the selected league
+      _selectedNewsItem = null;
+      _selectedMatch = null;
+      _selectedTeam = null;
+      _notifPressed = false;
+      _selectedPlayer = null;
+      _selectedCoupe = null;
+      _selectedCoupe8 = coupe;
+    });
+  }
 
   void _onNewsItemSelected(News news) {
     setState(() {
@@ -129,6 +161,22 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onMatchItemSelected(Match match) {
     setState(() {
       _selectedMatch = match; // Update with the selected league
+    });
+  }
+  void _onNewsTapped ( ) {
+    setState(() {
+      _newsPage = true; // Update with the selected league
+    });
+  }
+  void _onStreamTapped ( ) {
+    setState(() {
+      _streamPage = true; // Update with the selected league
+    });
+  }
+
+  void _onMomentsTapped ( ) {
+    setState(() {
+      _MomentsPage = true; // Update with the selected league
     });
   }
 
@@ -206,6 +254,13 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_selectedLeague != null) {
       return LeagueDetailsScreen(league: _selectedLeague!, trophy: _selectedTrophyName!,);
     }
+    if (_selectedCoupe != null) {
+      return CoupeDetailsScreen(coupe: _selectedCoupe!,  trophyName: _selectedTrophyName!,);
+    }
+
+    if (_selectedCoupe8 != null) {
+      return Coupe8DetailsScreen(coupe8: _selectedCoupe8!,  trophyName: _selectedTrophyName!,);
+    }
 
     if (_selectedNewsItem != null) {
       return NewsDetails( newsItem: _selectedNewsItem!,);
@@ -213,7 +268,15 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_selectedMatch != null) {
       return MatchDetailsPage( match: _selectedMatch!, onTeamSelected: _onTeamItemSelected);
     }
-
+    if (_newsPage ) {
+      return NewsScreen(  onNewsTapped: _newsPage, onNewsSelected: _onNewsItemSelected,);
+    }
+    if (_MomentsPage ) {
+      return Bestmoments(  );
+    }
+    if (_streamPage ) {
+      return StreamingScreen( );
+    }
     if (_notifPressed) {
       return NotificationScreen(notifications: mockNotifications, );
     }
@@ -222,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_showTrophyScreen && _selectedTrophyName != null) {
       return TrophyScreen(
         trophyName: _selectedTrophyName!,
-        onLeagueSelected: _onLeagueSelected, // Pass the callback to TrophyScreen
+        onLeagueSelected: _onLeagueSelected, onCoupeSelected: _onCoupeSelected, onCoupe8Selected: _onCoupe8Selected , // Pass the callback to TrophyScreen
       );
     }
 
@@ -248,7 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         return  FantasyScreen();
       case 4:
-        return  MenuScreen();
+        return  MenuScreen(onNewsTapped: _onNewsTapped, onStreamTapped: _onStreamTapped, onMomentsTapped: _onMomentsTapped,);
       default:
         return const SizedBox();
     }

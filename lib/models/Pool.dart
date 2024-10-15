@@ -7,16 +7,16 @@ part 'Pool.g.dart'; // Name of the generated file
 @JsonSerializable() // Enable JSON serialization
 class Pool {
   final int? id;
-  final PremierePhase? premierePhase;
-  final List<Club>? teams;
-  final bool? createMatches;
+  final int? premiere_phase;
+  final List<int>? teams;
+  final bool? create_matches;
   final String? type;
 
   Pool({
     required this.id,
-    required this.premierePhase,
+    required this.premiere_phase,
     required this.teams,
-    required this.createMatches,
+    required this.create_matches,
     required this.type,
   });
 

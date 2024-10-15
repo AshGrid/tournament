@@ -113,7 +113,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                this.widget.trophy,
+                                this.widget.trophy.toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -122,7 +122,7 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                               ),
                               const SizedBox(height: 4), // Space between league name and trophy name
                               Text(
-                                league.name!, // Assuming you have trophyName in the League model
+                                league.name!.toUpperCase(), // Assuming you have trophyName in the League model
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

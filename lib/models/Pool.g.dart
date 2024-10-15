@@ -8,21 +8,18 @@ part of 'Pool.dart';
 
 Pool _$PoolFromJson(Map<String, dynamic> json) => Pool(
       id: (json['id'] as num?)?.toInt(),
-      premierePhase: json['premierePhase'] == null
-          ? null
-          : PremierePhase.fromJson(
-              json['premierePhase'] as Map<String, dynamic>),
+      premiere_phase: (json['premiere_phase'] as num?)?.toInt(),
       teams: (json['teams'] as List<dynamic>?)
-          ?.map((e) => Club.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => (e as num).toInt())
           .toList(),
-      createMatches: json['createMatches'] as bool?,
+      create_matches: json['create_matches'] as bool?,
       type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$PoolToJson(Pool instance) => <String, dynamic>{
       'id': instance.id,
-      'premierePhase': instance.premierePhase,
+      'premiere_phase': instance.premiere_phase,
       'teams': instance.teams,
-      'createMatches': instance.createMatches,
+      'create_matches': instance.create_matches,
       'type': instance.type,
     };

@@ -27,10 +27,13 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   final DataService dataService = DataService();
   List<Trophy> trophiesList = [];
-  List<League> leagues = MockData.mockLeagues; // Your mock data for leagues
+  List<League> leaguesList = [];
+  List<DateTime> dayss = [];
   List<Match> matches = []; // Your mock data for matches
   bool isTrophiesLoading = true; // For tracking trophies loading state
   bool isMatchesLoading = true; // For tracking matches loading state
+  bool isLeaguesLoading = true;
+  bool isDaysLoading = true;
 
   Future<void> _fetchTrophies() async {
     try {
@@ -46,42 +49,94 @@ class _MatchesScreenState extends State<MatchesScreen> {
     }
   }
 
+  Future<void> _fetchDays() async {
+    try {
+      print("fetching days");
+      final fetchedTrophies = await dataService.fetchUpcomingMatchDates();
+      setState(() {
+        dayss = fetchedTrophies;
+        isDaysLoading = false; // Set to false once trophies are loaded
+      });
+    } catch (error) {
+      setState(() {
+        isDaysLoading = false;
+      });
+    }
+  }
+
+
+  Future<void> _fetchLeagues() async {
+    try {
+      final fetchedLeagues = await dataService.fetchLeagues();
+      print("Fetched leagues: $fetchedLeagues");
+      setState(() {
+        leaguesList = fetchedLeagues;
+        isLeaguesLoading = false;
+      });
+    } catch (error) {
+      print("Error fetching leagues: $error");
+      setState(() {
+        isLeaguesLoading = false;
+      });
+    }
+  }
+
+
+
+
   Future<void> _fetchMatches() async {
     try {
       final fetchedMatches = await dataService.fetchPlayedMatches();
       final fetchedUpcomingMatches = await dataService.fetchUpcomingMatches();
+      print("Fetched upcoming matches: $fetchedMatches");
+     // print("Fetched played matches: $fetchedMatches");
       setState(() {
-        matches = [...fetchedMatches];  // Initialize matches with fetchedMatches
-        matches.addAll(fetchedUpcomingMatches);  // Append upcoming matches
-        isMatchesLoading = false; // Set to false once matches are loaded
+        matches = [...fetchedMatches, ...fetchedUpcomingMatches];
+        isMatchesLoading = false;
       });
     } catch (error) {
+      print("Error fetching matches: $error");
       setState(() {
         isMatchesLoading = false;
       });
     }
   }
 
+
   @override
   void initState() {
     super.initState();
     _fetchTrophies();
     _fetchMatches();
+    _fetchLeagues();
+    _fetchDays();
   }
 
-  final List<String> days = [
-    'Journée 1',
-    'Journée 2',
-    'Journée 3',
-    'Journée 4',
-    'Journée 5',
-    'Journée 6',
-    'Journée 7',
-  ];
+
+
 
   @override
   Widget build(BuildContext context) {
-    bool isLoading = isTrophiesLoading || isMatchesLoading; // Determine if still loading
+    bool isLoading = isTrophiesLoading || isMatchesLoading|| isLeaguesLoading;
+
+    // Filter trophies that have leagues with matches
+    final List<Trophy> trophiesWithMatches = trophiesList.where((trophy) {
+      // Find if any league of this trophy has matches
+      return leaguesList.where((league) {
+        return league.trophy?.id == trophy.id &&
+            matches.where((match) => match.home?.league == league.id).isNotEmpty;
+      }).isNotEmpty;
+    }).toList();
+
+    // Trophies with no leagues or no matches
+    final List<Trophy> trophiesWithoutMatches = trophiesList.where((trophy) {
+      // Find trophies without any league with matches
+      return !trophiesWithMatches.contains(trophy);
+    }).toList();
+
+    // Combine trophies with matches first, followed by those without
+    final List<Trophy> sortedTrophies = [...trophiesWithMatches, ...trophiesWithoutMatches];
+
     return Column(
       children: [
         // Horizontally scrollable container for days
@@ -90,9 +145,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Row(
-              children: days.asMap().entries.map((entry) {
+              children: dayss.asMap().entries.map((entry) {
                 int index = entry.key;
-                String day = entry.value;
+                DateTime day = entry.value;
                 bool isSelected = index == selectedDayIndex;
 
                 return Padding(
@@ -107,7 +162,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          day,
+                    "${day.day}/${day.month}/${day.year}",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -116,7 +171,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         if (isSelected)
                           Container(
                             margin: const EdgeInsets.only(top: 5),
-                            width: day.length * 7.0,
+                            width: 70,
                             height: 2,
                             color: Colors.white,
                           ),
@@ -134,12 +189,12 @@ class _MatchesScreenState extends State<MatchesScreen> {
           child: isLoading
               ? Center(child: CircularProgressIndicator(color: Colors.white))
               : ListView.builder(
-            itemCount: trophiesList.length,
+            itemCount: sortedTrophies.length,
             itemBuilder: (context, trophyIndex) {
-              final trophy = trophiesList[trophyIndex];
+              final trophy = sortedTrophies[trophyIndex];
 
               // Filter the leagues where league.trophy.id equals trophy.id
-              final filteredLeagues = leagues.where((league) {
+              final filteredLeagues = leaguesList.where((league) {
                 return league.trophy?.id == trophy.id;
               }).toList();
 
@@ -204,6 +259,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
                   // Display the list of leagues filtered by trophy id
                   if (filteredLeagues.isNotEmpty)
+
                     Padding(
                       padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
                       child: Column(
@@ -211,8 +267,20 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         children: filteredLeagues.map((league) {
                           // Filter the matches based on league.trophy.id == match.trophy.id
                           final filteredMatches = matches.where((match) {
-                            return match.home?.league == league.id;
+                            if (match.home?.league == null) {
+                              print("Match has no home league: $match");
+                            } else {
+                              print("Match home league: ${match.home!.league}");
+                              print("League ID: ${league.id}");
+                            }
+                            return match.home?.league == league.id
+                                || match.away?.league == league.id
+                            ;
                           }).toList();
+
+                          if (filteredMatches.isEmpty) {
+                            print("No matches found for league ID: ${league.id}");
+                          }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,8 +333,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                           onTap: () {
                                             widget.onMatchSelected(match);
                                           },
-                                          child:
-                                          MatchItem(
+                                          child: MatchItem(
                                             match: match,
                                             backgroundColor: Colors.transparent,
                                             isFirstItem: isFirstItem,
@@ -313,5 +380,6 @@ class _MatchesScreenState extends State<MatchesScreen> {
       ],
     );
   }
+
 }
 

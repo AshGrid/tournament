@@ -1,5 +1,8 @@
+import 'package:untitled/Service/data_service.dart';
+
 import '../models/Club.dart';
 import '../models/Arbitre.dart';
+import '../models/Coupe.dart';
 import '../models/InvitedPlayers.dart';
 import '../models/Journey.dart';
 import '../models/League.dart';
@@ -15,22 +18,13 @@ import '../models/Venue.dart';
 import '../models/Match.dart'; // Import the Match model
 
 class MockData {
-  static List<League> mockLeagues = [
-    League(id: 1, name: 'Ligue Samedi', trophy: mockTrophies[0]),  // No trophy linked for now
-    League(id: 2, name: 'Ligue Dimanche', trophy: mockTrophies[0]),
+
+  static List<League> mockLeaguesCarthage = [
     League(id: 3, name: 'Coupe Samedi', trophy: mockTrophies[0]),
     League(id: 5, name: 'Coupe Dimanche', trophy: mockTrophies[0]),
-    League(id: 6, name: 'ligue VÉTÉRANS', trophy: mockTrophies[3]),
-    League(id: 7, name: 'Coupe VÉTÉRANS', trophy: mockTrophies[3]),
-    League(id: 8, name: 'Coupe it', trophy: mockTrophies[1]),
-    League(id: 9, name: 'Ligue it', trophy: mockTrophies[1]),
   ];
   static final List<League> mockLeaguesVeterans = [
-    League(
-      id: 1,
-      name: 'Ligue Vétérans',
-      // Initialize with empty list, will fill later
-    ),
+
     League(
       id: 2,
       name: 'Coupe Vétérans',
@@ -38,12 +32,11 @@ class MockData {
     ),
 
   ];
+
+
+
   static final List<League> mockLeaguesIT = [
-    League(
-      id: 1,
-      name: 'Ligue IT',
-      // Initialize with empty list, will fill later
-    ),
+
     League(
       id: 2,
       name: 'Coupe IT',
@@ -60,28 +53,28 @@ class MockData {
       id: 1,
       name: 'TROPHÉES DE CARTHAGE',
       image: 'https://example.com/champion_trophy.png',
-      date: DateTime(2024, 5, 1),
+      date: DateTime(2024, 5, 1), active: true,
 
     ),
     Trophy(
       id: 2,
       name: 'TROPHÉES IT',
       image: 'https://example.com/runner_up_trophy.png',
-      date: DateTime(2024, 5, 15),
+      date: DateTime(2024, 5, 15),active: true,
 
     ),
     Trophy(
       id: 3,
       name: 'TUNISIA CORPORATE CUP',
       image: 'https://example.com/best_player_trophy.png',
-      date: DateTime(2024, 6, 1),
+      date: DateTime(2024, 6, 1),active: true,
 
     ),
     Trophy(
       id: 4,
       name: 'TROPHÉES VÉTÉRANS',
       image: 'https://example.com/most_goals_trophy.png',
-      date: DateTime(2024, 6, 15),
+      date: DateTime(2024, 6, 15),active: true,
 
     ),
   ];
@@ -159,7 +152,7 @@ class MockData {
     Season(
       id: 1,
       season: '2023-2024',
-      league: mockLeagues[0], // Use Premier League for this season
+      league: mockLeaguesVeterans[0], // Use Premier League for this season
       teams: mockClubs,
     ),
   ];
@@ -178,16 +171,12 @@ class MockData {
   static final List<Journey> mockJourneys = [
     Journey(
       id: 1,
-      pool: Pool(
-        id: 1,
-        premierePhase: mockPremierePhases[0],
-        teams: mockClubs,
-        createMatches: true,
-        type: 'Group',
-      ),
+      pool: 1,
       number: 1,
     ),
   ];
+
+  
 
   static final List<Match> mockMatches = [
     Match(
@@ -197,7 +186,7 @@ class MockData {
       date: DateTime(2024, 10, 1),
       venue: mockVenues[0], // Venue from mockVenues
       arbitres: mockArbitres, // List of arbitres from mockArbitres
-      supervisors: mockSupervisors, // List of supervisors from mockSupervisors
+      supervisors: mockSupervisors[0], // List of supervisors from mockSupervisors
       home_first_half_score: 1, // Updated field names
       away_first_half_score: 0,
       home_second_half_score: 2,
@@ -223,7 +212,7 @@ class MockData {
       date: DateTime(2024, 10, 15),
       venue: mockVenues[1],
       arbitres: mockArbitres,
-      supervisors: mockSupervisors,
+      supervisors: mockSupervisors[0],
       home_first_half_score: 0,
       away_first_half_score: 1,
       home_second_half_score: 1,
@@ -248,52 +237,7 @@ class MockData {
   // Assign matches to each league
 
 
-  static final List<Player> invitedPlayersList = [
-    Player(
-      id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      nationality: 'American',
-      number: "1",
-      avatar: 'path/to/avatar',
-      cinImage: 'path/to/cinImage',
-      cin: '123456',
-      birthday: DateTime(2000, 1, 1),
-      attestation: 'path/to/attestation',
-      medicalCertificate: 'path/to/medicalCertificate',
-      taille: "180",
-      club: mockClubs[1],
-      captain: false,
-      verified: true,
-      declineReason: '',
-      pendingVerification: false,
-      suspended: false,
-      suspensionDuration: 0,
-      position: 'Guardien',
-    ),
-    Player(
-      id: 2,
-      firstName: 'Alice',
-      lastName: 'Smith',
-      nationality: 'Canadian',
-      number: "2",
-      avatar: 'path/to/avatar2',
-      cinImage: 'path/to/cinImage2',
-      cin: '654321',
-      birthday: DateTime(1995, 2, 2),
-      attestation: 'path/to/attestation2',
-      medicalCertificate: 'path/to/medicalCertificate2',
-      taille: "175",
-      club: mockClubs[0],
-      captain: true,
-      verified: true,
-      declineReason: '',
-      pendingVerification: false,
-      suspended: false,
-      suspensionDuration: 0,
-      position: 'Attaquant',
-    ),
-  ];
+
 
   // Call this method to assign matches to leagues
 

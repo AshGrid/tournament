@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:reels_viewer/reels_viewer.dart';
-
+import 'package:share_plus/share_plus.dart';
 
 
 
@@ -21,33 +21,10 @@ class _ReelsPageState extends State<ReelsPage> {
         'Darshan Patil',
         likeCount: 2000,
         isLiked: true,
-        musicName: 'In the name of Love',
-        reelDescription: "Life is better when you're laughing.",
+        reelDescription: "ABC EVENTS.",
         profileUrl:
-        'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-        commentList: [
-          ReelCommentModel(
-            comment: 'Nice...',
-            userProfilePic:
-            'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-          ReelCommentModel(
-            comment: 'Superr...',
-            userProfilePic:
-            'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-          ReelCommentModel(
-            comment: 'Great...',
-            userProfilePic:
-            'https://opt.toiimg.com/recuperator/img/toi/m-69257289/69257289.jpg',
-            userName: 'Darshan',
-            commentTime: DateTime.now(),
-          ),
-        ]),
+        'https://eu2.contabostorage.com/b44117b3116548a1b1703df5e191fd05:abc/images/1c80bcc2_ABC.png',
+        ),
     ReelModel(
       'https://assets.mixkit.co/videos/preview/mixkit-father-and-his-little-daughter-eating-marshmallows-in-nature-39765-large.mp4',
       'Rahul',
@@ -67,20 +44,17 @@ class _ReelsPageState extends State<ReelsPage> {
     return ReelsViewer(
       reelsList: reelsList,
       appbarTitle: 'MEILLEURS MOMENTS',
-      onShare: (url) {
-        log('Shared reel url ==> $url');
-      },
+
       onLike: (url) {
         print('Liked reel url ==> $url');
       },
       onFollow: () {
         log('======> Clicked on follow <======');
       },
-      onComment: (comment) {
-        log('Comment on reel ==> $comment');
-      },
-      onClickMoreBtn: () {
-        log('======> Clicked on more option <======');
+
+      onShare: (url) {
+        Share.share('check out my website $url');
+        print('Shared reel url ==> $url');
       },
       onClickBackArrow: () {
         log('======> Clicked on back arrow <======');

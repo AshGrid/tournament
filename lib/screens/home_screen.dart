@@ -21,8 +21,7 @@ import '../models/Stream.dart';
 class HomeScreen extends StatefulWidget {
   final Function(News) onNewsSelected;
   final StoryController _storyController = StoryController();
-  HomeScreen({Key? key, required this.onNewsSelected }) : super(key: key);
-
+  HomeScreen({Key? key, required this.onNewsSelected}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -47,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final streamItem = await dataService.fetchStream();
     setState(() {
       streamItems = streamItem;
-
     });
   }
 
@@ -56,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final fetchedNews = await dataService.fetchNews();
       setState(() {
         newsList = fetchedNews;
+        print("news: $newsList");
         isLoading = false; // Set loading to false after fetching
       });
     } catch (e) {
@@ -65,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
   Future<void> _fetchMatches() async {
     try {
       final fetchedMatches = await dataService.fetchPlayedMatches();
@@ -73,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
         isMatchesLoading = false; // Set loading to false after fetching matches
       });
     } catch (e) {
-      // Handle errors here
-      setState(() {
+print("error fetching matches for result component$e");
+setState(() {
         isMatchesLoading = false; // Stop loading on error
       });
     }
@@ -115,7 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'DANS LES FILETS',
     'VU DU BANC',
     'AMBIANCE',
-
   ];
 
   final List<List<Map<String, String>>> allStories = [
@@ -170,12 +169,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Initialize viewedStatuses for each story
 
-
-
   final List<bool> viewedStatuses = [
-    true,  // Story set 1 has been viewed
+    true, // Story set 1 has been viewed
     false, // Story set 2 has not been viewed
-    true,  // Story set 3 has been viewed
+    true, // Story set 3 has been viewed
     true,
     true,
     // Add more statuses as needed
@@ -186,15 +183,17 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>  StoryViewScreen(
+        builder: (context) => StoryViewScreen(
           storyItems: [
             StoryItem.text(
-              title: "Hello world!\nHave a look at some great Ghanaian delicacies. I'm sorry if your mouth waters. \n\nTap!",
+              title:
+                  "Hello world!\nHave a look at some great Ghanaian delicacies. I'm sorry if your mouth waters. \n\nTap!",
               backgroundColor: Colors.orange,
               roundedTop: true,
             ),
             StoryItem.inlineImage(
-              url: "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
+              url:
+                  "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
               controller: widget._storyController,
               caption: Text(
                 "Omotuo & Nkatekwan; You will love this meal if taken as supper.",
@@ -223,6 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   List<String> imagePath = [
     'assets/images/image1.jpeg',
     'assets/images/image2.jpeg',
@@ -242,15 +242,19 @@ class _HomeScreenState extends State<HomeScreen> {
             switch (index) {
               case 0:
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: SizedBox(
-                    height: 92, // Adjust height to accommodate text below circles
+                    height:
+                        92, // Adjust height to accommodate text below circles
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: imagePaths.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 10),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 10),
                       itemBuilder: (context, index) {
-                        final images = imagePaths[index]; // Access the list of images for each story
+                        final images = imagePaths[
+                            index]; // Access the list of images for each story
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -271,7 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 currentIndex: index,
                                 imageUrls: imagePaths,
                               ),
-                              const SizedBox(height: 4), // Space between circle and text
+                              const SizedBox(
+                                  height: 4), // Space between circle and text
                               Text(
                                 users[index],
                                 style: const TextStyle(
@@ -292,12 +297,14 @@ class _HomeScreenState extends State<HomeScreen> {
               case 1:
                 return isMatchesLoading // Check loading state for matches
                     ? Center(
-                  heightFactor: 2,
-                    child: CircularProgressIndicator(color: Colors.white,)) // Show loading indicator
+                        heightFactor: 2,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        )) // Show loading indicator
                     : MatchResultComponent(
-                  matchResults: matchesList,
-                  text: "Derniers résultats",
-                );
+                        matchResults: matchesList,
+                        text: "Derniers résultats",
+                      );
               case 2:
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -317,7 +324,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               case 4:
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                   child: ImageSlider(
                     imagePaths: imagePath,
                   ),
@@ -325,62 +333,69 @@ class _HomeScreenState extends State<HomeScreen> {
 
               case 5:
                 return Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Row(
-            mainAxisAlignment: MainAxisAlignment.start, // Aligns items to the start (left)
-            children: [
-            Text(
-            "Streaming",
-            style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            fontFamily: "oswald",
-            color: Colors.white,
-            shadows: [
-            Shadow(
-            blurRadius: 4.0,
-            color: AppColors.textShadow,
-            offset: Offset(0, 4),
-            ),
-            ],
-            ),
-            ),
-            ],
-            ),
-            const SizedBox(height: 2),
-            Container(
-            width: "Streaming".length * 11.5, // Adjust the width for the underline
-            height: 3,
-            decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-            BoxShadow(
-            color: AppColors.textShadow,
-            spreadRadius: 0,
-            blurRadius: 4,
-            offset: Offset(0, 4),
-            ),
-            ],
-            ),
-            ),
-
-            ],
-            ),
-            );
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .start, // Aligns items to the start (left)
+                        children: [
+                          Text(
+                            "Streaming",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "oswald",
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4.0,
+                                  color: AppColors.textShadow,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Container(
+                        width: "Streaming".length *
+                            11.5, // Adjust the width for the underline
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.textShadow,
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               case 6:
-            return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            child: VideoComponent(),
-            );
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: VideoComponent(),
+                );
               case 7:
                 return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            child: NewsSection( onNewsSelected:  widget.onNewsSelected, newsList: newsList, isLoading: isLoading,),
-            );
-            // You can add more cases here for additional widgets
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: NewsSection(
+                    onNewsSelected: widget.onNewsSelected,
+                    newsList: newsList,
+                    isLoading: isLoading,
+                  ),
+                );
+              // You can add more cases here for additional widgets
               default:
                 return SizedBox(); // Return an empty box for unhandled cases
             }
@@ -389,7 +404,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }
-
-

@@ -7,9 +7,13 @@ part of 'PlayerChange.dart';
 // **************************************************************************
 
 PlayerChange _$PlayerChangeFromJson(Map<String, dynamic> json) => PlayerChange(
-      id: (json['id'] as num).toInt(),
-      playerOut: Player.fromJson(json['playerOut'] as Map<String, dynamic>),
-      playerIn: Player.fromJson(json['playerIn'] as Map<String, dynamic>),
+      id: (json['id'] as num?)?.toInt(),
+      player_out: json['player_out'] == null
+          ? null
+          : Player.fromJson(json['player_out'] as Map<String, dynamic>),
+      player_in: json['player_in'] == null
+          ? null
+          : Player.fromJson(json['player_in'] as Map<String, dynamic>),
       min: json['min'] as String?,
       match: Match.fromJson(json['match'] as Map<String, dynamic>),
     );
@@ -17,8 +21,8 @@ PlayerChange _$PlayerChangeFromJson(Map<String, dynamic> json) => PlayerChange(
 Map<String, dynamic> _$PlayerChangeToJson(PlayerChange instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'playerOut': instance.playerOut,
-      'playerIn': instance.playerIn,
+      'player_out': instance.player_out,
+      'player_in': instance.player_in,
       'min': instance.min,
       'match': instance.match,
     };

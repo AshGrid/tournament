@@ -9,6 +9,7 @@ import 'package:untitled/components/tropheeHannibalCalendar.dart';
 import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
 import 'package:untitled/models/League.dart';
+import 'package:untitled/models/TeamRanking.dart';
 import 'package:untitled/screens/matches_screen.dart';
 import '../Service/data_service.dart';
 import '../components/TeamLeagueComponent.dart';
@@ -36,14 +37,14 @@ class _TeamPageState extends State<TeamPage> {
 
   int selectedIndex = 0;
 
-  List<Club> clubsList= [];
+  List<TeamRanking> clubsList= [];
 
   final DataService dataService = DataService();
 
 
 
   Future<void> _fetchClubs() async {
-    final fetchedClubs= await dataService.fetchClubs();
+    final fetchedClubs= await dataService.fetchRankingByLeague(widget.team.league!);
     setState(() {
       clubsList = fetchedClubs;
     });
@@ -121,7 +122,7 @@ class _TeamPageState extends State<TeamPage> {
                             child: Center(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
-                                child: Image.asset(
+                                child: Image.network(
                                   '${widget.team.logo}',
                                   fit: BoxFit.contain,
                                   width: 80,
@@ -240,14 +241,14 @@ class _TeamPageState extends State<TeamPage> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
       case 0:
-        return TeamResults(); // Display RankingScreen
+        return TeamResults(club: widget.team); // Display RankingScreen
        case 1:
-         return PremierePhaseRankingScreen(clubs: clubsList,); // Display ResultsScreen
+         return PremierePhaseRankingScreen(clubs: clubsList); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(); // Display CalendarScreen
+        return PremierePhaseCalendarScreen(league: widget.team.league!,); // Display CalendarScreen
       case 3:
         return TeamPlayers(team: widget.team, onPlayerSelected: widget.onPlayerSelected,);
-      
+
 
       default:
         return Container(); // Fallback case

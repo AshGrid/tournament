@@ -6,7 +6,7 @@ part 'Journey.g.dart';
 @JsonSerializable(explicitToJson: true) // Enable explicit to JSON serialization for nested objects
 class Journey {
   final int? id;
-  final Pool? pool; // Assuming Pool is also JSON serializable
+  final int? pool; // Assuming Pool is also JSON serializable
   final int? number;
 
   Journey({

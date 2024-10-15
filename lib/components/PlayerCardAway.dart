@@ -63,7 +63,7 @@ class playerCardAway extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0), // Circular image
-              child: Image.asset(
+              child: Image.network(
                 playerImage, // Ensure the image path is valid
                 width: 50.0,  // Set image size
                 height: 50.0,

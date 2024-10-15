@@ -38,7 +38,7 @@ class _VideoComponentState extends State<VideoComponent> {
       });
 
       // Check if the URL is a valid YouTube link
-      String videoUrl = streamItems[0].url;
+      String videoUrl = streamItems[streamItems.length-1].url;
       if (YoutubePlayer.convertUrlToId(videoUrl) != null) {
         _isYoutube = true;
         String videoId = YoutubePlayer.convertUrlToId(videoUrl)!;

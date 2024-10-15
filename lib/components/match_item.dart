@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/Match.dart';
 import 'colors.dart'; // Ensure the Match class is correctly imported
 
@@ -15,6 +16,14 @@ class MatchItem extends StatelessWidget {
     required this.isLastItem ,
     required this.isFirstItem ,
   }) : super(key: key);
+
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return "TBD"; // Default value if date is null
+    }
+    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    return formatter.format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +42,15 @@ class MatchItem extends StatelessWidget {
           // Match time on the left
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              "15-10-2024", // Use match.matchTime if it's dynamic
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Oswald'),
-            ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.17,
+              child:
+              Text(
+                textAlign: TextAlign.center,
+                "${_formatDate(match.date)}", // Use match.matchTime if it's dynamic
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Oswald'),
+              ),
+            )
           ),
           // Conditional vertical line or match time
 

@@ -132,7 +132,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${widget.player.firstName} ${widget.player.lastName}",
+                                  "${widget.player.first_name} ${widget.player.last_name}",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,

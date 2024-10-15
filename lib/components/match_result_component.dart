@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled/components/colors.dart';
 import '../models/Match.dart';
 
@@ -94,7 +95,7 @@ class MatchResultComponent extends StatelessWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              '${result.date ?? DateTime.now()}', // Default to current date if null
+                              '${DateFormat('dd.MM.yyyy hh:mm').format(result.date!)  ?? DateTime.now()}', // Default to current date if null
                               style: const TextStyle(
                                 fontSize: 13.0,
                                 fontWeight: FontWeight.bold,

@@ -8,18 +8,18 @@ class NewsSection extends StatefulWidget {
   final List<News> newsList;
   final bool isLoading;
 
-  const NewsSection({Key? key, required this.onNewsSelected,required this.newsList,required this.isLoading}) : super(key: key);
+  const NewsSection({
+    Key? key,
+    required this.onNewsSelected,
+    required this.newsList,
+    required this.isLoading,
+  }) : super(key: key);
 
   @override
   _NewsSectionState createState() => _NewsSectionState();
 }
 
 class _NewsSectionState extends State<NewsSection> {
-  // Added loading state
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -69,7 +69,7 @@ class _NewsSectionState extends State<NewsSection> {
         // Display loading indicator or news items
         widget.isLoading
             ? Center(
-          child: CircularProgressIndicator(color: Colors.white,), // Loading indicator
+          child: CircularProgressIndicator(color: Colors.white), // Loading indicator
         )
             : Column(
           children: widget.newsList.map((newsItem) => _buildNewsItem(newsItem, context)).toList(),
@@ -92,13 +92,12 @@ class _NewsSectionState extends State<NewsSection> {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
             color: Colors.grey.shade300,
             width: 1.0,
           ),
-          gradient: AppColors.newsBackground, // Apply the gradient background
         ),
         child: Stack(
           children: [
@@ -125,12 +124,23 @@ class _NewsSectionState extends State<NewsSection> {
                 ),
               ),
             ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.newsBackground,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
             // News title positioned at the bottom left
             Positioned(
               bottom: 16,
               left: 16,
               child: Text(
                 newsItem.title,
+                maxLines: 3, // Set a maximum number of lines
+                overflow: TextOverflow.ellipsis, // Use ellipsis for overflowing text
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,

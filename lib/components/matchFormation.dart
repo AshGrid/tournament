@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/Service/mock_data.dart';
-import 'package:untitled/components/PlayerCardAway.dart';
-import 'package:untitled/components/playercard.dart';
 import '../Service/data_service.dart';
 import '../models/InvitedPlayers.dart';
 import '../models/Match.dart';
 import '../models/Player.dart';
+import 'PlayerCardAway.dart';
+import 'playercard.dart';
 
 class MatchFormation extends StatefulWidget {
   final Match match;
@@ -17,7 +16,6 @@ class MatchFormation extends StatefulWidget {
 }
 
 class _MatchFormationState extends State<MatchFormation> {
-
   final DataService dataService = DataService();
 
   List<Player> homePlayers = [];
@@ -25,55 +23,37 @@ class _MatchFormationState extends State<MatchFormation> {
   List<Player> homePlayersR = [];
   List<Player> awayPlayersR = [];
 
-
   @override
   void initState() {
     super.initState();
-
     _fetchPlayers();
-
   }
 
+  Future<void> _fetchPlayers() async {
+    final fetchedPlayers = await dataService.fetchInvitedPlayers(widget.match.id!);
+    setState(() {
+      // Fetch home and away players for both starting and substitutes
+      homePlayers = fetchedPlayers[0].compositions_de_depart!;
+      awayPlayers = fetchedPlayers[1].compositions_de_depart!;
 
+      homePlayersR = fetchedPlayers[0].remplacants!;
+      awayPlayersR = fetchedPlayers[1].remplacants!;
 
-Future<void> _fetchPlayers() async {
-  final fetchedPlayers = await dataService.fetchInvitedPlayers( widget.match.id!);
-   setState(() {
-
-     homePlayers  = fetchedPlayers.compositionsDeDepart!.where((player) {
-       return player.club?.id == widget.match.home?.id; // Check if player's club is home club
-     }).toList();
-     awayPlayers  = fetchedPlayers.compositionsDeDepart!.where((player) {
-       return player.club?.id == widget.match.away?.id; // Check if player's club is away club
-     }).toList();
-     homePlayersR = fetchedPlayers.remplacants!.where((player) {
-       return player.club?.id == widget.match.home?.id;
-     }).toList();
-     awayPlayersR = fetchedPlayers.remplacants!.where((player) {
-       return player.club?.id == widget.match.away?.id;
-     }).toList();
-
-
-  });
-}
-
-
-
+      // Add these print statements to verify data
+      print("Home players: ${homePlayers.length}");
+      print("Away players: ${awayPlayers.length}");
+      print("Home substitutes: ${homePlayersR.length}");
+      print("Away substitutes: ${awayPlayersR.length}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     const double playerRowHeight = 70.0;
 
-    // Find the longest list to determine the divider height
-    int longestListLength = homePlayers.length > awayPlayers.length
-        ? homePlayers.length
-        : awayPlayers.length;
-    double dividerHeight = longestListLength * playerRowHeight;
-
-    int longestListLengthR = homePlayersR.length > awayPlayersR.length
-        ? homePlayersR.length
-        : awayPlayersR.length;
-    double dividerHeightR = longestListLengthR * playerRowHeight;
+    // Determine the divider height for starters and substitutes
+    double dividerHeight = _calculateDividerHeight(homePlayers, awayPlayers, playerRowHeight);
+    double dividerHeightR = _calculateDividerHeight(homePlayersR, awayPlayersR, playerRowHeight);
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.95,
@@ -93,56 +73,7 @@ Future<void> _fetchPlayers() async {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'Oswald'),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Home team players on the left
-                Expanded(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: homePlayers.length,
-                    itemBuilder: (context, index) {
-                      final player = homePlayers[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        alignment: Alignment.centerLeft,
-                        child: playerCard(
-                          playerName: player.firstName!,
-                          playerImage: player.avatar!,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 35, bottom: 20),
-                  width: 2,
-                  height: dividerHeight,
-                  color: Colors.black,
-                ),
-                // Away team players on the right
-                Expanded(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: awayPlayers.length,
-                    itemBuilder: (context, index) {
-                      final player = awayPlayers[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        alignment: Alignment.centerRight,
-                        child: playerCardAway(
-                          playerName: player.firstName!,
-                          playerImage: player.avatar!,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+            _buildPlayerRow(homePlayers, awayPlayers, dividerHeight, playerRowHeight),
             const SizedBox(
               height: 35,
               child: Text(
@@ -150,59 +81,73 @@ Future<void> _fetchPlayers() async {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'Oswald'),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Home team substitutes on the left
-                Expanded(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: homePlayersR.length,
-                    itemBuilder: (context, index) {
-                      final player = homePlayersR[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        alignment: Alignment.centerLeft,
-                        child: playerCard(
-                          playerName: player.firstName!,
-                          playerImage: player.avatar!,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 5, bottom: 10),
-                  width: 2,
-                  height: dividerHeightR,
-                  color: Colors.black,
-                ),
-                // Away team substitutes on the right
-                Expanded(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: awayPlayersR.length,
-                    itemBuilder: (context, index) {
-                      final player = awayPlayersR[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        alignment: Alignment.centerRight,
-                        child: playerCardAway(
-                          playerName: player.firstName!,
-                          playerImage: player.avatar!,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+            _buildPlayerRow(homePlayersR, awayPlayersR, dividerHeightR, playerRowHeight),
           ],
         ),
       ),
+    );
+  }
+
+  // Helper method to calculate divider height
+  double _calculateDividerHeight(List<Player> homePlayers, List<Player> awayPlayers, double rowHeight) {
+    int longestListLength = homePlayers.length > awayPlayers.length
+        ? homePlayers.length
+        : awayPlayers.length;
+    return longestListLength * rowHeight;
+  }
+
+  // Helper method to build player rows
+  Widget _buildPlayerRow(List<Player> homePlayers, List<Player> awayPlayers, double dividerHeight, double rowHeight) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Away team players on the left
+        Expanded(
+          child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: awayPlayers.length,
+            itemBuilder: (context, index) {
+              final player = awayPlayers[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                alignment: Alignment.centerLeft, // Align left for away team
+                child: playerCard(
+                  playerName: "${player.first_name!} ${player.last_name!}",
+                  playerImage: player.avatar!,
+                ),
+              );
+            },
+          ),
+        ),
+        // Vertical divider between home and away players
+        Container(
+          margin: const EdgeInsets.only(top: 35, bottom: 20),
+          width: 2,
+          height: dividerHeight,
+          color: Colors.black,
+        ),
+        // Home team players on the right
+        Expanded(
+          child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: homePlayers.length,
+            itemBuilder: (context, index) {
+              final player = homePlayers[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                alignment: Alignment.centerRight, // Align right for home team
+                child: playerCardAway(
+                  playerName: "${player.first_name!} ${player.last_name!}",
+                  playerImage: player.avatar!,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

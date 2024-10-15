@@ -22,9 +22,9 @@ Match _$MatchFromJson(Map<String, dynamic> json) => Match(
       arbitres: (json['arbitres'] as List<dynamic>?)
           ?.map((e) => Arbitre.fromJson(e as Map<String, dynamic>))
           .toList(),
-      supervisors: (json['supervisors'] as List<dynamic>?)
-          ?.map((e) => Supervisor.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      supervisors: json['supervisors'] == null
+          ? null
+          : Supervisor.fromJson(json['supervisors'] as Map<String, dynamic>),
       home_first_half_score: (json['home_first_half_score'] as num?)?.toInt(),
       away_first_half_score: (json['away_first_half_score'] as num?)?.toInt(),
       home_second_half_score: (json['home_second_half_score'] as num?)?.toInt(),
@@ -60,7 +60,7 @@ Map<String, dynamic> _$MatchToJson(Match instance) => <String, dynamic>{
       'date': instance.date?.toIso8601String(),
       'venue': instance.venue?.toJson(),
       'arbitres': instance.arbitres?.map((e) => e.toJson()).toList(),
-      'supervisors': instance.supervisors?.map((e) => e.toJson()).toList(),
+      'supervisors': instance.supervisors?.toJson(),
       'home_first_half_score': instance.home_first_half_score,
       'away_first_half_score': instance.away_first_half_score,
       'home_second_half_score': instance.home_second_half_score,

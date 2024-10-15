@@ -1,52 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../Service/data_service.dart';
+import '../components/matchItemFavorite.dart';
+import '../components/colors.dart';
 import '../models/Match.dart';
 import '../models/League.dart'; // Import your League model
-import 'package:untitled/components/matchItemFavorite.dart';
-import 'package:untitled/components/colors.dart'; // Ensure AppColors is correctly imported
 
-class LeagueFavoriteComponent extends StatefulWidget {
+class LeagueFavoriteComponent extends StatelessWidget {
   final League league;
+  final List<Match> matches; // Accept matches list for the league
 
-  const LeagueFavoriteComponent({Key? key, required this.league}) : super(key: key);
-
-  @override
-  _LeagueFavoriteComponentState createState() => _LeagueFavoriteComponentState();
-}
-
-class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
-
-
-  final DataService dataService = DataService();
-
-  List<Match> matchesList = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _fetchMatches();
-
-  }
-
-
-
-  Future<void> _fetchMatches() async {
-    final fetchedMatches = await dataService.fetchPlayedMatches();
-    setState(() {
-      matchesList = fetchedMatches;
-
-    });
-  }
-
+  const LeagueFavoriteComponent({
+    Key? key,
+    required this.league,
+    required this.matches, // Pass the matches list
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('MMMM d, yyyy').format(matchesList.first.date!);
-
     // Sort matches to put live matches first
-    List<Match> sortedMatches = List.from(matchesList);
+    List<Match> sortedMatches = List.from(matches);
     sortedMatches.sort((a, b) {
       // Check if the match is live or not
       bool aIsLive = a.status!.toLowerCase() == 'live';
@@ -68,7 +40,7 @@ class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
           height: 80,
           decoration: BoxDecoration(
             color: AppColors.leagueComponent,
-            border: Border(
+            border: const Border(
               top: BorderSide(color: Colors.white),
               bottom: BorderSide(color: Colors.white),
             ),
@@ -78,27 +50,27 @@ class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
               const SizedBox(width: 12),
               // Container for the League Logo with border and shadow
               Container(
-                width: 65, // Adjust the width and height as needed
+                width: 65,
                 height: 65,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: AppColors.teamLogoBorder, width: 1), // Add border to the container
+                  border: Border.all(color: AppColors.teamLogoBorder, width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.teamLogoShadow, // Shadow color
-                      offset: Offset(2, 4), // Shadow position
-                      blurRadius: 4, // How blurry the shadow is
+                      color: AppColors.teamLogoShadow,
+                      offset: const Offset(2, 4),
+                      blurRadius: 4,
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0), // Match the border radius
+                  borderRadius: BorderRadius.circular(8.0),
                   child: FittedBox(
-                    fit: BoxFit.scaleDown, // Ensure the image scales down to fit inside
+                    fit: BoxFit.scaleDown,
                     child: Image.asset(
-                      "assets/images/${widget.league.name}.png",
-                      width: 55, // Adjust the size here
+                      "assets/images/${league.name!.toUpperCase()}.png", // League logo based on league name
+                      width: 55,
                       height: 55,
                     ),
                   ),
@@ -106,7 +78,7 @@ class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
               ),
               const SizedBox(width: 10),
               Text(
-                widget.league.name!,
+                league.name!,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -116,7 +88,8 @@ class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
             ],
           ),
         ),
-        // Matches List Container with no extra padding or spacing
+        const SizedBox(height: 10),
+        // Matches List Container
         Column(
           children: List.generate(
             sortedMatches.length,
@@ -125,7 +98,7 @@ class _LeagueFavoriteComponentState extends State<LeagueFavoriteComponent> {
               return MatchItemFavorite(
                 match: match,
                 backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
-                isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+                isLastItem: index == sortedMatches.length - 1,
               );
             },
           ),

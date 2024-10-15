@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/Service/mock_data.dart';
 import 'package:untitled/components/phaseMatchResultItem.dart';
+import '../Service/data_service.dart';
+import '../models/League.dart';
 import '../models/Team.dart';
 import '../models/Match.dart';
 import 'image_slider.dart';
@@ -8,7 +10,8 @@ import 'match_item.dart';
 import 'match_item_live.dart';
 
 class PremierePhaseResultsScreen extends StatefulWidget {
-  const PremierePhaseResultsScreen({Key? key}) : super(key: key);
+  final League league;
+  const PremierePhaseResultsScreen({Key? key,required this.league}) : super(key: key);
 
   @override
   _ResultsScreenState createState() => _ResultsScreenState();
@@ -16,6 +19,43 @@ class PremierePhaseResultsScreen extends StatefulWidget {
 
 class _ResultsScreenState extends State<PremierePhaseResultsScreen> {
   int selectedDayIndex = 0;
+
+
+  final DataService dataService = DataService();
+  List<Match> matches = []; // List of all matches
+  List<Map<String, dynamic>> daysWithMatches = []; // To hold matches grouped by days
+  bool isMatchesLoading = true; // Loading state for matches
+
+  // Number of days to display
+
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMatches();
+  }
+
+  Future<void> _fetchMatches() async {
+    try {
+      final fetchedMatches = await dataService.fetchPlayedMatches();
+
+      // Filter matches where the home team's league matches widget.league.id
+      matches = fetchedMatches.where((match) {
+        return (match.home!.league == widget.league.id) && (match.away!.league == widget.league.id);
+
+      }).toList();
+
+      setState(() {
+        isMatchesLoading = false; // Stop loading after matches are fetched and filtered
+      });
+    } catch (error) {
+      setState(() {
+        isMatchesLoading = false; // Stop loading in case of error
+      });
+    }
+  }
+
+
 
   final List<String> days = [
     'Journée 1',
@@ -32,7 +72,7 @@ class _ResultsScreenState extends State<PremierePhaseResultsScreen> {
     'assets/images/image1.jpeg',
   ];
 
-  List<Match> matches = MockData.mockMatches;
+
 
   @override
   @override

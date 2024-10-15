@@ -9,14 +9,14 @@ part 'InvitedPlayers.g.dart';
 class InvitedPlayers {
   final int? id;
   final Club? club;
-  final List<Player>? compositionsDeDepart;
+  final List<Player>? compositions_de_depart;
   final List<Player>? remplacants;
   final Match? match;
 
   InvitedPlayers({
     required this.id,
     required this.club,
-    required this.compositionsDeDepart,
+    required this.compositions_de_depart,
     required this.remplacants,
     required this.match, // Ensure non-nullable
   });
