@@ -5,7 +5,7 @@ import 'story_details.dart';
 class StoryCircle extends StatelessWidget {
   final List<List<String>> imageUrls;
   final List<String> userNames;
-  final List<bool> viewedStatuses; // New list to check if stories have been viewed
+  final bool viewedStatuses; // New list to check if stories have been viewed
   final bool isFirst;
   final int currentIndex;
 
@@ -20,7 +20,7 @@ class StoryCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isViewed = viewedStatuses[currentIndex]; // Check if current story is viewed
+    bool isViewed = viewedStatuses; // Check if current story is viewed
 
     return GestureDetector(
       onTap: () {

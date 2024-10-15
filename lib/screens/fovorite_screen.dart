@@ -42,7 +42,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     });
 
     try {
-      final fetchedMatches = await dataService.fetchPlayedMatches();
+      final fetchedMatches = await dataService.fetchUpcomingMatches();
       final favoriteTeamIds = await _loadFavoriteTeams();
 
       // Filter matches based on favorite teams
@@ -99,7 +99,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           const Expanded(
             child: Center(
               child: Text(
-                'No favorite matches found.',
+                'Pas de matches.',
                 style: TextStyle(fontSize: 16, color: Colors.white), // Change color to your theme color
               ),
             ),

@@ -7,6 +7,7 @@ import '../Service/data_service.dart';
 import '../components/colors.dart'; // Import the colors file
 import '../components/story_circle.dart';
 import '../models/News.dart';
+import '../models/Story.dart';
 import 'StoryViewScreen.dart';
 import 'bottom_sheet.dart';
 import '../components/full_story_screen.dart'; // Import FullStoryScreen
@@ -34,18 +35,55 @@ class _HomeScreenState extends State<HomeScreen> {
   List<News> newsList = [];
   List<Match> matchesList = [];
   List<StreamItem> streamItems = [];
+  List<Story> Stories = [];
   @override
   void initState() {
     super.initState();
     _fetchNews();
     _fetchMatches();
     _fetchStream();
+    _fetchStories();
   }
 
   Future<void> _fetchStream() async {
     final streamItem = await dataService.fetchStream();
     setState(() {
       streamItems = streamItem;
+    });
+  }
+
+  Future<void> _fetchStories() async {
+    final storyItem = await dataService.fetchStories();
+    print("stories fetched");
+
+    setState(() {
+      // Clear the links and titles lists before adding new data
+      links.clear();
+      titles.clear();
+
+      for (int i = 0; i < storyItem.length; i++) {
+        // Create a new inner list for video links of the current story
+        List<String> videoLinks = [];
+
+        for (int j = 0; j < storyItem[i].videos!.length; j++) {
+          // Access the 'file' property for video links
+          videoLinks.add(storyItem[i].videos![j].lien!);
+        }
+
+        // Add the inner list of video links to the main links list
+        links.add(videoLinks);
+
+        // Add corresponding user title
+        titles.add(storyItem[i].name!);
+      }
+
+      // Print the results
+      print('Links:');
+      print(links);
+      print('Titles:');
+      print(titles);
+
+      Stories = storyItem; // Assuming Stories is defined elsewhere
     });
   }
 
@@ -73,8 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
         isMatchesLoading = false; // Set loading to false after fetching matches
       });
     } catch (e) {
-print("error fetching matches for result component$e");
-setState(() {
+      print("error fetching matches for result component$e");
+      setState(() {
         isMatchesLoading = false; // Stop loading on error
       });
     }
@@ -88,8 +126,8 @@ setState(() {
       'assets/images/image1.jpeg',
     ],
     [
-      'assets/images/ABC.png',
       'assets/images/image2.jpeg',
+      'assets/videos/videofoot.mp4',
       'assets/images/image1.jpeg',
     ],
     [
@@ -116,6 +154,9 @@ setState(() {
     'VU DU BANC',
     'AMBIANCE',
   ];
+
+  List<List<String>>links = [];
+  List<String> titles = [];
 
   final List<List<Map<String, String>>> allStories = [
     [
@@ -249,7 +290,7 @@ setState(() {
                         92, // Adjust height to accommodate text below circles
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: imagePaths.length,
+                      itemCount: links.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(width: 10),
                       itemBuilder: (context, index) {
@@ -269,16 +310,16 @@ setState(() {
                           child: Column(
                             children: [
                               StoryCircle(
-                                userNames: users,
+                                userNames: titles,
                                 isFirst: index == 0,
-                                viewedStatuses: viewedStatuses,
+                                viewedStatuses: true,
                                 currentIndex: index,
-                                imageUrls: imagePaths,
+                                imageUrls: links,
                               ),
                               const SizedBox(
                                   height: 4), // Space between circle and text
                               Text(
-                                users[index],
+                                titles[index],
                                 style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,

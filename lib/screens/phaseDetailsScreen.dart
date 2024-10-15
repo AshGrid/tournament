@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tournament_bracket/flutter_tournament_bracket.dart';
 
 
 import 'package:untitled/components/superPlayOffCalendar.dart';
@@ -35,6 +36,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
 
   List<String> years = List.generate(7, (index) => (19 + index).toString()); // Years from 2010 to 2024
   String selectedYear = '24'; // Default selected year
+
 
 
 
@@ -318,11 +320,26 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
       case 2:
         return PremierePhaseCalendarScreen(league: widget.league.id!); // Display CalendarScreen
       case 3:
-        return SuperPlayOffTableau();
+      // Ensure superPlayoffList is not null
+        if (superPlayoffList != null) {
+          return SuperPlayOffTableau(playOff: widget.league);
+        } else {
+          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+        }
       case 4:
-        return Superplayoffresultats();
+        if (superPlayoffList != null) {
+          return Superplayoffresultat(superPlayOffData: superPlayoffList!,);
+        } else {
+          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+        }
+
       case 5:
-        return SuperPlayoffCalendar(superPlayOff: superPlayoffList!,);
+        if (superPlayoffList != null) {
+          return SuperPlayoffCalendar(superPlayOff: superPlayoffList!,);
+        } else {
+          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+        }
+
       case 6:
         return Tropheehannibaltableau();
       case 7:

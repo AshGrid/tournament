@@ -13,8 +13,8 @@ class MatchItem extends StatelessWidget {
     Key? key,
     required this.match,
     required this.backgroundColor,
-    required this.isLastItem ,
-    required this.isFirstItem ,
+    required this.isLastItem,
+    required this.isFirstItem,
   }) : super(key: key);
 
   String _formatDate(DateTime? date) {
@@ -33,8 +33,8 @@ class MatchItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border(
-          bottom: isLastItem ?  BorderSide(color: Color(0xFFFFFFFF), width: 2) :  BorderSide.none,
-          top:  const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          bottom: isLastItem ? BorderSide(color: Color(0xFFFFFFFF), width: 2) : BorderSide.none,
+          top: const BorderSide(color: Color(0xFFFFFFFF), width: 2),
         ),
       ),
       child: Row(
@@ -44,23 +44,20 @@ class MatchItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.17,
-              child:
-              Text(
+              child: Text(
                 textAlign: TextAlign.center,
                 "${_formatDate(match.date)}", // Use match.matchTime if it's dynamic
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Oswald'),
               ),
-            )
+            ),
           ),
-          // Conditional vertical line or match time
-
+          // Vertical line separator
           Container(
             width: 1,
             height: 70, // Adjust the height of the divider line
             color: AppColors.timeLogoSeperator,
           ),
-
-          const SizedBox(width: 7 ),
+          const SizedBox(width: 7),
           Expanded(
             child: Row(
               children: [
@@ -76,24 +73,8 @@ class MatchItem extends StatelessWidget {
                     _buildTeamLogo("${match.away!.logo}", match.away!.name),
                   ],
                 ),
-                // Conditional match time or line separator
-
                 Spacer(),
-                if (match.status!.toLowerCase() == 'live') ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      "${match.date}", // Display match time if live
-                      style: const TextStyle(fontSize: 10                       , fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
-                ] else ...[
-                  Container(
-                    width: 1,
-                    height: 70, // Adjust the height of the divider line
-                    color: AppColors.timeLogoSeperator,
-                  ),
-                ],
+
                 // Score on the far right
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -107,19 +88,53 @@ class MatchItem extends StatelessWidget {
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${match.home_first_half_score!+match.home_second_half_score!}", // Home team score
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        const Text(
-                          "",
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        Text(
-                          "${match.away_first_half_score!+match.away_second_half_score!}", // Away team score
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
+
+
+                        if (match.status != null && match.status!.isNotEmpty) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              "${_formatDate(match.date)}", // Display match date
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                          ),
+                          // Show score if the match status is not empty
+                          Text(
+                            "${match.home_first_half_score! + match.home_second_half_score!}", // Home team score
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                          const Text(
+                            "",
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                          Text(
+                            "${match.away_first_half_score! + match.away_second_half_score!}", // Away team score
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+
+                        ] else ...[
+                          Row(
+                            children: [
+                              Container(
+                                width: 1,
+                                height: 70, // Adjust the height of the divider line
+                                color: AppColors.timeLogoSeperator,
+                              ),
+                              SizedBox(width: 2),
+                              // Show match date if status is empty
+                              Text(
+                                textAlign: TextAlign.center,
+                                "${_formatDate(match.date)}", // Use match.matchTime if it's dynamic
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Oswald'),
+                              ),
+                            ],
+                          )
+                        ],
+
+
+
                       ],
                     ),
                   ),

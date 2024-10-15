@@ -16,3 +16,16 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+buildscript {
+    ext.kotlin_version = '1.7.10' // Updated Kotlin version
+    repositories {
+        google()
+        jcenter() // jcenter() is deprecated, consider removing if not needed
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4' // Updated Gradle version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}

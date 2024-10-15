@@ -29,9 +29,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
   List<Trophy> trophiesList = [];
   List<League> leaguesList = [];
   List<DateTime> dayss = [];
-  List<Match> matches = []; // Your mock data for matches
-  bool isTrophiesLoading = true; // For tracking trophies loading state
-  bool isMatchesLoading = true; // For tracking matches loading state
+  List<Match> matches = [];
+  bool isTrophiesLoading = true;
+  bool isMatchesLoading = true;
   bool isLeaguesLoading = true;
   bool isDaysLoading = true;
 
@@ -40,7 +40,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
       final fetchedTrophies = await dataService.fetchTrophies();
       setState(() {
         trophiesList = fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
-        isTrophiesLoading = false; // Set to false once trophies are loaded
+        isTrophiesLoading = false;
       });
     } catch (error) {
       setState(() {
@@ -52,10 +52,13 @@ class _MatchesScreenState extends State<MatchesScreen> {
   Future<void> _fetchDays() async {
     try {
       print("fetching days");
-      final fetchedTrophies = await dataService.fetchUpcomingMatchDates();
+      final fetchedDays = await dataService.fetchUpcomingMatchDates();
       setState(() {
-        dayss = fetchedTrophies;
-        isDaysLoading = false; // Set to false once trophies are loaded
+        if (fetchedDays.isNotEmpty) {
+          dayss = fetchedDays;
+        }
+
+        isDaysLoading = false;
       });
     } catch (error) {
       setState(() {
@@ -63,7 +66,6 @@ class _MatchesScreenState extends State<MatchesScreen> {
       });
     }
   }
-
 
   Future<void> _fetchLeagues() async {
     try {
@@ -81,15 +83,11 @@ class _MatchesScreenState extends State<MatchesScreen> {
     }
   }
 
-
-
-
   Future<void> _fetchMatches() async {
     try {
       final fetchedMatches = await dataService.fetchPlayedMatches();
       final fetchedUpcomingMatches = await dataService.fetchUpcomingMatches();
       print("Fetched upcoming matches: $fetchedMatches");
-     // print("Fetched played matches: $fetchedMatches");
       setState(() {
         matches = [...fetchedMatches, ...fetchedUpcomingMatches];
         isMatchesLoading = false;
@@ -102,7 +100,6 @@ class _MatchesScreenState extends State<MatchesScreen> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -112,30 +109,33 @@ class _MatchesScreenState extends State<MatchesScreen> {
     _fetchDays();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    bool isLoading = isTrophiesLoading || isMatchesLoading|| isLeaguesLoading;
+    bool isLoading = isTrophiesLoading || isMatchesLoading || isLeaguesLoading||isDaysLoading;
 
     // Filter trophies that have leagues with matches
     final List<Trophy> trophiesWithMatches = trophiesList.where((trophy) {
-      // Find if any league of this trophy has matches
       return leaguesList.where((league) {
         return league.trophy?.id == trophy.id &&
-            matches.where((match) => match.home?.league == league.id).isNotEmpty;
+            matches.where((match) => match.home?.league == league.id || match.away?.league == league.id).isNotEmpty;
       }).isNotEmpty;
     }).toList();
 
     // Trophies with no leagues or no matches
     final List<Trophy> trophiesWithoutMatches = trophiesList.where((trophy) {
-      // Find trophies without any league with matches
       return !trophiesWithMatches.contains(trophy);
     }).toList();
 
     // Combine trophies with matches first, followed by those without
     final List<Trophy> sortedTrophies = [...trophiesWithMatches, ...trophiesWithoutMatches];
+
+    // Get the selected date
+    DateTime selectedDate ;
+    if (dayss.length > 0) {
+      selectedDate = dayss[selectedDayIndex];
+    } else {
+      selectedDate = DateTime.now();
+    }
 
     return Column(
       children: [
@@ -155,14 +155,14 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedDayIndex = index;
+                        selectedDayIndex = index; // Update selected day index
                       });
                     },
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                    "${day.day}/${day.month}/${day.year}",
+                          "${day.day}/${day.month}/${day.year}",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -259,28 +259,20 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
                   // Display the list of leagues filtered by trophy id
                   if (filteredLeagues.isNotEmpty)
-
                     Padding(
                       padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: filteredLeagues.map((league) {
-                          // Filter the matches based on league.trophy.id == match.trophy.id
+                          // Filter the matches based on league.trophy.id == match.trophy.id and the selected date
                           final filteredMatches = matches.where((match) {
-                            if (match.home?.league == null) {
-                              print("Match has no home league: $match");
-                            } else {
-                              print("Match home league: ${match.home!.league}");
-                              print("League ID: ${league.id}");
-                            }
-                            return match.home?.league == league.id
-                                || match.away?.league == league.id
-                            ;
+                            // Check if the date matches
+                            final matchDate = match.date;
+                            return (match.home?.league == league.id || match.away?.league == league.id) &&
+                                (matchDate != null && matchDate.year == selectedDate.year &&
+                                    matchDate.month == selectedDate.month &&
+                                    matchDate.day == selectedDate.day);
                           }).toList();
-
-                          if (filteredMatches.isEmpty) {
-                            print("No matches found for league ID: ${league.id}");
-                          }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,78 +290,50 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                   width: 45,
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                      color: AppColors.bottomSheetLogo,
-                                      width: 1.0,
-                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    border: Border.all(color: Colors.white, width: 1.0),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.25),
                                         blurRadius: 4.0,
                                         spreadRadius: 0.0,
-                                        offset: const Offset(0, 4),
+                                        offset: Offset(0, 4),
                                       ),
                                     ],
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(2.0),
                                     child: Image.asset(
-                                      'assets/images/${league.name!.toUpperCase()}.png',
+                                      'assets/images/${league.name?.toUpperCase() ?? 'default'}.png',
                                       fit: BoxFit.scaleDown,
                                     ),
                                   ),
                                 ),
                               ),
+
+                              // Display matches for the league
                               if (filteredMatches.isNotEmpty)
                                 Column(
-                                  children: filteredMatches.mapIndexed((index, match) {
-                                    bool isFirstItem = index == 0;
-                                    bool isLastItem = index == filteredMatches.length - 1;
-                                    return Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            widget.onMatchSelected(match);
-                                          },
-                                          child: MatchItem(
-                                            match: match,
-                                            backgroundColor: Colors.transparent,
-                                            isFirstItem: isFirstItem,
-                                            isLastItem: isLastItem,
-                                          ),
-                                        ),
-                                      ],
+                                  children: filteredMatches.map((match) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        widget.onMatchSelected(match);
+                                      },
+                                      child: MatchItem(match: match, backgroundColor: Colors.transparent, isLastItem: false, isFirstItem: true,),
                                     );
                                   }).toList(),
-                                ),
-                              if (filteredMatches.isEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 8.0),
-                                  child: Text(
-                                    'aucun match disponible pour cette ligue',
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                  ),
                                 ),
                             ],
                           );
                         }).toList(),
                       ),
-                    ),
-                  if (filteredLeagues.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    )
+                  else
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
                       child: Text(
-                        'No leagues available for this trophy',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                        'No leagues found for this trophy.',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                 ],
@@ -380,6 +344,4 @@ class _MatchesScreenState extends State<MatchesScreen> {
       ],
     );
   }
-
 }
-

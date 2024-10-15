@@ -3,14 +3,13 @@ import 'package:story_view/story_view.dart';
 import '../components/colors.dart';
 import 'StoryViewScreen.dart';
 
-
 class StoryDetailScreen extends StatefulWidget {
-  final List<List<String>> allStories; // All stories as a list of image sets
+  final List<List<String>> allStories; // All stories as a list of media (image/video) sets
   final List<String> userNames; // Corresponding usernames
   final int initialIndex; // Index of the first story set to display
   final StoryController _storyController = StoryController();
 
-   StoryDetailScreen({
+  StoryDetailScreen({
     Key? key,
     required this.allStories,
     required this.userNames,
@@ -27,49 +26,28 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final List<StoryItem> storyItems = widget.allStories[widget.initialIndex]
-        .map(
-          (imageUrl) => StoryItem.pageImage(
-        url: imageUrl,
-        controller: _storyController,
-        caption: Text(widget.userNames[widget.initialIndex]),
-      ),
-    )
-        .toList();
+        .map((mediaUrl) {
+      if (isVideo(mediaUrl)) {
+        // If it's a video, use the pageVideo constructor
+        return StoryItem.pageVideo(
+          mediaUrl,
+          controller: _storyController,
+          caption: Text(widget.userNames[widget.initialIndex]),
+        );
+      } else {
+        // If it's an image, use the pageImage constructor
+        return StoryItem.pageImage(
+          url: mediaUrl,
+          controller: _storyController,
+          caption: Text(widget.userNames[widget.initialIndex]),
+        );
+      }
+    }).toList();
 
     return Scaffold(
       backgroundColor: AppColors.navbarColor,
       body: StoryViewScreen(
-        storyItems: [
-          StoryItem.text(
-            title: "Hello world!\nHave a look at some great Ghanaian delicacies. I'm sorry if your mouth waters. \n\nTap!",
-            backgroundColor: Colors.orange,
-            roundedTop: true,
-          ),
-          StoryItem.inlineImage(
-            url: "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
-            controller: widget._storyController,
-            caption: Text(
-              "Omotuo & Nkatekwan; You will love this meal if taken as supper.",
-              style: TextStyle(
-                color: Colors.white,
-                backgroundColor: Colors.black54,
-                fontSize: 17,
-              ),
-            ),
-          ),
-          StoryItem.inlineImage(
-            url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",
-            controller: widget._storyController,
-            caption: Text(
-              "Hektas, sektas and skatad",
-              style: TextStyle(
-                color: Colors.white,
-                backgroundColor: Colors.black54,
-                fontSize: 17,
-              ),
-            ),
-          ),
-        ],
+        storyItems: storyItems,
         controller: widget._storyController,
       ),
     );
@@ -79,5 +57,10 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   void dispose() {
     _storyController.dispose(); // Dispose the controller when not needed
     super.dispose();
+  }
+
+  // Helper function to determine if a URL points to a video
+  bool isVideo(String url) {
+    return url.endsWith(".mp4") || url.endsWith(".mov") || url.endsWith(".avi") || url.endsWith(".mkv");
   }
 }

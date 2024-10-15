@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'package:untitled/components/colors.dart';
 
 class StoryDetailScreen extends StatefulWidget {
@@ -20,14 +21,16 @@ class StoryDetailScreen extends StatefulWidget {
 
 class _StoryDetailScreenState extends State<StoryDetailScreen> {
   late PageController _outerPageController; // Controller for story sets
-  late PageController _innerPageController; // Controller for images within a story set
+  late PageController _innerPageController; // Controller for images/videos within a story set
   Timer? _autoScrollTimer;
   Timer? _progressTimer;
   int _currentStoryIndex = 0; // Track the current story set index
-  int _currentImageIndex = 0; // Track the current image index within the set
+  int _currentImageIndex = 0; // Track the current image/video index within the set
   bool _isLongPressing = false;
-  double _progress = 0.0; // Track progress for the current image
-  final Duration _imageDuration = const Duration(seconds: 3); // Duration for each image
+  double _progress = 0.0; // Track progress for the current image/video
+  final Duration _imageDuration = const Duration(seconds: 5); // Duration for each image/video
+  VideoPlayerController? _videoController; // Video player controller
+  bool _isLoading = true; // Track loading state
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
     _startAutoScrollTimer();
     _startProgressTimer();
+    _initializeVideoPlayer(); // Initialize video player when starting
   }
 
   void _resetTimers() {
@@ -71,7 +75,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     if (_currentImageIndex < widget.allStories[_currentStoryIndex].length - 1) {
       setState(() {
         _currentImageIndex++;
-        _progress = 0; // Reset progress for the next image
+        _progress = 0; // Reset progress for the next image/video
       });
       _innerPageController.animateToPage(
         _currentImageIndex,
@@ -106,11 +110,13 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
         _currentImageIndex = 0;
         _progress = 0;
         _innerPageController.jumpToPage(0);
+        _isLoading = true; // Reset loading state for the next story set
       });
       _outerPageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeIn,
       );
+      _initializeVideoPlayer(); // Initialize video for the new story set
       _resetTimers();
     } else {
       _autoScrollTimer?.cancel();
@@ -126,12 +132,46 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
         _currentImageIndex = 0;
         _progress = 0;
         _innerPageController.jumpToPage(0);
+        _isLoading = true; // Reset loading state for the previous story set
       });
       _outerPageController.previousPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeIn,
       );
+      _initializeVideoPlayer(); // Initialize video for the previous story set
       _resetTimers();
+    }
+  }
+
+  // Function to initialize video player
+  void _initializeVideoPlayer() {
+    // Dispose of the current video controller if it exists
+    if (_videoController != null) {
+      _videoController!.dispose();
+      _videoController = null; // Set it to null after disposing
+    }
+
+    if (_currentStoryIndex < widget.allStories.length &&
+        _currentImageIndex < widget.allStories[_currentStoryIndex].length) {
+      String currentStoryItem = widget.allStories[_currentStoryIndex][_currentImageIndex];
+      if (currentStoryItem.endsWith('.mp4')) {
+        _videoController = VideoPlayerController.network(currentStoryItem);
+        _videoController!.initialize().then((_) {
+          setState(() {
+            _isLoading = false; // Set loading to false when video is ready
+            _videoController!.play(); // Automatically play video when initialized
+          });
+        }).catchError((error) {
+          setState(() {
+            _isLoading = false; // Handle any error by stopping the loading
+          });
+          print('Error initializing video player: $error');
+        });
+      } else {
+        setState(() {
+          _isLoading = false; // Set loading to false if it's an image
+        });
+      }
     }
   }
 
@@ -141,6 +181,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     _progressTimer?.cancel();
     _innerPageController.dispose();
     _outerPageController.dispose();
+    _videoController?.dispose(); // Dispose video controller
     super.dispose();
   }
 
@@ -149,6 +190,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.navbarColor,
       body: PageView.builder(
+        key: ValueKey<int>(_currentStoryIndex), // Use a key to force rebuild
         controller: _outerPageController,
         physics: const ClampingScrollPhysics(),
         itemCount: widget.allStories.length,
@@ -157,6 +199,8 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
             _currentStoryIndex = index;
             _currentImageIndex = 0; // Reset image index when story set changes
             _progress = 0;
+            _isLoading = true; // Set loading to true when changing story set
+            _initializeVideoPlayer(); // Initialize video for the new story set
           });
           _resetTimers(); // Restart timers for the new story set
         },
@@ -187,9 +231,9 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                           alignment: Alignment.centerLeft,
                           child: Container(
                             width: (_progress *
-                                MediaQuery.of(context).size.width /
-                                currentImages.length),
-                            color: Colors.grey,
+                                MediaQuery.of(context).size.width),
+                            height: 2,
+                            color: Colors.white,
                           ),
                         )
                             : null,
@@ -199,36 +243,54 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 ),
               ),
               Expanded(
-                child: GestureDetector(
-                  onLongPress: () {
-                    setState(() {
-                      _isLongPressing = true;
-                    });
-                  },
-                  onLongPressUp: () {
-                    setState(() {
-                      _isLongPressing = false;
-                    });
-                  },
-                  onTapUp: (details) {
-                    final screenWidth = MediaQuery.of(context).size.width;
-                    if (details.globalPosition.dx < screenWidth / 2) {
-                      _goToPreviousImage();
-                    } else {
-                      _goToNextImage();
-                    }
-                  },
-                  child: PageView.builder(
-                    controller: _innerPageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: currentImages.length,
-                    itemBuilder: (context, index) {
-                      return Image.asset(
-                        currentImages[index],
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
+                child: Stack(
+                  children: [
+                    // Inner PageView for Images and Videos
+                    PageView.builder(
+                      controller: _innerPageController,
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: currentImages.length,
+                      itemBuilder: (context, imageIndex) {
+                        final mediaItem = currentImages[imageIndex];
+                        if (mediaItem.endsWith('.mp4')) {
+                          return AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: _isLoading
+                                ? Center(child: CircularProgressIndicator())
+                                : VideoPlayer(_videoController!),
+                          );
+                        } else {
+                          return _isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : Image.network(
+                            mediaItem,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      },
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentImageIndex = index;
+                          _isLoading = true; // Set loading to true when changing image
+                          _initializeVideoPlayer(); // Initialize video when switching images
+                        });
+                        _resetTimers(); // Restart timers for the new image
+                      },
+                    ),
+                    // User Name at the Bottom
+                    Positioned(
+                      bottom: 40,
+                      left: 16,
+                      child: Text(
+                        widget.userNames[storySetIndex],
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

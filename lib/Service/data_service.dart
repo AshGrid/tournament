@@ -21,7 +21,7 @@ import 'package:path_provider/path_provider.dart';
 
 class DataService {
   final String baseUrl =
-      'https://dev.abcevents.com.tn/api/'; // Replace with your API URL
+      'https://www.abcevents.com.tn/api/'; // Replace with your API URL
 
   /// Fetches news from the API
   Future<List<News>> fetchNews() async {
@@ -44,6 +44,7 @@ class DataService {
       return []; // Return an empty list in case of an error
     }
   }
+
 
   Future<List<Trophy>> fetchTrophies() async {
     try {
@@ -102,11 +103,10 @@ class DataService {
       print("list played matches:$list");
       if (list is List) {
         // Assuming list is an array of JSON objects
-        print(list
-            .runtimeType); // This will tell you what type of elements you're receiving
+
 
         List<Match> matches = list.map((data) {
-          print(data.runtimeType); // Check the type of each element
+
           return Match.fromJson(data);
         }).toList();
 
@@ -179,7 +179,7 @@ class DataService {
 
   Future<List<Match>> fetchUpcomingMatches() async {
     final response = await http.get(Uri.parse(baseUrl + 'upcoming_matches'));
-    await writeResponseToFile(response.body);
+
     if (response.statusCode == 200) {
       print("upcoming matches");
       print(response.body);
@@ -192,20 +192,7 @@ class DataService {
     }
   }
 
-  Future<void> writeResponseToFile(String response) async {
-    final directory =
-        await getApplicationDocumentsDirectory(); // Get the documents directory
-    final filePath =
-        '${directory.path}/matches_response.json'; // File name and path
-    final file = File(filePath);
 
-    try {
-      await file.writeAsString(response);
-      print('Response saved to $filePath');
-    } catch (e) {
-      print('Error writing to file: $e');
-    }
-  }
 
   Future<List<Player>> fetchPlayers(String clubID) async {
     final response = await http.get(Uri.parse(baseUrl + 'players/' + clubID));
@@ -225,8 +212,9 @@ class DataService {
   Future<List<Story>> fetchStories() async {
     try {
       final response = await http.get(Uri.parse(baseUrl + 'stories'));
-
+print(response.body);
       if (response.statusCode == 200) {
+        print("status stories ok");
         // Parse the response body and convert it to a list of Story objects
         final List<dynamic> jsonData = json.decode(response.body);
         return jsonData.map((json) => Story.fromJson(json)).toList();
@@ -339,6 +327,7 @@ class DataService {
 
   Future<SuperPlayOff?> fetchSuperPlayoff(int id) async {
     try {
+      print("SuperPlayOff fetcheing ");
       final response = await http.get(Uri.parse(baseUrl + 'super_play_offs/$id'));
       final utf8DecodedResponse = utf8.decode(response.bodyBytes);
 

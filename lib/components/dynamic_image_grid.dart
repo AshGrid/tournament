@@ -92,10 +92,10 @@ class DynamicImageGrid extends StatelessWidget {
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ReelsPage()), // Replace with your main screen
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => ReelsPage()), // Replace with your main screen
+                          // );
                         },
                         child: Stack(
                           fit: StackFit.expand,
