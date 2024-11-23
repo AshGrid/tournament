@@ -1,59 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/Service/mock_data.dart';
 import 'package:untitled/components/match_item_live.dart';
-import '../models/Team.dart';
+import '../Service/data_service.dart';
+import '../models/Coupe8.dart';
 import '../models/Match.dart';
 import 'image_slider.dart';
-import 'match_item.dart';
 
 class Tropheehannibalcalendar extends StatefulWidget {
-  const Tropheehannibalcalendar({Key? key}) : super(key: key);
+  final Coupe8? coupe;
+
+  const Tropheehannibalcalendar({Key? key, required this.coupe}) : super(key: key);
 
   @override
-  _SuperplayoffCalendarState createState() => _SuperplayoffCalendarState();
+  _TropheehannibalcalendarState createState() => _TropheehannibalcalendarState();
 }
 
-class _SuperplayoffCalendarState extends State<Tropheehannibalcalendar> {
-  final List<Map<String, dynamic>> roundsWithMatches = [
-    {
-      'round': 'Quarterfinal',
-      'matches': MockData.mockMatches
-    },
-    {
-      'round': 'Semifinal',
-      'matches': MockData.mockMatches
-    },
-    {
-      'round': 'Final',
-      'matches': MockData.mockMatches
-    },
-  ];
+class _TropheehannibalcalendarState extends State<Tropheehannibalcalendar> {
+  // Variable to track how many rounds to display
+  int displayedRounds = 2;
+  bool isAdsLoading = true;
+  final DataService dataService = DataService();
 
+  List<String> imagePaths = [];
+
+  Future<void> _fetchAds() async {
+    try {
+      final fetchedAds = await dataService.fetchAds();
+      setState(() {
+        // Filter ads by place, ensure non-null images, and map to their image paths
+        imagePaths = fetchedAds
+            .where((ad) =>
+        ad.place == "trophy" &&
+            ad.image != null) // Filter by place and non-null images
+            .map((ad) => ad
+            .image!) // Use non-null assertion to convert String? to String
+            .toList();
+        isAdsLoading = false; // Set loading to false after fetching ads
+      });
+    } catch (e) {
+      print("Error fetching ads for home screen: $e");
+      setState(() {
+        isAdsLoading = false; // Stop loading on error
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchAds();
+  }
   List<String> imagePath = [
     'assets/images/image1.jpeg',
     'assets/images/image2.jpeg',
     'assets/images/image1.jpeg',
   ];
 
-  // Variable to track how many rounds to display
-  int displayedRounds = 2;
+  // Define the phases for the Coupe8
+  final List<String> phases = [
+    'Quarterfinal',
+    'Semifinal',
+    'Final',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // Sort matches within each round
-    for (var round in roundsWithMatches) {
-      List<Match> sortedMatches = List.from(round['matches']);
-      sortedMatches.sort((a, b) {
-        bool aIsLive = a.status!.toLowerCase() == 'live';
-        bool bIsLive = b.status!.toLowerCase() == 'live';
+    // Get organized matches by phase from the Coupe8 class
+    List<Match?> sortedMatches = [];
 
-        if (aIsLive && !bIsLive) return -1;
-        if (!aIsLive && bIsLive) return 1;
-
-        return 0;
-      });
-      round['matches'] = sortedMatches;
+    for (var phase in phases) {
+      switch (phase) {
+        case 'Quarterfinal':
+          sortedMatches = [
+            widget.coupe?.quarter_final_1,
+            widget.coupe?.quarter_final_2,
+            widget.coupe?.quarter_final_3,
+            widget.coupe?.quarter_final_4,
+          ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+          break;
+        case 'Semifinal':
+          sortedMatches = [
+            widget.coupe?.semi_final_1,
+            widget.coupe?.semi_final_2,
+          ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+          break;
+        case 'Final':
+          sortedMatches = [
+            widget.coupe?.finalMatch,
+          ].where((match) => match?.is_ended == false).toList(); // Filter matches that are ongoing
+          break;
+      }
     }
+
+    // Define the rounds with matches to display
+    final List<Map<String, dynamic>> roundsWithMatches = [
+      {
+        'round': 'Quarterfinal',
+        'matches': sortedMatches,
+      },
+      {
+        'round': 'Semifinal',
+        'matches': sortedMatches,
+      },
+      {
+        'round': 'Final',
+        'matches': sortedMatches,
+      },
+    ];
 
     return Container(
       child: Column(
@@ -82,7 +136,7 @@ class _SuperplayoffCalendarState extends State<Tropheehannibalcalendar> {
                   // Underline
                   Container(
                     height: 2,
-                    width: roundsWithMatches[i]['round'] == "Quarterfinal" ?  110 : roundsWithMatches[i]['round'] == "Semifinal" ? 90 : 50,
+                    width: roundsWithMatches[i]['round'] == "Quarterfinal" ? 110 : roundsWithMatches[i]['round'] == "Semifinal" ? 90 : 50,
                     color: Colors.white,
                     margin: const EdgeInsets.only(top: 4),
                   ),
@@ -128,8 +182,16 @@ class _SuperplayoffCalendarState extends State<Tropheehannibalcalendar> {
           // Image slider at the bottom
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-            child: ImageSlider(
-              imagePaths: imagePath,
+            child: isAdsLoading
+                ? const Center(
+              child: CircularProgressIndicator(), // Loading icon
+            )
+                : Padding(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 8, horizontal: 8),
+              child: ImageSlider(
+                imagePaths: imagePaths,
+              ),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/Match.dart';
 import 'colors.dart'; // Ensure the Match class is correctly imported
 
@@ -15,6 +16,14 @@ class PhaseMatchResultItem extends StatelessWidget {
     this.isLastItem = false, this.isFirstItem = false,
   }) : super(key: key);
 
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return "TBD"; // Default value if date is null
+    }
+    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    return formatter.format(date);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,7 +42,7 @@ class PhaseMatchResultItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              "15-10-2024", // Use match.matchTime if it's dynamic
+              _formatDate(match.date), // Use match.matchTime if it's dynamic
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Oswald'),
             ),
           ),

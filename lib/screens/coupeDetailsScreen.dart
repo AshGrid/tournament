@@ -14,10 +14,11 @@ import '../components/colors.dart';
 import '../components/superPlayOffTableau.dart';
 import '../models/Club.dart';
 import '../models/Coupe.dart';
+import '../models/Trophy.dart';
 
 class CoupeDetailsScreen extends StatefulWidget {
   final Coupe coupe;
-  final String trophyName;
+  final Trophy trophyName;
 
   const CoupeDetailsScreen({super.key, required this.coupe, required this.trophyName});
 
@@ -140,7 +141,7 @@ class _CoupeDetailsScreenState extends State<CoupeDetailsScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.asset(
-            'assets/images/${widget.trophyName!.toUpperCase()}.png',
+            'assets/images/${widget.trophyName.name!.toUpperCase()}.png',
             fit: BoxFit.contain,
             width: 80,
             height: 80,
@@ -155,7 +156,7 @@ class _CoupeDetailsScreenState extends State<CoupeDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.trophyName,
+          widget.trophyName.name!.toUpperCase(),
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         const SizedBox(height: 4),

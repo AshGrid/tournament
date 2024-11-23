@@ -43,10 +43,10 @@ class BottomNavigation extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
-              AssetImage("assets/icons/shirt.png"),
+              AssetImage("assets/icons/tower.png"),
               color: Colors.white, // Set icon color here
             ),
-            label: 'Fantasy',
+            label: 'Direct',
             backgroundColor: AppColors.navbarColor, // Optional, for item background color
           ),
           BottomNavigationBarItem(

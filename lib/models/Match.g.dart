@@ -34,13 +34,8 @@ Match _$MatchFromJson(Map<String, dynamic> json) => Match(
       trophy: json['trophy'] == null
           ? null
           : Trophy.fromJson(json['trophy'] as Map<String, dynamic>),
-      season: json['season'] == null
-          ? null
-          : Season.fromJson(json['season'] as Map<String, dynamic>),
-      premierePhase: json['premierePhase'] == null
-          ? null
-          : PremierePhase.fromJson(
-              json['premierePhase'] as Map<String, dynamic>),
+      season: (json['season'] as num?)?.toInt(),
+      premiere_phase: (json['premiere_phase'] as num?)?.toInt(),
       is_premiere_phase: json['is_premiere_phase'] as bool?,
       is_playoff: json['is_playoff'] as bool?,
       is_trophy: json['is_trophy'] as bool?,
@@ -51,6 +46,7 @@ Match _$MatchFromJson(Map<String, dynamic> json) => Match(
       journey: json['journey'] == null
           ? null
           : Journey.fromJson(json['journey'] as Map<String, dynamic>),
+      time: json['time'] as String?,
     );
 
 Map<String, dynamic> _$MatchToJson(Match instance) => <String, dynamic>{
@@ -68,8 +64,8 @@ Map<String, dynamic> _$MatchToJson(Match instance) => <String, dynamic>{
       'status': instance.status,
       'is_ended': instance.is_ended,
       'trophy': instance.trophy?.toJson(),
-      'season': instance.season?.toJson(),
-      'premierePhase': instance.premierePhase?.toJson(),
+      'season': instance.season,
+      'premiere_phase': instance.premiere_phase,
       'is_premiere_phase': instance.is_premiere_phase,
       'is_playoff': instance.is_playoff,
       'is_trophy': instance.is_trophy,
@@ -78,4 +74,5 @@ Map<String, dynamic> _$MatchToJson(Match instance) => <String, dynamic>{
       'is_coupe': instance.is_coupe,
       'is_super_coupe': instance.is_super_coupe,
       'journey': instance.journey?.toJson(),
+      'time': instance.time,
     };

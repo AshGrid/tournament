@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fullscreen_window/fullscreen_window.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -13,13 +15,12 @@ class VideoComponent extends StatefulWidget {
 }
 
 class _VideoComponentState extends State<VideoComponent> {
-  late VideoPlayerController _videoController;
+  VideoPlayerController? _videoController;
   late YoutubePlayerController _youtubeController;
   bool _isError = false;
   bool _isLoading = true;
   bool _isYoutube = false;
   bool _isVisible = true; // Track visibility
-
   final DataService dataService = DataService();
   List<StreamItem> streamItems = [];
 
@@ -33,12 +34,12 @@ class _VideoComponentState extends State<VideoComponent> {
     try {
       final streamItem = await dataService.fetchStream();
       setState(() {
-        streamItems = streamItem;
+        streamItems = streamItem..sort((a, b) => a.id.compareTo(b.id));
         _isLoading = false;
       });
 
       // Check if the URL is a valid YouTube link
-      String videoUrl = streamItems[streamItems.length-1].url;
+      String videoUrl = streamItems[streamItems.length - 1].url;
       if (YoutubePlayer.convertUrlToId(videoUrl) != null) {
         _isYoutube = true;
         String videoId = YoutubePlayer.convertUrlToId(videoUrl)!;
@@ -52,8 +53,8 @@ class _VideoComponentState extends State<VideoComponent> {
       } else {
         _isYoutube = false;
         _videoController = VideoPlayerController.network(videoUrl);
-        await _videoController.initialize();
-        setState(() {});
+        await _videoController!.initialize();
+        setState(() {}); // Update the UI once the video is initialized
       }
     } catch (error) {
       setState(() {
@@ -69,13 +70,12 @@ class _VideoComponentState extends State<VideoComponent> {
     if (_isYoutube) {
       _youtubeController.dispose();
     } else {
-      _videoController.dispose();
+      _videoController?.dispose(); // Use null-aware operator to check if _videoController is not null
     }
     super.dispose();
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
-    // Check if the video component is visible
     setState(() {
       _isVisible = info.visibleFraction > 0;
     });
@@ -87,11 +87,11 @@ class _VideoComponentState extends State<VideoComponent> {
       } else {
         _youtubeController.pause();
       }
-    } else {
+    } else if (_videoController != null && _videoController!.value.isInitialized) {
       if (_isVisible) {
-        _videoController.play();
+        _videoController!.play();
       } else {
-        _videoController.pause();
+        _videoController!.pause();
       }
     }
   }
@@ -109,7 +109,7 @@ class _VideoComponentState extends State<VideoComponent> {
 
     if (_isLoading) {
       return Center(
-        child: CircularProgressIndicator(color: Colors.white,),
+        child: CircularProgressIndicator(color: Colors.white),
       );
     }
 
@@ -127,15 +127,13 @@ class _VideoComponentState extends State<VideoComponent> {
                 ? YoutubePlayer(
               controller: _youtubeController,
               showVideoProgressIndicator: true,
-              onReady: () {
-                // Optional: Add your logic here if needed
-              },
             )
-                : ClipRRect(
+                : (_videoController != null && _videoController!.value.isInitialized)
+                ? ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Stack(
                 children: [
-                  VideoPlayer(_videoController),
+                  VideoPlayer(_videoController!),
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -147,22 +145,22 @@ class _VideoComponentState extends State<VideoComponent> {
                         children: [
                           IconButton(
                             icon: Icon(
-                              _videoController.value.isPlaying
+                              _videoController!.value.isPlaying
                                   ? Icons.pause
                                   : Icons.play_arrow,
                               color: Colors.white,
                             ),
                             onPressed: () {
                               setState(() {
-                                _videoController.value.isPlaying
-                                    ? _videoController.pause()
-                                    : _videoController.play();
+                                _videoController!.value.isPlaying
+                                    ? _videoController!.pause()
+                                    : _videoController!.play();
                               });
                             },
                           ),
                           Expanded(
                             child: VideoProgressIndicator(
-                              _videoController,
+                              _videoController!,
                               allowScrubbing: true,
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             ),
@@ -172,6 +170,12 @@ class _VideoComponentState extends State<VideoComponent> {
                     ),
                   ),
                 ],
+              ),
+            )
+                : Center(
+              child: Text(
+                'Failed to initialize video player.',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),

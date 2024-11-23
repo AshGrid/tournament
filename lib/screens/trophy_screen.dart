@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled/models/Coupe8.dart';
 import '../Service/data_service.dart'; // Your data service
 import '../components/image_slider.dart'; // Your image slider component
@@ -10,7 +11,7 @@ import 'coupeDetailsScreen.dart';
 import 'coupe_8_details.dart'; // Import your CoupeDetailsScreen
 
 class TrophyScreen extends StatefulWidget {
-  final String trophyName;
+  final Trophy trophyName;
 
   final void Function(League league) onLeagueSelected;
   final void Function(Coupe coupe) onCoupeSelected;
@@ -18,11 +19,11 @@ class TrophyScreen extends StatefulWidget {
 
   const TrophyScreen({
     super.key,
-
     required this.trophyName,
     required this.onLeagueSelected,
     required this.onCoupeSelected,
-    required this.onCoupe8Selected,  });
+    required this.onCoupe8Selected,
+  });
 
   @override
   _TrophyScreenState createState() => _TrophyScreenState();
@@ -34,6 +35,36 @@ class _TrophyScreenState extends State<TrophyScreen> {
   List<League> leaguesList = [];
   List<Coupe> coupesList = []; // List for Coupes
   List<Coupe8> coupes8List = []; // List for Coupe8
+
+  bool isAdsLoading = true;
+
+
+  List<String> imagePaths = [];
+
+  Future<void> _fetchAds() async {
+    try {
+      final fetchedAds = await dataService.fetchAds();
+      setState(() {
+        // Filter ads by place, ensure non-null images, and map to their image paths
+        imagePaths = fetchedAds
+            .where((ad) =>
+        ad.place == "trophy" &&
+            ad.image != null) // Filter by place and non-null images
+            .map((ad) => ad
+            .image!) // Use non-null assertion to convert String? to String
+            .toList();
+        isAdsLoading = false; // Set loading to false after fetching ads
+      });
+    } catch (e) {
+      print("Error fetching ads for home screen: $e");
+      setState(() {
+        isAdsLoading = false; // Stop loading on error
+      });
+    }
+  }
+
+
+
 
   Future<void> _fetchLeagues() async {
     final fetchedLeagues = await dataService.fetchLeagues();
@@ -65,36 +96,52 @@ class _TrophyScreenState extends State<TrophyScreen> {
     });
   }
 
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return "TBD"; // Default value if date is null
+    }
+    final DateFormat formatter = DateFormat('yyyy');
+    return formatter.format(date);
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchLeagues();
     _fetchCoupes();
     _fetchCoupes8(); // Fetch Coupes8
+    _fetchAds();
   }
 
   @override
   Widget build(BuildContext context) {
     // Filtering leagues based on the trophy name
     List<League> filteredLeagues = leaguesList
-        .where((league) => league.trophy!.name == widget.trophyName)
+        .where((league) => league.trophy!.name == widget.trophyName.name)
         .toList();
-          print("filteredLeagues: $filteredLeagues");
+    print("filteredLeagues: $filteredLeagues");
     // Filtering coupes based on the trophy name
     List<Coupe> filteredCoupes = coupesList
-        .where((coupe) => coupe.season!.league?.trophy!.name!.toUpperCase() == widget.trophyName.toUpperCase())
+        .where((coupe) =>
+            coupe.season!.league?.trophy!.name!.toUpperCase() ==
+            widget.trophyName.name!.toUpperCase())
         .toList();
-print("coupe: $filteredCoupes");
+    print("coupe: $filteredCoupes");
     // Filtering coupes8 based on the trophy name
     List<Coupe8> filteredCoupes8 = coupes8List
-        .where((coupe8) => coupe8.season!.league?.trophy!.name!.toUpperCase() == widget.trophyName.toUpperCase())
+        .where((coupe8) =>
+            coupe8.season!.league?.trophy!.name!.toUpperCase() ==
+            widget.trophyName.name!.toUpperCase())
         .toList();
     print("coupe8: $filteredCoupes8");
     // Create a combined list of TrophyItems
     List<TrophyItem> combinedItems = [];
-    combinedItems.addAll(filteredLeagues.map((league) => TrophyItem(league: league)));
-    combinedItems.addAll(filteredCoupes.map((coupe) => TrophyItem(coupe: coupe)));
-    combinedItems.addAll(filteredCoupes8.map((coupe8) => TrophyItem(coupe8: coupe8)));
+    combinedItems
+        .addAll(filteredLeagues.map((league) => TrophyItem(league: league)));
+    combinedItems
+        .addAll(filteredCoupes.map((coupe) => TrophyItem(coupe: coupe)));
+    combinedItems
+        .addAll(filteredCoupes8.map((coupe8) => TrophyItem(coupe8: coupe8)));
 
     // Image paths for the slider
     List<String> imagePath = [
@@ -103,7 +150,10 @@ print("coupe: $filteredCoupes");
       'assets/images/image1.jpeg',
     ];
 
-    double height = widget.trophyName.toUpperCase() == "TROPHÉES DE CARTHAGE" ? 430 : 350;
+    double height =
+        widget.trophyName.name!.toUpperCase() == "TROPHÉES DE CARTHAGE"
+            ? 430
+            : 350;
 
     return Scaffold(
       backgroundColor: AppColors.secondaryBackground,
@@ -166,7 +216,7 @@ print("coupe: $filteredCoupes");
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                'assets/images/${widget.trophyName.toUpperCase()}.png',
+                                'assets/images/${widget.trophyName.name!.toUpperCase()}.png',
                                 fit: BoxFit.contain,
                                 width: 80,
                                 height: 80,
@@ -176,16 +226,29 @@ print("coupe: $filteredCoupes");
                         ),
                         const SizedBox(width: 2),
                         // Trophy Name
-                        Expanded(
-                          child: Text(
-                            widget.trophyName.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.trophyName.name!.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                        ),
+                            Text(
+                              "Depuis: ${_formatDate(widget.trophyName.date)}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -197,8 +260,9 @@ print("coupe: $filteredCoupes");
                       itemCount: combinedItems.length,
                       itemBuilder: (context, index) {
                         final item = combinedItems[index];
-                        final backgroundColor =
-                        index.isEven ? AppColors.trophyItem1 : Colors.transparent;
+                        final backgroundColor = index.isEven
+                            ? AppColors.trophyItem1
+                            : Colors.transparent;
 
                         return Container(
                           decoration: BoxDecoration(
@@ -208,7 +272,8 @@ print("coupe: $filteredCoupes");
                           child: Column(
                             children: [
                               ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 leading: Container(
                                   width: 55,
                                   height: 55,
@@ -248,7 +313,8 @@ print("coupe: $filteredCoupes");
                                   item.onTap(context, widget);
                                 },
                               ),
-                              Divider(color: AppColors.trophyListTileItemBorder),
+                              Divider(
+                                  color: AppColors.trophyListTileItemBorder),
                             ],
                           ),
                         );
@@ -263,8 +329,16 @@ print("coupe: $filteredCoupes");
             child: SizedBox(height: 20),
           ),
           SliverToBoxAdapter(
-            child: ImageSlider(
-              imagePaths: imagePath,
+            child: isAdsLoading
+                ? const Center(
+              child: CircularProgressIndicator(), // Loading icon
+            )
+                : Padding(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 8, horizontal: 8),
+              child: ImageSlider(
+                imagePaths: imagePaths,
+              ),
             ),
           ),
         ],
@@ -309,7 +383,6 @@ class TrophyItem {
       widget.onLeagueSelected(league!);
     } else if (isCoupe) {
       widget.onCoupeSelected(coupe!);
-
     } else if (isCoupe8) {
       widget.onCoupe8Selected(coupe8!);
     }

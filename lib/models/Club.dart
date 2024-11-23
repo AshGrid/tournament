@@ -28,8 +28,8 @@ class Club {
     required this.id,
     required this.name,
     required this.abbreviation,
-    String? logo,
-     String? cover,
+     this.logo,
+     this.cover,
     required this.maillot,
     required this.short,
     required this.bas,
@@ -40,7 +40,8 @@ class Club {
     required this.order,
     required this.active,
     required this.send_mail,
-  }): logo = logo ?? 'default_logo.png',cover = cover ?? 'cover'; // Set default value for logo
+
+  }); // Set default value for logo
 
   factory Club.fromJson(Map<String, dynamic> json) => _$ClubFromJson(json);
   Map<String, dynamic> toJson() => _$ClubToJson(this);

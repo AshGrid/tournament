@@ -53,6 +53,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
     selectedIndex = 1;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +117,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                             child: Center(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50.0),
-                                child: Image.asset(
+                                child: Image.network(
                                   '${widget.player.avatar}',
                                   fit: BoxFit.contain,
                                   width: 80,
@@ -152,7 +153,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                     ),
                                     const SizedBox(width: 4), // Space between league name and trophy name
                                     Text(
-                                      " (${widget.player.birthday})",
+                                      " (${widget.player.birthday?.year}-${widget.player.birthday?.month}-${widget.player.birthday?.day})",
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -251,9 +252,9 @@ class _PlayerDetailsState extends State<PlayerDetails> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
       case 0:
-        return PlayerMatches(); // Display RankingScreen
+        return PlayerMatches(player: widget.player); // Display RankingScreen
       case 1:
-        return PlayrCarriere(); // Display ResultsScreen
+        return PlayrCarriere(player: widget.player); // Display ResultsScreen
 
       default:
         return Container(); // Fallback case

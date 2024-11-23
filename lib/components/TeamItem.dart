@@ -9,6 +9,7 @@ class TeamItem extends StatelessWidget {
   final int index;
   final TeamRanking ranking;
 
+
   const TeamItem({Key? key, required this.club, required this.index, required  this.ranking}) : super(key: key);
 
   @override
@@ -78,7 +79,7 @@ class TeamItem extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        club.logo!,
+                        club.logo??'https://via.placeholder.com/150', // Ensure the image path is valid
                         width: 40, // Adjust the logo size as needed
                         height: 40,
                         fit: BoxFit.fill,
@@ -93,7 +94,7 @@ class TeamItem extends StatelessWidget {
                 ),)
               ],
             ),
-            SizedBox(width: 60, child: Text((ranking.win!+ranking.loose!).toString(), textAlign: TextAlign.right)),
+            SizedBox(width: 60, child: Text((ranking.win!+ranking.loose!+ranking.draw!).toString(), textAlign: TextAlign.right)),
             SizedBox(width: 60, child: Text(ranking.goals_for.toString(), textAlign: TextAlign.center)),
             SizedBox(width: 60, child: Text(ranking.points.toString(), textAlign: TextAlign.center)),
           ],

@@ -11,6 +11,7 @@ class Goal {
   final Player? assist;
   final String? min;
   final Match? match;
+  final bool? is_penalty;
 
   Goal({
     required this.id,
@@ -18,6 +19,7 @@ class Goal {
     this.assist,
     required this.min,
     required this.match,
+    this.is_penalty,
   });
 
   // JSON serialization methods

@@ -11,28 +11,61 @@ import 'package:untitled/models/Trophy.dart';
 import '../models/Card.dart';
 import '../models/Club.dart';
 import '../models/Goal.dart';
+import '../models/Moment.dart';
 import '../models/News.dart';
 import '../models/Match.dart';
+import '../models/Penalty.dart';
 import '../models/Player.dart';
 import '../models/PlayerChange.dart';
 import '../models/Story.dart';
 import '../models/Stream.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/SuperPlayOff8.dart';
+import '../models/adBanner.dart';
+
+
 class DataService {
   final String baseUrl =
       'https://www.abcevents.com.tn/api/'; // Replace with your API URL
 
   /// Fetches news from the API
-  Future<List<News>> fetchNews() async {
+
+
+  Future<List<adBanner>> fetchAds() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl + 'news'));
-      final utf8DecodedResponse = utf8.decode(response.bodyBytes);
+      final response = await http.get(Uri.parse('$baseUrl'+'mobile_ads/'));
 
       // Check if the request was successful
       if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        print("adBanner decoded body");
+        print(decodedBody); // Debugging: Check if "é" is displayed correctly here
         // Decode the JSON response
-        final List<dynamic> jsonData = json.decode(utf8DecodedResponse);
+        final List<dynamic> jsonData = json.decode(decodedBody);
+
+        // Map the JSON data to a list of News objects
+        return jsonData.map((item) => adBanner.fromJson(item)).toList();
+      } else {
+        throw Exception('Failed to load adBanner: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching adBanner: $e');
+      return []; // Return an empty list in case of an error
+    }
+  }
+
+  Future<List<News>> fetchNews() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl'+'news'));
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        print("news decoded body");
+        print(decodedBody); // Debugging: Check if "é" is displayed correctly here
+        // Decode the JSON response
+        final List<dynamic> jsonData = json.decode(decodedBody);
 
         // Map the JSON data to a list of News objects
         return jsonData.map((item) => News.fromJson(item)).toList();
@@ -45,6 +78,17 @@ class DataService {
     }
   }
 
+  Future<List<Penalty>> fetchPenalties(int matchId) async {
+    final url = Uri.parse('$baseUrl'+'penalties_by_match/$matchId/');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      return data.map((penalty) => Penalty.fromJson(penalty)).toList();
+    } else {
+      throw Exception('Failed to load penalties: ${response.body}');
+    }
+  }
 
   Future<List<Trophy>> fetchTrophies() async {
     try {
@@ -99,7 +143,7 @@ class DataService {
       print("played matches");
       print(response.body); // Ensure this shows a valid JSON array or object
 
-      var list = jsonDecode(response.body);
+      var list = jsonDecode(utf8.decode(response.bodyBytes));
       print("list played matches:$list");
       if (list is List) {
         // Assuming list is an array of JSON objects
@@ -124,7 +168,7 @@ class DataService {
 
     if (response.statusCode == 200) {
       // Decode the JSON response
-      var jsonResponse = jsonDecode(response.body);
+      var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       print("upcoming_match_dates response: $jsonResponse");
 
       // Check if the 'upcoming_match_dates' field exists
@@ -142,6 +186,8 @@ class DataService {
     }
   }
 
+
+
   Future<List<Match>> fetchMatchesByDate(DateTime date) async {
     // Format the date as a string (e.g., '2024-10-19')
     String formattedDate = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
@@ -149,7 +195,7 @@ class DataService {
     final response = await http.get(Uri.parse('$baseUrl  matches_by_date/$formattedDate'));
 
     if (response.statusCode == 200) {
-      var jsonResponse = jsonDecode(response.body);
+      var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       print("matches response: $jsonResponse");
 
       // Assuming the response contains a 'matches' key with the match data
@@ -171,43 +217,98 @@ class DataService {
     final response = await http.get(Uri.parse('$baseUrl/matches/$id'));
 
     if (response.statusCode == 200) {
-      return Match.fromJson(json.decode(response.body));
+      return Match.fromJson(json.decode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to load match');
     }
   }
 
   Future<List<Match>> fetchUpcomingMatches() async {
-    final response = await http.get(Uri.parse(baseUrl + 'upcoming_matches'));
+    try {
+      final response = await http.get(Uri.parse(baseUrl + 'upcoming_matches'));
+      print(" upcaoming matches try catch block server code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("upcoming matches");
+        print(response.body);
+
+        var list = jsonDecode(utf8.decode(response.bodyBytes));
+
+        List<Match> matches = (list as List)
+            .map((data) => Match.fromJson(data))
+            .toList();
+
+        return matches;
+      } else {
+        throw Exception('Failed to load matches');
+      }
+    } catch (e) {
+      print("Error loading upcaoming matches try catch block server: $e");
+      // You can handle specific errors here as well
+      return [];
+    }
+
+  }
+
+
+  Future<List<Match>> fetchLiveMatches() async {
+    try {
+      final response = await http.get(Uri.parse(baseUrl + 'live_matches/'));
+      print(" live matches try catch block server code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("live matches");
+        print(response.body);
+
+        var list = jsonDecode(utf8.decode(response.bodyBytes));
+
+        List<Match> matches = (list as List)
+            .map((data) => Match.fromJson(data))
+            .toList();
+
+        return matches;
+      } else {
+        throw Exception('Failed to load live matches');
+      }
+    } catch (e) {
+      print("Error loading live matches try catch block server: $e");
+      // You can handle specific errors here as well
+      return [];
+    }
+
+  }
+
+
+
+  Future<List<Player>> fetchPlayers(int clubID) async {
+    final response = await http.get(Uri.parse(baseUrl + 'players/$clubID'));
+
 
     if (response.statusCode == 200) {
-      print("upcoming matches");
+      print("players");
       print(response.body);
-      var list = jsonDecode(response.body);
+      var list = jsonDecode(utf8.decode(response.bodyBytes));
+      List<Player> players =
+      (list as List).map((data) => Player.fromJson(data)).toList();
+      return players;
+    }else {
+      throw Exception('Failed to load players by club id');
+    }
+  }
+
+  Future<List<Match>> fetchMatchesByPlayer(int playerID) async {
+    final response = await http.get(Uri.parse(baseUrl + 'players/$playerID'));
+
+    if (response.statusCode == 200) {
+      print("players");
+      print(response.body);
+      var list = jsonDecode(utf8.decode(response.bodyBytes));
       List<Match> matches =
-          (list as List).map((data) => Match.fromJson(data)).toList();
+      (list as List).map((data) => Match.fromJson(data)).toList();
       return matches;
     } else {
       throw Exception('Failed to load matches');
     }
   }
 
-
-
-  Future<List<Player>> fetchPlayers(String clubID) async {
-    final response = await http.get(Uri.parse(baseUrl + 'players/' + clubID));
-
-    if (response.statusCode == 200) {
-      print("players");
-      print(response.body);
-      var list = jsonDecode(response.body);
-      List<Player> players =
-          (list as List).map((data) => Player.fromJson(data)).toList();
-      return players;
-    } else {
-      throw Exception('Failed to load matches');
-    }
-  }
 
   Future<List<Story>> fetchStories() async {
     try {
@@ -216,7 +317,7 @@ print(response.body);
       if (response.statusCode == 200) {
         print("status stories ok");
         // Parse the response body and convert it to a list of Story objects
-        final List<dynamic> jsonData = json.decode(response.body);
+        final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
         return jsonData.map((json) => Story.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load stories. Status code: ${response.statusCode}');
@@ -225,7 +326,22 @@ print(response.body);
       throw Exception('Failed to load stories: $error');
     }
   }
-
+  Future<List<Moment>> fetchReels() async {
+    try {
+      final response = await http.get(Uri.parse(baseUrl + 'moments'));
+      print(response.body);
+      if (response.statusCode == 200) {
+        print("status moments ok");
+        // Parse the response body and convert it to a list of Story objects
+        final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
+        return jsonData.map((json) => Moment.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load moments. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Failed to load moments: $error');
+    }
+  }
   Future<List<InvitedPlayers>> fetchInvitedPlayers(int matchId) async {
     try {
       print("$baseUrl invited_players_by_match/$matchId");
@@ -235,7 +351,7 @@ print(response.body);
       if (response.statusCode == 200) {
         print("success invited players");
         // Parse the response body as a list of players
-        List<dynamic> jsonData = json.decode(response.body);
+        List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
 
         // Map each player JSON to an InvitedPlayer object
         return jsonData.map((json) => InvitedPlayers.fromJson(json)).toList();
@@ -255,7 +371,7 @@ print(response.body);
     if (response.statusCode == 200) {
       print("Clubs");
       print(response.body);
-      var list = jsonDecode(response.body);
+      var list = jsonDecode(utf8.decode(response.bodyBytes));
       List<Club> clubs =
           (list as List).map((data) => Club.fromJson(data)).toList();
       return clubs;
@@ -270,7 +386,7 @@ print(response.body);
     if (response.statusCode == 200) {
       print("Clubs");
       print(response.body);
-      var list = jsonDecode(response.body);
+      var list = jsonDecode(utf8.decode(response.bodyBytes));
       List<Club> clubs =
           (list as List).map((data) => Club.fromJson(data)).toList();
       return clubs;
@@ -349,6 +465,30 @@ print(response.body);
     }
   }
 
+  Future<SuperPlayOff8?> fetchSuperPlayoff8(int id) async {
+    try {
+      print("SuperPlayOff fetcheing ");
+      final response = await http.get(Uri.parse(baseUrl + 'super_play_offs8/$id'));
+      final utf8DecodedResponse = utf8.decode(response.bodyBytes);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        print("SuperPlayOff8 fetched successfully");
+
+        // Decode the JSON response
+        final Map<String, dynamic> jsonData = json.decode(utf8DecodedResponse);
+
+        // Map the JSON data to a SuperPlayOff object
+        return SuperPlayOff8.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load SuperPlayOff8: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching SuperPlayOff8: $e');
+      return null; // Return null in case of an error
+    }
+  }
+
   Future<List<Coupe8>> fetchCoupes8() async {
     try {
       final response = await http.get(Uri.parse(baseUrl + 'coupe8/'));
@@ -372,6 +512,55 @@ print(response.body);
     }
   }
 
+  Future<List<Coupe8>> league_super_trophies8() async {
+    try {
+      final response = await http.get(Uri.parse(baseUrl + 'league_super_trophies/'));
+      final utf8DecodedResponse = utf8.decode(response.bodyBytes);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        print("league_super_trophies list");
+
+        // Decode the JSON response
+        final List<dynamic> jsonData = json.decode(utf8DecodedResponse);
+        print(jsonData.map((item) => Coupe8.fromJson(item)).toList());
+        // Map the JSON data to a list of News objects
+        return jsonData.map((item) => Coupe8.fromJson(item)).toList();
+      } else {
+        throw Exception('Failed to load league_super_trophies: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching league_super_trophies: $e');
+      return []; // Return an empty list in case of an error
+    }
+  }
+
+
+  Future<SuperPlayOff8?> league_super_trophies(int id) async {
+    try {
+      print("SuperPlayOff fetcheing ");
+      final response = await http.get(Uri.parse(baseUrl + 'league_super_trophies8/'));
+      final utf8DecodedResponse = utf8.decode(response.bodyBytes);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        print("SuperPlayOff8 fetched successfully");
+
+        // Decode the JSON response
+        final Map<String, dynamic> jsonData = json.decode(utf8DecodedResponse);
+
+        // Map the JSON data to a SuperPlayOff object
+        return SuperPlayOff8.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load SuperPlayOff8: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching SuperPlayOff8: $e');
+      return null; // Return null in case of an error
+    }
+  }
+
+
   Future<List<Club>> fetchRankingByLeague2(int leagueId) async {
     try {
       print("fetchingRankingByLeague");
@@ -393,6 +582,30 @@ print(response.body);
       }
     } catch (e) {
       print('Error fetching Clubs: $e');
+      return []; // Return an empty list in case of an error
+    }
+  }
+  Future<List<Player>> fetchPlayersByClub(int clubId) async {
+    try {
+      print("fetchingRankingByLeague");
+      final response =
+      await http.get(Uri.parse(baseUrl + 'players/$clubId'));
+      final utf8DecodedResponse = utf8.decode(response.bodyBytes);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        print("fetchPlayers by club");
+
+        // Decode the JSON response
+        final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
+        print(jsonData.map((item) => Player.fromJson(item)).toList());
+        // Map the JSON data to a list of News objects
+        return jsonData.map((item) => Player.fromJson(item)).toList();
+      } else {
+        throw Exception('Failed to load Players: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching Players: $e');
       return []; // Return an empty list in case of an error
     }
   }
@@ -499,7 +712,7 @@ print(response.body);
   Future<List<Card>> fetchCards(int matchId) async {
     final response = await http.get(Uri.parse('$baseUrl''cards/?match_id=$matchId'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
       return data.map((json) => Card.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load cards');
@@ -511,7 +724,7 @@ print(response.body);
     print("$baseUrl player_changes/$matchId");
     final response = await http.get(Uri.parse('$baseUrl''player_changes/?match_id=$matchId'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
       return data.map((json) => PlayerChange.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load player changes');
@@ -522,7 +735,7 @@ print(response.body);
   Future<List<Goal>> fetchGoals(int matchId) async {
     final response = await http.get(Uri.parse('$baseUrl''goals/?match_id=$matchId'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
       return data.map((json) => Goal.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load goals');

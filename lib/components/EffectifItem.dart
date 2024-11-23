@@ -29,7 +29,7 @@ class Effectifitem extends StatelessWidget {
       decoration: BoxDecoration(
 
     border: Border(
-      bottom: isLastItem ? BorderSide.none : const BorderSide(color: Color(0xFFFFFFFF), width: 1),
+      bottom: isLastItem ? BorderSide(color: Color(0xFFFFFFFF), width: 1): const BorderSide(color: Color(0xFFFFFFFF), width: 1),
     ),
     ),
       child: Row(
@@ -50,7 +50,7 @@ class Effectifitem extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0), // Circular image
-              child: Image.asset(
+              child: Image.network(
                 playerImage, // Ensure the image path is valid
                 width: 50.0,  // Set image size
                 height: 50.0,

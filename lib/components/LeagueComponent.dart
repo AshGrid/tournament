@@ -11,9 +11,10 @@ import 'package:untitled/components/colors.dart'; // Ensure AppColors is correct
 
 class LeagueComponent extends StatefulWidget {
   final League league;
+  final DateTime date;
   final Function(Match) onMatchSelected;
 
-  const LeagueComponent({Key? key, required this.league, required this.onMatchSelected}) : super(key: key);
+  const LeagueComponent({Key? key, required this.league, required this.onMatchSelected, required this.date}) : super(key: key);
 
   @override
   _LeagueComponentState createState() => _LeagueComponentState();
@@ -37,33 +38,49 @@ class _LeagueComponentState extends State<LeagueComponent> {
 
 
   Future<void> _fetchMatches() async {
-    final fetchedMatches = await dataService.fetchPlayedMatches();
-    setState(() {
-      matchesList = fetchedMatches;
-
-    });
+    try {
+      final fetchedMatches = await dataService.fetchUpcomingMatches();
+      if (mounted) {
+        setState(() {
+          matchesList = fetchedMatches;
+        });
+      }
+    } catch (error) {
+      print("Error fetching matches: $error");
+      // Optionally, handle the error further here, e.g. showing an error message in the UI
+    }
+  }
+  @override
+  void didUpdateWidget(LeagueComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.date != widget.date) {
+      _fetchMatches();
+    }
   }
 
 
-  void addMatchEvents(Match match) {
-    // Your logic for adding match events (if needed)
-  }
+
+//  match.home!.league == widget.league.id &&
 
   @override
   Widget build(BuildContext context) {
     // Sort matches to put live matches first
-    List<Match> sortedMatches = List.from(matchesList);
-    sortedMatches.sort((a, b) {
-      // Check if the match is live or not
-      bool aIsLive = a.status!.toLowerCase() == 'live';
-      bool bIsLive = b.status!.toLowerCase() == 'live';
-
-      // Prioritize live matches
-      if (aIsLive && !bIsLive) return -1;
-      if (!aIsLive && bIsLive) return 1;
-
-      // Maintain the original order if both matches have the same status
-      return 0;
+    matchesList = matchesList.where((match) {
+      // Check if the match belongs to the selected league and matches the date
+      bool isSameLeague = match.away!.league == widget.league.id;
+      bool isSameDate = match.date != null && (
+          match.date!.year == widget.date.year &&
+              match.date!.month == widget.date.month &&
+              match.date!.day == widget.date.day
+      );
+      print("matches in league component");
+      print(matchesList);
+      return isSameLeague && isSameDate;
+    }).toList();
+    matchesList.sort((a, b) {
+      if (a.time == null) return 1; // Push null times to the end
+      if (b.time == null) return -1;
+      return a.time!.compareTo(b.time!);
     });
 
     return Column(
@@ -71,12 +88,12 @@ class _LeagueComponentState extends State<LeagueComponent> {
       children: [
         // League Name and Logo Container
         Container(
-          height: 80,
+          height: 60,
           decoration: BoxDecoration(
-            color: AppColors.leagueComponent,
+            color: Colors.transparent,
             border: Border(
-              top: BorderSide(color: Colors.white),
-              bottom: BorderSide(color: Colors.white),
+              top: BorderSide(color: Colors.white,width: 0.2),
+              bottom: BorderSide(color: Colors.white,width: 0.2),
             ),
           ),
           child: Row(
@@ -84,19 +101,12 @@ class _LeagueComponentState extends State<LeagueComponent> {
               const SizedBox(width: 12),
               // Container for the League Logo with border and shadow
               Container(
-                width: 65, // Adjust the width and height as needed
-                height: 65,
+                width: 40, // Adjust the width and height as needed
+                height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: AppColors.teamLogoBorder, width: 1), // Add border to the container
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.teamLogoShadow, // Shadow color
-                      offset: Offset(2, 4), // Shadow position
-                      blurRadius: 4, // How blurry the shadow is
-                    ),
-                  ],
+                  color: Colors.transparent,
+                   // Add border to the container
+
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0), // Match the border radius
@@ -125,9 +135,9 @@ class _LeagueComponentState extends State<LeagueComponent> {
         // Matches List Container with no extra padding or spacing
         Column(
           children: List.generate(
-            sortedMatches.length,
+            matchesList.length,
                 (index) {
-              final match = sortedMatches[index];
+              final match = matchesList[index];
               return GestureDetector(
                 onTap: () {
                   widget.onMatchSelected(match);
@@ -135,7 +145,7 @@ class _LeagueComponentState extends State<LeagueComponent> {
                 child: MatchItemLive(
                   match: match,
                   backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
-                  isLastItem: index == sortedMatches.length - 1, // Check if it's the last item
+                  isLastItem: index == matchesList.length - 1, isFirstItem: index == 0, // Check if it's the last item
                 ),
               );
             },

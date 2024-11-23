@@ -22,17 +22,9 @@ class Coupe8Tableau extends StatefulWidget {
 class _Coupe8TableauTableauState extends State<Coupe8Tableau> {
   int selectedDayIndex = 0;
 
-  final List<String> phases = [
-    'QUARTS DE FINALE',
-    'DEMI-FINALE',
-    'FINALE',
-  ];
 
-  final Map<String, List<Match>> matchesByPhase = {
-    'QUARTS DE FINALE': MockData.mockMatches,
-    'DEMI-FINALE': MockData.mockMatches,
-    'FINALE':MockData.mockMatches,
-  };
+
+
 
 
 

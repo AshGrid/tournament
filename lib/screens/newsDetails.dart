@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../models/News.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 class NewsDetails extends StatelessWidget {
   final News newsItem;
 
-  const NewsDetails({Key? key, required this.newsItem}) : super(key: key);
+   NewsDetails({Key? key, required this.newsItem}) : super(key: key);
 
 
-
+  final unescape = HtmlUnescape();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -160,13 +161,14 @@ class NewsDetails extends StatelessWidget {
   }
 
   Widget _buildContent() {
+    final String decodedContent = unescape.convert(newsItem.content);
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Row(
         children: [
           Expanded( // Use Expanded to allow the text to take available space
             child: Text(
-              newsItem.content ?? 'Content not available',
+              decodedContent ?? 'Content not available',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,

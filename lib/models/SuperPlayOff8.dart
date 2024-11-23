@@ -26,6 +26,8 @@ class SuperPlayOff8 {
 
   });
   factory SuperPlayOff8.fromJson(Map<String, dynamic> json) => _$SuperPlayOff8FromJson(json);
+
+  get quarter_final_1_home => null;
   Map<String, dynamic> toJson() => _$SuperPlayOff8ToJson(this);
 
 }

@@ -8,6 +8,7 @@ import 'package:untitled/models/SuperPlayOff.dart';
 
 import '../Service/data_service.dart';
 import '../models/League.dart';
+import '../models/SuperPlayOff8.dart';
 import '../models/Team.dart';
 import '../models/Match.dart';
 
@@ -23,6 +24,7 @@ class SuperPlayOffTableau extends StatefulWidget {
 class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
   final DataService dataService = DataService();
   SuperPlayOff? superPlayoffList;
+  SuperPlayOff8? superPlayoff8List;
 
   static const List<String> phases = [
     'QUARTS DE FINALE',
@@ -47,6 +49,17 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
     }
   }
 
+  Future<void> _fetchSuperPlayoff8() async {
+    try {
+      final fetchedClubs = await dataService.fetchSuperPlayoff8(widget.playOff.id!);
+      setState(() {
+        superPlayoff8List = fetchedClubs;
+      });
+    } catch (error) {
+      print("Error fetching Super PlayOff: $error");
+    }
+  }
+
   List<Tournament> _createTournaments() {
 
     return [
@@ -57,48 +70,84 @@ class _SuperPlayOffTableauState extends State<SuperPlayOffTableau> {
   }
 
   List<TournamentMatch> _createQuarterFinalMatches() {
-    if (superPlayoffList == null) return [];
+
     return [
       _createDefaultTournamentMatch(
         id: "1",
-        teamA: superPlayoffList!.quarter_final_1_home?.home?.name ?? "TBD",
-        teamB: superPlayoffList!.quarter_final_1_away?.away?.name ?? "TBD",
-        scoreTeamA: _calculateScore(superPlayoffList!.quarter_final_1_home),
-        scoreTeamB: _calculateScore(superPlayoffList!.quarter_final_1_away),
-        teamAImage: superPlayoffList!.quarter_final_1_home?.home?.logo ?? "",
-        teamBImage: superPlayoffList!.quarter_final_1_away?.away?.logo ?? "",
+        teamA: superPlayoffList?.quarter_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.quarter_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.quarter_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.quarter_final_1_away),
+        teamAImage: superPlayoffList?.quarter_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.quarter_final_1_away?.away?.logo ?? "",
+      ),
+      _createDefaultTournamentMatch(
+        id: "2",
+        teamA: superPlayoffList?.quarter_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.quarter_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.quarter_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.quarter_final_1_away),
+        teamAImage: superPlayoffList?.quarter_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.quarter_final_1_away?.away?.logo ?? "",
+      ),
+      _createDefaultTournamentMatch(
+        id: "3",
+        teamA: superPlayoffList?.quarter_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.quarter_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.quarter_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.quarter_final_1_away),
+        teamAImage: superPlayoffList?.quarter_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.quarter_final_1_away?.away?.logo ?? "",
+      ),
+      _createDefaultTournamentMatch(
+        id: "4",
+        teamA: superPlayoffList?.quarter_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.quarter_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.quarter_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.quarter_final_1_away),
+        teamAImage: superPlayoffList?.quarter_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.quarter_final_1_away?.away?.logo ?? "",
       ),
       // Add more matches...
     ];
   }
 
   List<TournamentMatch> _createSemiFinalMatches() {
-    if (superPlayoffList == null) return [];
+
     return [
       _createDefaultTournamentMatch(
-        id: "11",
-        teamA: superPlayoffList!.semi_final_1_home?.home?.name ?? "TBD",
-        teamB: superPlayoffList!.semi_final_1_away?.away?.name ?? "TBD",
-        scoreTeamA: _calculateScore(superPlayoffList!.semi_final_1_home),
-        scoreTeamB: _calculateScore(superPlayoffList!.semi_final_1_away),
-        teamAImage: superPlayoffList!.semi_final_1_home?.home?.logo ?? "",
-        teamBImage: superPlayoffList!.semi_final_1_away?.away?.logo ?? "",
+        id: "5",
+        teamA: superPlayoffList?.semi_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.semi_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.semi_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.semi_final_1_away),
+        teamAImage: superPlayoffList?.semi_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.semi_final_1_away?.away?.logo ?? "",
+      ),
+      _createDefaultTournamentMatch(
+        id: "6",
+        teamA: superPlayoffList?.semi_final_1_home?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.semi_final_1_away?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.semi_final_1_home),
+        scoreTeamB: _calculateScore(superPlayoffList?.semi_final_1_away),
+        teamAImage: superPlayoffList?.semi_final_1_home?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.semi_final_1_away?.away?.logo ?? "",
       ),
       // Add more matches...
     ];
   }
 
   List<TournamentMatch> _createFinalMatches() {
-    if (superPlayoffList == null) return [];
+
     return [
       _createDefaultTournamentMatch(
         id: "21",
-        teamA: superPlayoffList!.finalmatch?.home?.name ?? "TBD",
-        teamB: superPlayoffList!.finalmatch?.away?.name ?? "TBD",
-        scoreTeamA: _calculateScore(superPlayoffList!.finalmatch),
-        scoreTeamB: _calculateScore(superPlayoffList!.finalmatch),
-        teamAImage: superPlayoffList!.finalmatch?.home?.logo ?? "",
-        teamBImage: superPlayoffList!.finalmatch?.away?.logo ?? "",
+        teamA: superPlayoffList?.finalmatch?.home?.name ?? "TBD",
+        teamB: superPlayoffList?.finalmatch?.away?.name ?? "TBD",
+        scoreTeamA: _calculateScore(superPlayoffList?.finalmatch),
+        scoreTeamB: _calculateScore(superPlayoffList?.finalmatch),
+        teamAImage: superPlayoffList?.finalmatch?.home?.logo ?? "",
+        teamBImage: superPlayoffList?.finalmatch?.away?.logo ?? "",
       ),
     ];
   }

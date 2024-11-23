@@ -28,7 +28,7 @@ class _StreamingScreenState extends State<StreamingScreen> {
     try {
       final items = await dataService.fetchStream(); // Assuming you have this method
       setState(() {
-        streamItems = items;
+        streamItems = items..sort((a, b) => a.id.compareTo(b.id));
         _isLoading = false;
       });
     } catch (error) {

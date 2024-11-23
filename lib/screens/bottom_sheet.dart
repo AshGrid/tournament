@@ -4,7 +4,7 @@ import 'package:untitled/components/colors.dart';
 import '../models/Trophy.dart';
 
 class BottomSheetContent extends StatelessWidget {
-  final Function(String) onTrophySelected;
+  final Function(Trophy) onTrophySelected;
   final List<Trophy> trophies;// Callback function
 
   BottomSheetContent({Key? key, required this.onTrophySelected,required this.trophies }) : super(key: key);
@@ -98,7 +98,7 @@ class BottomSheetContent extends StatelessWidget {
               ),
               onTap: () {
                 print(trophy.name!.toUpperCase());
-                onTrophySelected(trophy.name!); // Pass the selected trophy name
+                onTrophySelected(trophy); // Pass the selected trophy name
                 Navigator.pop(context); // Close the bottom sheet
               },
             ),

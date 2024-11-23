@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tournament_bracket/flutter_tournament_bracket.dart';
-
+import 'package:untitled/components/TropheeHannibalVeteranTableau.dart';
+import 'package:untitled/components/TropheehannibalcalendarVeteran.dart';
+import 'package:untitled/components/TropheehannibalresultasVeteran.dart';
+import 'package:untitled/components/superPlayOff8Calendar.dart';
 
 import 'package:untitled/components/superPlayOffCalendar.dart';
 import 'package:untitled/components/superPlayOffResultats.dart';
@@ -14,17 +17,29 @@ import '../components/calendarContainer.dart';
 import '../components/colors.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
+import '../components/superPlayOff8Resultats.dart';
+import '../components/superPlayOff8Tableau.dart';
 import '../components/superPlayOffCalendar.dart';
 import '../components/superPlayOffTableau.dart';
 import '../models/Club.dart';
+import '../models/Match.dart';
+import '../models/Coupe8.dart';
+import '../models/SuperPlayOff8.dart';
 import '../models/TeamRanking.dart';
 
 class PhaseDetailsScreen extends StatefulWidget {
   final String phaseName;
   final League league;
   final String trophyName;
+  final Function(Match) onMatchSelected;
 
-  const PhaseDetailsScreen({super.key, required this.phaseName, required this.league, required this.trophyName});
+  const PhaseDetailsScreen(
+      {super.key,
+      required this.phaseName,
+      required this.league,
+      required this.trophyName,
+      required this.onMatchSelected
+      });
 
   @override
   _PhaseDetailsScreenState createState() => _PhaseDetailsScreenState();
@@ -33,39 +48,107 @@ class PhaseDetailsScreen extends StatefulWidget {
 class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   final DataService dataService = DataService();
   int selectedIndex = 0;
-
-  List<String> years = List.generate(7, (index) => (19 + index).toString()); // Years from 2010 to 2024
+  List<Coupe8> coupes8List = []; // List for Coupe8
+  List<String> years = List.generate(
+      7, (index) => (19 + index).toString()); // Years from 2010 to 2024
   String selectedYear = '24'; // Default selected year
+  List<Coupe8> league_superTrophies = [];
+  late Coupe8? league_superTrophy = null;
 
+  SuperPlayOff8? hannibalTrophies;
 
-
-
-  List<Club> clubsList= [];
-  List<TeamRanking> clubsListPremierePhase= [];
+  List<Club> clubsList = [];
+  List<TeamRanking> clubsListPremierePhase = [];
   SuperPlayOff? superPlayoffList;
+  SuperPlayOff8? superPlayoff8List;
 
-
-
-
-   // Future<void> _fetchClubs() async {
-   //   final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
-   //   setState(() {
-   //     clubsList = fetchedClubs;
-   //   });
-   // }
-  Future<void> _fetchClubsByPremierePhase() async {
-    final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
-    print("fetched clubs premirephase");
+  Future<void> _fetchCoupes8() async {
+    final fetchedCoupes8 = await dataService.fetchCoupes8();
     setState(() {
-      clubsListPremierePhase = fetchedClubs;
+      coupes8List = fetchedCoupes8;
+
+      // Print the names of all the fetched coupes
+      for (var coupe in coupes8List) {
+        print("Coupe8 name: ${coupe.season?.league?.trophy?.name}");
+      }
     });
   }
+
+  // Future<void> _fetchClubs() async {
+  //   final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
+  //   setState(() {
+  //     clubsList = fetchedClubs;
+  //   });
+  // }
+  Future<void> _fetchClubsByPremierePhase() async {
+    print("league id");
+    print(widget.league.id);
+
+    try {
+      final fetchedClubs =
+          await dataService.fetchRankingByLeague(widget.league.id!);
+      print("fetched clubs premirephase by league id");
+
+      // Sort the clubs by teamranking.points in descending order
+      fetchedClubs.sort((a, b) => b.points!.compareTo(a.points!));
+
+      setState(() {
+        clubsListPremierePhase = fetchedClubs; // Use the sorted list
+      });
+
+      print(clubsListPremierePhase); // Log the sorted clubs
+    } catch (error) {
+      print('Error fetching clubs: $error');
+      // Handle error if necessary
+    }
+  }
+
   Future<void> _fetchsuperPlayoff() async {
-    final fetchedClubs= await dataService.fetchSuperPlayoff(widget.league.id!);
-    print("fetched clubs premirephase");
+    final fetchedClubs = await dataService.fetchSuperPlayoff(widget.league.id!);
+    print("fetched clubs siperplayoff");
     setState(() {
       superPlayoffList = fetchedClubs;
     });
+  }
+
+  Future<void> _fetchsuperPlayoff8() async {
+    final fetchedClubs =
+        await dataService.fetchSuperPlayoff8(widget.league.id!);
+    print("fetched clubs siperplayoff");
+    setState(() {
+      superPlayoff8List = fetchedClubs;
+    });
+  }
+
+  Future<void> _fetchHannibal() async {
+    final fetchedClubs =
+        await dataService.league_super_trophies(widget.league.id!);
+    print("fetched clubs siperplayoff");
+    setState(() {
+      hannibalTrophies = fetchedClubs;
+    });
+  }
+
+  Future<void> league_super_trophies() async {
+    // Fetch the super trophies
+    final fetchedSuperTrophies = await dataService.league_super_trophies8();
+    print("Fetched clubs from PremierePhase");
+
+    try {
+      // Get the first trophy that matches the league ID
+      final selectedTrophy = fetchedSuperTrophies.firstWhere((trophy) {
+        return trophy.season?.league?.id == widget.league.id;
+      });
+
+      // If found, update your state
+      setState(() {
+        league_superTrophy =
+            selectedTrophy; // Store the single trophy in your state variable
+      });
+    } catch (e) {
+      // Handle the case where no trophy is found
+      print("No trophy found for the league ID ${widget.league.id}");
+    }
   }
 
   @override
@@ -73,7 +156,10 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
     super.initState();
     _fetchClubsByPremierePhase();
     _fetchsuperPlayoff();
-   // _fetchClubs();
+    _fetchCoupes8(); // Fetch Coupes8
+    _fetchsuperPlayoff8();
+    _fetchHannibal();
+    // _fetchClubs();
     if (this.widget.phaseName == "SUPER PLAY-OFF") {
       selectedIndex = 3; // or whatever index you need
     } else if (this.widget.phaseName == "TROPHÉE HANNIBAL") {
@@ -85,11 +171,14 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Coupe8> filteredCoupes8 = coupes8List
+        .where((coupe8) =>
+            coupe8.season!.league?.trophy!.name!.toUpperCase() ==
+            widget.trophyName.toUpperCase())
+        .toList();
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.backgroundColor
-        ),
+        decoration: BoxDecoration(gradient: AppColors.backgroundColor),
         child: CustomScrollView(
           slivers: [
             // Phase Details Header
@@ -133,7 +222,8 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(color: Colors.black12, width: 1),
+                              border:
+                                  Border.all(color: Colors.black12, width: 1),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.25),
@@ -168,7 +258,9 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                const SizedBox(height: 4), // Space between league name and trophy name
+                                const SizedBox(
+                                    height:
+                                        4), // Space between league name and trophy name
                                 Text(
                                   widget.league.name!,
                                   style: TextStyle(
@@ -177,7 +269,9 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                const SizedBox(height: 4), // Space between league name and trophy name
+                                const SizedBox(
+                                    height:
+                                        4), // Space between league name and trophy name
                                 Row(
                                   children: [
                                     Text(
@@ -190,33 +284,33 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                     ),
                                     Spacer(),
                                     // DropdownButton for Year Selection
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                      width: 50,
-                                      height: 35,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(4.0),
-                                        border: Border.all(color: Colors.grey, width: 1),
-
-                                      ),
-                                      child: DropdownButton<String>(
-                                        value: selectedYear,
-                                        icon: Icon(Icons.arrow_drop_down),
-                                        underline: Container(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedYear = newValue!;
-                                          });
-                                        },
-                                        items: years.map<DropdownMenuItem<String>>((String year) {
-                                          return DropdownMenuItem<String>(
-                                            value: year,
-                                            child: Text(year, style: TextStyle(fontSize: 12, color: Colors.black)),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )
+                                    // Container(
+                                    //   padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    //   width: 50,
+                                    //   height: 35,
+                                    //   decoration: BoxDecoration(
+                                    //     color: Colors.transparent,
+                                    //     borderRadius: BorderRadius.circular(4.0),
+                                    //     border: Border.all(color: Colors.grey, width: 1),
+                                    //
+                                    //   ),
+                                    //   child: DropdownButton<String>(
+                                    //     value: selectedYear,
+                                    //     icon: Icon(Icons.arrow_drop_down),
+                                    //     underline: Container(),
+                                    //     onChanged: (String? newValue) {
+                                    //       setState(() {
+                                    //         selectedYear = newValue!;
+                                    //       });
+                                    //     },
+                                    //     items: years.map<DropdownMenuItem<String>>((String year) {
+                                    //       return DropdownMenuItem<String>(
+                                    //         value: year,
+                                    //         child: Text(year, style: TextStyle(fontSize: 12, color: Colors.black)),
+                                    //       );
+                                    //     }).toList(),
+                                    //   ),
+                                    // )
                                   ],
                                 ),
                               ],
@@ -265,7 +359,8 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
             SliverToBoxAdapter(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
                 child: _buildSelectedContent(),
               ),
             ),
@@ -313,39 +408,106 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   // Method to build the selected content
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
-       case 0:
-         return PremierePhaseRankingScreen(clubs: clubsListPremierePhase,); // Display RankingScreen
+      case 0:
+        return PremierePhaseRankingScreen(
+          clubs: clubsListPremierePhase,
+        ); // Display RankingScreen
       case 1:
-        return PremierePhaseResultsScreen(league: widget.league); // Display ResultsScreen
+        return PremierePhaseResultsScreen(
+            league: widget.league, onMatchSelected: widget.onMatchSelected); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(league: widget.league.id!); // Display CalendarScreen
+        return PremierePhaseCalendarScreen(
+            league: widget.league.id!, onMatchSelected: widget.onMatchSelected,); // Display CalendarScreen
       case 3:
-      // Ensure superPlayoffList is not null
-        if (superPlayoffList != null) {
-          return SuperPlayOffTableau(playOff: widget.league);
-        } else {
-          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+        if (widget.league.id == 5) {
+          return SuperPlayOff8Tableau(playOff: widget.league);
         }
+        // Ensure superPlayoffList is not null
+        return SuperPlayOffTableau(playOff: widget.league);
       case 4:
+        if (widget.league.id == 5) {
+          if (superPlayoff8List != null) {
+            return Superplayoff8resultat(
+              superPlayOffData: superPlayoff8List!,
+            );
+          }
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.white,
+          ));
+        }
         if (superPlayoffList != null) {
-          return Superplayoffresultat(superPlayOffData: superPlayoffList!,);
+          return Superplayoffresultat(
+            superPlayOffData: superPlayoffList!,
+          );
         } else {
-          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+          return Center(
+              child: CircularProgressIndicator()); // or any placeholder widget
         }
 
       case 5:
+        if (widget.league.id == 5) {
+          if (superPlayoff8List != null) {
+            return SuperPlayoff8Calendar(
+              superPlayOff: superPlayoff8List!,
+            );
+          }
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.white,
+          ));
+        }
         if (superPlayoffList != null) {
-          return SuperPlayoffCalendar(superPlayOff: superPlayoffList!,);
+          return SuperPlayoffCalendar(
+            superPlayOff: superPlayoffList!,
+          );
         } else {
-          return Center(child: CircularProgressIndicator()); // or any placeholder widget
+          return Center(
+              child: CircularProgressIndicator()); // or any placeholder widget
         }
 
       case 6:
-        return Tropheehannibaltableau();
+        if (widget.league.id == 5) {
+
+            return Tropheehannibalveterantableau(
+              superPlayOff8: hannibalTrophies,
+            );
+
+
+        }
+        return Tropheehannibaltableau(coupe8: league_superTrophy);
       case 7:
-        return Tropheehannibalresultats();
+        if (widget.league.id == 5) {
+          if (hannibalTrophies != null) {
+            return TropheehannibalresultatsVeteran(coupe:hannibalTrophies );
+          }
+          return Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ));
+        }
+        if (league_superTrophy != null) {
+         return Tropheehannibalresultats(coupe: league_superTrophy);
+        } else {
+          return Center(
+              child: CircularProgressIndicator()); // or any placeholder widget
+        }
       case 8:
-        return Tropheehannibalcalendar();
+        if (widget.league.id == 5) {
+          if (hannibalTrophies != null) {
+            return TropheehannibalcalendarVeteran(coupe: hannibalTrophies);
+          }
+          return Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ));
+        }
+        if (league_superTrophy != null) {
+          return Tropheehannibalcalendar(coupe: league_superTrophy);
+        } else {
+          return Center(
+              child: CircularProgressIndicator()); // or any placeholder widget
+        }
       default:
         return Container(); // Fallback case
     }

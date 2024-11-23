@@ -1,29 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/screens/ReelsPage.dart';
+import 'package:video_player/video_player.dart';
+import '../Service/data_service.dart';
 import '../components/colors.dart';
+import '../models/Moment.dart';
 
+class Bestmoments extends StatefulWidget {
+  @override
+  _BestmomentsState createState() => _BestmomentsState();
+}
 
-class Bestmoments extends StatelessWidget {
+class _BestmomentsState extends State<Bestmoments> {
+  List<VideoPlayerController> _videoControllers = [];
+  List<String> videos = [];
+  List<String> captions = [];
 
+  List<Moment> moments = [];
+  final DataService dataService = DataService();
+  bool isVideosLoading = true;
 
-  // const Bestmoments({
-  //   Key? key,
-  //
-  // }) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    _fetchReels();
+  }
 
+  void _initializeVideoControllers() {
+    if (videos.isEmpty) {
+      print("No video paths provided.");
+      return;
+    }
 
-  List<String> imagePath = [
-    'assets/images/image1.jpeg',
-    'assets/images/image2.jpeg',
-    'assets/images/image1.jpeg',
-  ];
+    for (var videoPath in videos) {
+      VideoPlayerController controller = VideoPlayerController.network(videoPath)
+        ..initialize().then((_) {
+          setState(() {}); // Ensure the first frame is shown when initialized
+        }).catchError((error) {
+          print("Error initializing video: $error");
+        });
+      _videoControllers.add(controller);
+    }
+  }
 
-  List<String> captions = [
-    'Caption 1',
-    'Caption 2',
-    'Caption 3',
-  ];
-   String text = 'Meilleurs moments';
+  @override
+  void dispose() {
+    for (var controller in _videoControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _fetchReels() async {
+    try {
+      final fetchedMoments = await dataService.fetchReels();
+
+      setState(() {
+        moments = fetchedMoments;
+        videos = moments.map((moment) => moment.video).toList();
+        captions = moments.map((moment) => moment.name).toList();
+        _initializeVideoControllers();
+        isVideosLoading = false; // Set loading to false after fetching moments
+      });
+    } catch (e) {
+      print("Error fetching moments for home screen $e");
+      setState(() {
+        isVideosLoading = false; // Stop loading on error
+      });
+    }
+  }
+
+  String text = 'Meilleurs moments';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -36,8 +83,8 @@ class Bestmoments extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                text.toUpperCase(),
-                style: TextStyle(
+                "Meilleurs moments",
+                style: const TextStyle(
                   fontSize: 24,
                   fontFamily: "oswald",
                   fontWeight: FontWeight.bold,
@@ -51,10 +98,10 @@ class Bestmoments extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 2), // Space between text and underline
+              const SizedBox(height: 2),
               Container(
-                width: text.toUpperCase().length*13, // Adjust the underline length here
-                height: 3, // Thickness of the underline
+                width: "Meilleur moments".toUpperCase().length * 13,
+                height: 3,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -62,7 +109,7 @@ class Bestmoments extends StatelessWidget {
                       color: AppColors.textShadow,
                       spreadRadius: 0,
                       blurRadius: 4,
-                      offset: Offset(0, 4), // Shadow position for the underline
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -71,19 +118,21 @@ class Bestmoments extends StatelessWidget {
           ),
           const SizedBox(height: 14.0),
 
-          // Image Grid
-          Expanded(
-            child: GridView.builder(
+          // Video Grid
+          Expanded( // Use Expanded to allow the GridView to take available space
+            child: GridView.count(
               padding: const EdgeInsets.all(5.0),
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 20.0,
-                childAspectRatio: 0.5,
-              ),
-              itemCount: imagePath.length,
-              itemBuilder: (context, index) {
+              crossAxisCount: 2,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 20.0,
+              childAspectRatio: 0.5,
+              children: List.generate(videos.length, (index) {
+                if (index >= _videoControllers.length) {
+                  return const SizedBox(); // Prevent error if controllers are not yet initialized
+                }
+
+                final controller = _videoControllers[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -102,27 +151,26 @@ class Bestmoments extends StatelessWidget {
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => ReelsPage()), // Replace with your main screen
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReelsPage(
+                                videoPaths: videos,
+                                videoCaptions: captions,
+                                currentIndex: index,
+                              ),
+                            ),
+                          ); // Replace with your main screen
                         },
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(
-                                imagePath[index],
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Center(
-                                    child: Text(
-                                      'Image Not Found',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  );
-                                },
+                              child: controller.value.isInitialized
+                                  ? VideoPlayer(controller)
+                                  : const Center(
+                                child: CircularProgressIndicator(),
                               ),
                             ),
                             // Gradient overlay for the fading effect
@@ -135,10 +183,13 @@ class Bestmoments extends StatelessWidget {
                                     Colors.transparent,
                                     Colors.white.withOpacity(0.7),
                                   ],
-                                  stops: const [0.3, 1.0], // Adjust gradient stop for better fading
+                                  stops: const [0.3, 1.0],
                                 ),
                                 borderRadius: BorderRadius.circular(8.0),
-                                border: Border.all(color: AppColors.imageGridItem, width: 2.5),
+                                border: Border.all(
+                                  color: AppColors.imageGridItem,
+                                  width: 2.5,
+                                ),
                               ),
                             ),
                           ],
@@ -147,47 +198,33 @@ class Bestmoments extends StatelessWidget {
                     ),
                     const SizedBox(height: 4.0),
 
-                    // Icons (Heart and Comment) placed under the image
+                    // Icons (Heart and Comment)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
                           onPressed: () {
-                            // Add your like action here
+                            // Handle like action
                           },
                           icon: Image.asset(
                             'assets/icons/heart.png',
                             fit: BoxFit.scaleDown,
-                            width: 20, // Adjust the size here
+                            width: 20,
                             height: 20,
                           ),
                         ),
-                        Text("123K",style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: "oswald",
-
-                          color: Colors.white,
-                        ),),
                         const SizedBox(width: 10.0),
-
-                        // Space between icons
                         IconButton(
                           onPressed: () {
-                            // Add your comment action here
+                            // Handle comment action
                           },
                           icon: Image.asset(
                             'assets/icons/comment.png',
                             fit: BoxFit.scaleDown,
-                            width: 20, // Adjust the size here
+                            width: 20,
                             height: 20,
                           ),
                         ),
-                        Text("123K",style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: "oswald",
-
-                          color: Colors.white,
-                        ),),
                       ],
                     ),
 
@@ -205,7 +242,7 @@ class Bestmoments extends StatelessWidget {
                     ),
                   ],
                 );
-              },
+              }),
             ),
           ),
         ],

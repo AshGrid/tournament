@@ -3,12 +3,10 @@ import 'package:untitled/components/colors.dart';
 
 class ImageSlider extends StatefulWidget {
   final List<String> imagePaths;
- // final double height;
 
   const ImageSlider({
     Key? key,
     required this.imagePaths,
-   // this.height = 200.0, // Default height
   }) : super(key: key);
 
   @override
@@ -41,10 +39,17 @@ class _ImageSliderState extends State<ImageSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
+    final sliderHeight = 200.0;
+    // isTablet
+    //     ? MediaQuery.of(context).size.height * 0.4
+    //     : MediaQuery.of(context).size.height * 0.225;
+
     return Stack(
       children: [
+        // Slider Container
         SizedBox(
-          height: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.height * 0.4 :  MediaQuery.of(context).size.height * 0.225,
+          height: sliderHeight,
           child: PageView(
             controller: _pageController,
             scrollDirection: Axis.horizontal,
@@ -54,7 +59,7 @@ class _ImageSliderState extends State<ImageSlider> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
                   image: DecorationImage(
-                    image: AssetImage(path),
+                    image: NetworkImage(path),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -62,6 +67,8 @@ class _ImageSliderState extends State<ImageSlider> {
             }).toList(),
           ),
         ),
+
+        // Page Indicator Dots
         Positioned(
           bottom: 10,
           left: 0,
@@ -70,7 +77,8 @@ class _ImageSliderState extends State<ImageSlider> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               widget.imagePaths.length,
-                  (index) => Container(
+                  (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
                 width: 8,
                 height: 8,

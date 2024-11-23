@@ -6,12 +6,14 @@ import 'package:untitled/components/bracketCard.dart';
 import 'package:untitled/components/brackets.dart';
 
 import '../Service/mock_data.dart';
+import '../models/Coupe8.dart';
 import '../models/Team.dart';
 import '../models/Match.dart';
 import 'colors.dart';
 
 class Tropheehannibaltableau extends StatefulWidget {
-  const Tropheehannibaltableau({Key? key}) : super(key: key);
+  final Coupe8? coupe8;
+  const Tropheehannibaltableau({Key? key, required this.coupe8}) : super(key: key);
 
   @override
   _TropheehannibaltableauState createState() => _TropheehannibaltableauState();
@@ -20,40 +22,117 @@ class Tropheehannibaltableau extends StatefulWidget {
 class _TropheehannibaltableauState extends State<Tropheehannibaltableau> {
   int selectedDayIndex = 0;
 
-  final List<String> phases = [
-    'QUARTS DE FINALE',
-    'DEMI-FINALE',
-    'FINALE',
-  ];
-
-  final Map<String, List<Match>> matchesByPhase = {
-    'QUARTS DE FINALE': MockData.mockMatches,
-    'DEMI-FINALE': MockData.mockMatches,
-    'FINALE': MockData.mockMatches,
-  };
 
 
-  final List<Tournament> _tournaments = [
 
-    Tournament(matches: [
-      TournamentMatch(id: "1", teamA: "ennakl", teamB: "monoprix", scoreTeamA: "3", scoreTeamB: "1"),
-      TournamentMatch(id: "2", teamA: "monoprix", teamB: "ennakl", scoreTeamA: "0", scoreTeamB: "1"),
-      TournamentMatch(id: "3", teamA: "ennakl", teamB: "monoprix", scoreTeamA: "0", scoreTeamB: "2"),
-      TournamentMatch(id: "4", teamA: "monoprix", teamB: "ennakl", scoreTeamA: "4", scoreTeamB: "2"),
-    ]),
-    Tournament(matches: [
-      TournamentMatch(id: "1", teamA: "ennakl", teamB: "monoprix", scoreTeamA: "4", scoreTeamB: "0"),
-      TournamentMatch(id: "2", teamA: "monoprix", teamB: "ennakl", scoreTeamA: "2", scoreTeamB: "1"),
-    ]),
-    Tournament(matches: [
-      TournamentMatch(id: "1", teamA: "ennakl", teamB: "monoprix", scoreTeamA: "4", scoreTeamB: "3"),
-    ])
-  ];
+
+
+
 
 
   @override
   Widget build(BuildContext context) {
     // Create a list of tournaments based on the selected phase
+    final List<Tournament> _tournaments = [
+      Tournament(matches: [
+        TournamentMatch(
+          id: "1",
+          teamA: widget.coupe8?.quarter_final_1?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.quarter_final_1?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.quarter_final_1?.home_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_1?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.quarter_final_1?.away_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_1?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.quarter_final_1?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.quarter_final_1?.away?.logo ?? "",
+        ),
+        TournamentMatch(
+          id: "2",
+          teamA: widget.coupe8?.quarter_final_2?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.quarter_final_2?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.quarter_final_2?.home_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_2?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.quarter_final_2?.away_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_2?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.quarter_final_2?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.quarter_final_2?.away?.logo ?? "",
+        ),
+        TournamentMatch(
+          id: "3",
+          teamA: widget.coupe8?.quarter_final_3?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.quarter_final_3?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.quarter_final_3?.home_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_3?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.quarter_final_3?.away_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_3?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.quarter_final_3?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.quarter_final_3?.away?.logo ?? "",
+        ),
+        TournamentMatch(
+          id: "4",
+          teamA: widget.coupe8?.quarter_final_4?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.quarter_final_4?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.quarter_final_4?.home_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_4?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.quarter_final_4?.away_first_half_score ?? 0) +
+              (widget.coupe8?.quarter_final_4?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.quarter_final_4?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.quarter_final_4?.away?.logo ?? "",
+        ),
+      ]),
+      Tournament(matches: [
+        TournamentMatch(
+          id: "5",
+          teamA: widget.coupe8?.semi_final_1?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.semi_final_1?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.semi_final_1?.home_first_half_score ?? 0) +
+              (widget.coupe8?.semi_final_1?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.semi_final_1?.away_first_half_score ?? 0) +
+              (widget.coupe8?.semi_final_1?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.semi_final_1?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.semi_final_1?.away?.logo ?? "",
+        ),
+        TournamentMatch(
+          id: "6",
+          teamA: widget.coupe8?.semi_final_2?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.semi_final_2?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.semi_final_2?.home_first_half_score ?? 0) +
+              (widget.coupe8?.semi_final_2?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.semi_final_2?.away_first_half_score ?? 0) +
+              (widget.coupe8?.semi_final_2?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.semi_final_2?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.semi_final_2?.away?.logo ?? "",
+        ),
+      ]),
+      Tournament(matches: [
+        TournamentMatch(
+          id: "5",
+          teamA: widget.coupe8?.finalMatch?.home?.name ?? "TBD",
+          teamB: widget.coupe8?.finalMatch?.away?.name ?? "TBD",
+          scoreTeamA: ((widget.coupe8?.finalMatch?.home_first_half_score ?? 0) +
+              (widget.coupe8?.finalMatch?.home_second_half_score ?? 0))
+              .toString(),
+          scoreTeamB: ((widget.coupe8?.finalMatch?.away_first_half_score ?? 0) +
+              (widget.coupe8?.finalMatch?.away_second_half_score ?? 0))
+              .toString(),
+          teamAImage: widget.coupe8?.finalMatch?.home?.logo ?? "",
+          teamBImage: widget.coupe8?.finalMatch?.away?.logo ?? "",
+        ),
+
+      ]),
+    ];
 
 
     return Container(
@@ -61,51 +140,7 @@ class _TropheehannibaltableauState extends State<Tropheehannibaltableau> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Phase selector (quarterfinals, semifinals, final)
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(vertical: 10),
-          //     child: Row(
-          //       children: phases.asMap().entries.map((entry) {
-          //         int index = entry.key;
-          //         String phase = entry.value;
-          //         bool isSelected = index == selectedDayIndex;
-          //
-          //         return Padding(
-          //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          //           child: GestureDetector(
-          //             onTap: () {
-          //               setState(() {
-          //                 selectedDayIndex = index;
-          //               });
-          //             },
-          //             child: Column(
-          //               mainAxisSize: MainAxisSize.min,
-          //               children: [
-          //                 Text(
-          //                   phase,
-          //                   style: TextStyle(
-          //                     color: Colors.white,
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //                 if (isSelected)
-          //                   Container(
-          //                     margin: const EdgeInsets.only(top: 5),
-          //                     width: 100,
-          //                     height: 2,
-          //                     color: Colors.white,
-          //                   ),
-          //               ],
-          //             ),
-          //           ),
-          //         );
-          //       }).toList(),
-          //     ),
-          //   ),
-          // ),
-          // Matches List Container
+
           Align(
             alignment: Alignment.centerLeft,
             child: Container(

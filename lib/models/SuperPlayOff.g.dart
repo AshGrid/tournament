@@ -52,7 +52,7 @@ SuperPlayOff _$SuperPlayOffFromJson(Map<String, dynamic> json) => SuperPlayOff(
       semi_final_2_away: json['semi_final_2_away'] == null
           ? null
           : Match.fromJson(json['semi_final_2_away'] as Map<String, dynamic>),
-      finalmatch: json['final'] == null
+      finalmatch: json['finalmatch'] == null
           ? null
           : Match.fromJson(json['finalmatch'] as Map<String, dynamic>),
     );
@@ -72,5 +72,5 @@ Map<String, dynamic> _$SuperPlayOffToJson(SuperPlayOff instance) =>
       'semi_final_1_away': instance.semi_final_1_away,
       'semi_final_2_home': instance.semi_final_2_home,
       'semi_final_2_away': instance.semi_final_2_away,
-      'final': instance.finalmatch,
+      'finalmatch': instance.finalmatch,
     };

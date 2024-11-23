@@ -16,17 +16,17 @@ class TeamPositionComponent extends StatelessWidget {
   final Position position;
   final Function(Player) onPlayerSelected;
 
-  const TeamPositionComponent({Key? key, required this.position, required this.onPlayerSelected}) : super(key: key);
+  const TeamPositionComponent(
+      {Key? key, required this.position, required this.onPlayerSelected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Sort matches to put live matches first
 
-
-    return Expanded(
-     // height: MediaQuery.of(context).size.height*0.5,
+    return Container(
+       //height: MediaQuery.of(context).size.height*0.5,
       child: Column(
-
         children: [
           // League Name and Logo Container
           Container(
@@ -43,11 +43,14 @@ class TeamPositionComponent extends StatelessWidget {
             ),
             child: Row(
               children: [
-
                 const SizedBox(width: 12),
                 Text(
-                  position.name!,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
+                  //'éçdzd',
+                  '${position.name!}s',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ],
             ),
@@ -64,19 +67,21 @@ class TeamPositionComponent extends StatelessWidget {
               bool isLastItem = index == position.players.length - 1;
 
               return GestureDetector(
-                onTap: (){
-onPlayerSelected(player);
-print(player.first_name);
+                onTap: () {
+                  onPlayerSelected(player);
+                  print(player.first_name);
                 },
                 child: Effectifitem(
                   player: player,
-                  playerName: player.first_name!,
+                  playerName: '${player.first_name!} ${player.last_name!}',
                   playerImage: player.avatar!,
-                  isLastItem: isLastItem, // You can pass this to the widget if needed
+                  isLastItem:
+                      isLastItem, // You can pass this to the widget if needed
                 ),
               );
             }).toList(),
           ),
+
         ],
       ),
     );
