@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_tournament_bracket/src/model/tournament_match.dart';
-//import 'package:flutter_tournament_bracket/src/model/tournament_model.dart';
+
 import 'package:untitled/components/CustomMatchCard.dart';
 import 'package:untitled/components/bracketCard.dart';
-
 import 'package:untitled/components/brackets.dart';
 
 import '../Service/mock_data.dart';
-import '../dep/lib/src/model/tournament_match.dart';
-import '../dep/lib/src/model/tournament_model.dart';
+import '../dep/lib/flutter_tournament_bracket.dart';
 import '../models/Coupe8.dart';
 import '../models/Team.dart';
 import '../models/Match.dart';
@@ -24,6 +21,22 @@ class Coupe8Tableau extends StatefulWidget {
 
 class _Coupe8TableauTableauState extends State<Coupe8Tableau> {
   int selectedDayIndex = 0;
+
+  final List<String> phases = [
+    'QUARTS DE FINALE',
+    'DEMI-FINALE',
+    'FINALE',
+  ];
+
+  final Map<String, List<Match>> matchesByPhase = {
+    'QUARTS DE FINALE': MockData.mockMatches,
+    'DEMI-FINALE': MockData.mockMatches,
+    'FINALE':MockData.mockMatches,
+  };
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
