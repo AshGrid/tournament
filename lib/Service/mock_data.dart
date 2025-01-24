@@ -158,6 +158,7 @@ class MockData {
       season: '2023-2024',
       league: mockLeaguesVeterans[0], // Use Premier League for this season
       teams: mockClubs,
+      full_name: "test"
     ),
   ];
 
@@ -198,8 +199,8 @@ class MockData {
       status: 'completed',
       is_ended: true, // Updated field name
       trophy: mockTrophies[0], // Nullable Trophy
-      season: mockSeasons[0], // Nullable Season
-      premierePhase: mockPremierePhases[0], // Nullable PremierePhase
+      season: 1, // Nullable Season
+      premiere_phase: 1, // Nullable PremierePhase
       is_premiere_phase: true,
       is_playoff: false,
       is_trophy: true,
@@ -224,8 +225,8 @@ class MockData {
       status: 'completed',
       is_ended: true,
       trophy: mockTrophies[0],
-      season: mockSeasons[0],
-      premierePhase: mockPremierePhases[0],
+      season: 1,
+      premiere_phase: 1,
       is_premiere_phase: true,
       is_playoff: false,
       is_trophy: true,

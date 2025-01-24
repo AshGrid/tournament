@@ -6,22 +6,14 @@ part of 'Trophy.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Trophy _$TrophyFromJson(Map<String, dynamic> json) {
-
-  try {
-    return Trophy(
+Trophy _$TrophyFromJson(Map<String, dynamic> json) => Trophy(
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       image: json['image'] as String?,
-      date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      active: json['active'] as bool,
+      date:
+          json['date'] == null ? null : DateTime.parse(json['date'] as String),
+      active: json['active'] as bool?,
     );
-  } catch (e) {
-    print('Error deserializing Trophy: $e');
-    print('Offending JSON: $json');
-    rethrow;
-  }
-}
 
 Map<String, dynamic> _$TrophyToJson(Trophy instance) => <String, dynamic>{
       'id': instance.id,

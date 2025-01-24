@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'Arbitre.dart';
 import 'Club.dart';
 import 'Journey.dart';
@@ -26,8 +28,8 @@ class Match {
   final String? status; // Make sure status can handle null values
   final bool? is_ended;
   final Trophy? trophy; // Nullable Trophy
-  final Season? season; // Nullable Season
-  final PremierePhase? premierePhase; // Nullable PremierePhase
+  final int? season; // Nullable Season
+  final int? premiere_phase; // Nullable PremierePhase
   final bool? is_premiere_phase;
   final bool? is_playoff;
   final bool? is_trophy;
@@ -36,6 +38,8 @@ class Match {
   final bool? is_coupe;
   final bool? is_super_coupe;
   final Journey? journey; // Nullable Journey
+  final String? time;
+
 
   Match({
     required this.id,
@@ -53,7 +57,7 @@ class Match {
     required this.is_ended,
     this.trophy,
     this.season,
-    this.premierePhase,
+    this.premiere_phase,
     required this.is_premiere_phase,
     required this.is_playoff,
     required this.is_trophy,
@@ -62,6 +66,8 @@ class Match {
     required this.is_coupe,
     required this.is_super_coupe,
     this.journey,
+    this.time,
+
   });
   factory Match.fromJson(Map<String, dynamic> json) => _$MatchFromJson(json);
   Map<String, dynamic> toJson() => _$MatchToJson(this);

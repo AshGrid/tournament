@@ -9,12 +9,14 @@ import '../models/League.dart';
 import '../models/Match.dart';
 import '../models/Player.dart';
 import 'TeamLeagueComponent.dart';
+import 'match_item.dart';
+import 'match_item_live.dart';
 
 class TeamResults extends StatefulWidget {
-  final Function(Match)? onMatchSelected;
-  final Club club;
+  final Function(Match) onMatchSelected;
+  final Club team;
 
-  const TeamResults({Key? key, this.onMatchSelected,required this.club}) : super(key: key);
+  const TeamResults({Key? key, required this.onMatchSelected,required this.team}) : super(key: key);
 
   @override
   _TeamResultsState createState() => _TeamResultsState();
@@ -22,59 +24,93 @@ class TeamResults extends StatefulWidget {
 
 class _TeamResultsState extends State<TeamResults> {
   final DataService dataService = DataService();
+  List<Match> matches = []; // List of all matches
 
-  List<League> leaguesList = [];
+  bool isMatchesLoading = true; // Loading state for matches
 
-  Future<void> _fetchLeagues() async {
-    try {
-      final fetchedLeagues = await dataService.fetchLeagues();
-      print("Fetched leagues: $fetchedLeagues");
-
-      // Filter leagues where the league ID matches widget.club.league
-      final filteredLeagues = fetchedLeagues.where((league) {
-        return league.id == widget.club.league;
-      }).toList();
-
-      setState(() {
-        leaguesList = filteredLeagues;
-        //  isLeaguesLoading = false; // Uncomment if needed
-      });
-    } catch (error) {
-      print("Error fetching leagues: $error");
-      setState(() {
-        // isLeaguesLoading = false; // Uncomment if needed
-      });
-    }
-  }
-
+  // Number of days to display
+  int displayedDays = 2;
 
   @override
   void initState() {
     super.initState();
-
-    _fetchLeagues();
+    _fetchMatches();
   }
 
+  Future<void> _fetchMatches() async {
+    try {
+      // Fetch matches from the service
+      final fetchedUpcomingMatches = await dataService.fetchPlayedMatches();
 
-  // Sample list of leagues
+      // Filter the matches by teamId
+      final filteredMatches = fetchedUpcomingMatches.where((match) {
+        return match.home!.id == widget.team.id || match.away!.id == widget.team.id;
+      }).toList();
 
+      setState(() {
+        matches = filteredMatches; // Set only the filtered matches
+        isMatchesLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isMatchesLoading = false;
+      });
+    }
+  }
+
+  // Grouping matches into days (journées)
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-        child: Container(
-          height: MediaQuery.of(context).size.height*0.69,
-          width:MediaQuery.of(context).size.width ,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            children: leaguesList.map((league) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                child: TeamLeagueComponent(league: league,),
-              );
-            }).toList(),
+    if (isMatchesLoading) {
+      return Center(child: CircularProgressIndicator(color: Colors.white,));
+    }
+
+    return Container(
+      child: Column(
+        children: [
+          // Display each day and its matches
+
+
+          // List of matches for the current day
+          Container(
+            height: (matches.length ?? 0) * 131.0 , // Adjust the height as needed
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.only(bottom: 0),
+            child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: matches.length ?? 0, // Safeguard against null
+              itemBuilder: (context, index) {
+
+                if ( matches.isEmpty) {
+                  return Container(); // Return an empty container if no matches
+                }
+                final match = matches[index];
+                return GestureDetector(
+                  onTap: () {
+
+                      widget.onMatchSelected!(match);
+
+                  },
+                  child: MatchItemLive(
+                    match: match,
+                    backgroundColor: index.isEven ? Colors.transparent : Colors.transparent,
+                    isLastItem: index == matches.length - 1, // Check if it's the last item
+                    isFirstItem: index == 0,
+                  ),
+
+                );
+              },
+            ),
           ),
-        )
+
+          // "See More" button
+
+          // Image slider at the bottom
+
+        ],
+      ),
     );
   }
 }
+

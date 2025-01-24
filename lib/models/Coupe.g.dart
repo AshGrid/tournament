@@ -55,7 +55,7 @@ Coupe _$CoupeFromJson(Map<String, dynamic> json) => Coupe(
           : Match.fromJson(json['semi_final_2'] as Map<String, dynamic>),
       finalmatch: json['finalmatch'] == null
           ? null
-          : Match.fromJson(json['final'] as Map<String, dynamic>),
+          : Match.fromJson(json['finalmatch'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CoupeToJson(Coupe instance) => <String, dynamic>{
@@ -75,5 +75,5 @@ Map<String, dynamic> _$CoupeToJson(Coupe instance) => <String, dynamic>{
       'quarter_final_4': instance.quarter_final_4?.toJson(),
       'semi_final_1': instance.semi_final_1?.toJson(),
       'semi_final_2': instance.semi_final_2?.toJson(),
-      'final': instance.finalmatch?.toJson(),
+      'finalmatch': instance.finalmatch?.toJson(),
     };

@@ -44,12 +44,22 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
   }
 
   Future<void> _fetchClubs() async {
-    //final fetchedClubs= await dataService.fetchRankingByLeague(widget);
-    final fetchedClubs= await dataService.fetchRankingByLeague(widget.match.home!.league!);
-    setState(() {
-      clubsList = fetchedClubs;
+    try {
+      final fetchedClubs = await dataService.fetchRankingByLeague(widget.match.home!.league!);
+      print("fetched clubs premirephase by league id");
 
-    });
+      // Sort the clubs by teamranking.points in descending order
+      fetchedClubs.sort((a, b) => b.points!.compareTo(a.points!));
+
+      setState(() {
+        clubsList = fetchedClubs; // Use the sorted list
+      });
+
+      print(clubsList); // Log the sorted clubs
+    } catch (error) {
+      print('Error fetching clubs: $error');
+      // Handle error if necessary
+    }
   }
   Future<void> _fetchClubsList() async {
     final fetchedClubs= await dataService.fetchClubs();

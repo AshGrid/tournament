@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:story_view/story_view.dart';
 import 'package:untitled/Service/mock_data.dart';
 import 'package:untitled/models/Match.dart';
+import 'package:untitled/models/adBanner.dart';
 import 'package:untitled/screens/Story.dart';
 import '../Service/data_service.dart';
 import '../components/colors.dart'; // Import the colors file
 import '../components/story_circle.dart';
+import '../models/Club.dart';
+import '../models/Moment.dart';
 import '../models/News.dart';
 import '../models/Story.dart';
 import 'StoryViewScreen.dart';
@@ -22,7 +26,14 @@ import '../models/Stream.dart';
 class HomeScreen extends StatefulWidget {
   final Function(News) onNewsSelected;
   final StoryController _storyController = StoryController();
-  HomeScreen({Key? key, required this.onNewsSelected}) : super(key: key);
+  final Function(Club) onTeamSelected;
+  final Function(Match) onMatchSelected;
+  HomeScreen(
+      {Key? key,
+      required this.onNewsSelected,
+      required this.onTeamSelected,
+      required this.onMatchSelected})
+      : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -36,6 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Match> matchesList = [];
   List<StreamItem> streamItems = [];
   List<Story> Stories = [];
+  bool isVideosLoading = true;
+  bool isAdsLoading = true;
   @override
   void initState() {
     super.initState();
@@ -43,12 +56,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchMatches();
     _fetchStream();
     _fetchStories();
+    _fetchReels();
+    _fetchAds();
   }
 
   Future<void> _fetchStream() async {
     final streamItem = await dataService.fetchStream();
     setState(() {
-      streamItems = streamItem;
+      //streamItems = streamItem;
+      streamItems = streamItem..sort((a, b) => a.id.compareTo(b.id));
     });
   }
 
@@ -91,7 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final fetchedNews = await dataService.fetchNews();
       setState(() {
-        newsList = fetchedNews;
+        // Take only the first 3 items from fetchedNews
+        newsList = fetchedNews.take(3).toList();
         print("news: $newsList");
         isLoading = false; // Set loading to false after fetching
       });
@@ -103,84 +120,115 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _formatTime(String? timeString) {
+    if (timeString == null || timeString.isEmpty) return 'TBD';
+
+    // Split the time string into hours and minutes
+    final timeParts = timeString.split(':');
+    if (timeParts.length != 3)
+      return 'TBD'; // Return empty if the format is invalid
+
+    final hours = int.tryParse(timeParts[0]);
+    final minutes = int.tryParse(timeParts[1]);
+
+    // Validate hours and minutes
+    if (hours == null ||
+        minutes == null ||
+        hours < 0 ||
+        hours > 23 ||
+        minutes < 0 ||
+        minutes > 59) {
+      return 'TBD'; // Return empty if invalid
+    }
+
+    // Create a DateTime object
+    final dateTime = DateTime.now().copyWith(hour: hours, minute: minutes);
+
+    // Format the DateTime object to 'HH:mm'
+    return DateFormat('HH:mm').format(dateTime); // Example: "14:30"
+  }
+
   Future<void> _fetchMatches() async {
     try {
       final fetchedMatches = await dataService.fetchPlayedMatches();
+
+      // Sort the fetched matches by date and time
+      fetchedMatches.sort((a, b) {
+        if (a.date != null && b.date != null) {
+          // First, compare by date
+          int dateComparison = b.date!.compareTo(a.date!);
+          if (dateComparison != 0) {
+            return dateComparison;
+          }
+
+          // If dates are the same, compare by time
+          if (a.time != null && b.time != null) {
+            String timeA = _formatTime(b.time);
+            String timeB = _formatTime(a.time);
+            return timeA.compareTo(timeB);
+          }
+        }
+        return 0; // Default case if one or both dates/times are null
+      });
+
+      // Update state with the sorted list
       setState(() {
         matchesList = fetchedMatches;
-        isMatchesLoading = false; // Set loading to false after fetching matches
+        isMatchesLoading =
+            false; // Set loading to false after fetching and sorting matches
       });
     } catch (e) {
-      print("error fetching matches for result component$e");
+      print("Error fetching matches for result component: $e");
       setState(() {
         isMatchesLoading = false; // Stop loading on error
       });
     }
   }
 
+  List<Moment> moments = [];
+
+  Future<void> _fetchReels() async {
+    try {
+      final fetchedMoments = await dataService.fetchReels();
+      setState(() {
+        moments = fetchedMoments;
+        isVideosLoading = false; // Set loading to false after fetching matches
+      });
+    } catch (e) {
+      print("error fetching moments for home screen $e");
+      setState(() {
+        isVideosLoading = false; // Stop loading on error
+      });
+    }
+  }
+
   // List of image paths
-  List<List<String>> imagePaths = [
-    [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ],
-    [
-      'assets/images/image2.jpeg',
-      'assets/videos/videofoot.mp4',
-      'assets/images/image1.jpeg',
-    ],
-    [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ],
-    [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ],
-    [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ],
-  ];
+  List<String> imagePaths = [];
 
-  List<String> users = [
-    'A l’instant',
-    'TOP ARRETS',
-    'DANS LES FILETS',
-    'VU DU BANC',
-    'AMBIANCE',
-  ];
+  Future<void> _fetchAds() async {
+    try {
+      final fetchedAds = await dataService.fetchAds();
+      setState(() {
+        // Filter ads by place, ensure non-null images, and map to their image paths
+        imagePaths = fetchedAds
+            .where((ad) =>
+                ad.place == "home_swiper" &&
+                ad.image != null) // Filter by place and non-null images
+            .map((ad) => ad
+                .image!) // Use non-null assertion to convert String? to String
+            .toList();
+        isAdsLoading = false; // Set loading to false after fetching ads
+      });
+    } catch (e) {
+      print("Error fetching ads for home screen: $e");
+      setState(() {
+        isAdsLoading = false; // Stop loading on error
+      });
+    }
+  }
 
-  List<List<String>>links = [];
+  List<List<String>> links = [];
   List<String> titles = [];
-
-  final List<List<Map<String, String>>> allStories = [
-    [
-      {'type': 'image', 'url': 'assets/images/image1.jpeg'},
-      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
-      {'type': 'image', 'url': 'assets/images/image2.jpeg'},
-    ],
-    [
-      {'type': 'image', 'url': 'assets/images/image3.jpg'},
-      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
-    ],
-    [
-      {'type': 'image', 'url': 'assets/images/image3.jpg'},
-      {'type': 'video', 'url': 'assets/videos/videofoot.mp4'},
-    ],
-    [
-      {'type': 'image', 'url': 'assets/image3.jpg'},
-      {'type': 'video', 'url': 'https://your-video-url.com/video2.mp4'},
-    ],
-    [
-      {'type': 'image', 'url': 'assets/image3.jpg'},
-      {'type': 'video', 'url': 'https://your-video-url.com/video2.mp4'},
-    ],
-  ];
 
   final List<List<StoryItem>> storyItemsList = [
     [
@@ -219,59 +267,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // Add more statuses as needed
   ];
 
-  // Function to open the full story screen
-  void _openFullStory(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => StoryViewScreen(
-          storyItems: [
-            StoryItem.text(
-              title:
-                  "Hello world!\nHave a look at some great Ghanaian delicacies. I'm sorry if your mouth waters. \n\nTap!",
-              backgroundColor: Colors.orange,
-              roundedTop: true,
-            ),
-            StoryItem.inlineImage(
-              url:
-                  "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
-              controller: widget._storyController,
-              caption: Text(
-                "Omotuo & Nkatekwan; You will love this meal if taken as supper.",
-                style: TextStyle(
-                  color: Colors.white,
-                  backgroundColor: Colors.black54,
-                  fontSize: 17,
-                ),
-              ),
-            ),
-            StoryItem.inlineImage(
-              url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",
-              controller: widget._storyController,
-              caption: Text(
-                "Hektas, sektas and skatad",
-                style: TextStyle(
-                  color: Colors.white,
-                  backgroundColor: Colors.black54,
-                  fontSize: 17,
-                ),
-              ),
-            ),
-          ],
-          controller: widget._storyController,
-        ),
-      ),
-    );
-  }
-
-  List<String> imagePath = [
-    'assets/images/image1.jpeg',
-    'assets/images/image2.jpeg',
-    'assets/images/image1.jpeg',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<String> videoPaths =
+        moments.map((moment) => moment.video).take(4).toList();
+    List<String> captions =
+        moments.map((moment) => moment.name).take(4).toList();
+    print("videopaths");
+    print(videoPaths);
+    print(captions);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -294,8 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       separatorBuilder: (context, index) =>
                           const SizedBox(width: 10),
                       itemBuilder: (context, index) {
-                        final images = imagePaths[
-                            index]; // Access the list of images for each story
+
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -345,6 +348,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     : MatchResultComponent(
                         matchResults: matchesList,
                         text: "Derniers résultats",
+                        onTeamSelected: widget.onTeamSelected,
+                        onMatchSelected: widget.onMatchSelected,
                       );
               case 2:
                 return Padding(
@@ -352,25 +357,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const AdsBanner(),
                 );
               case 3:
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0.8),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.9,
-                    child: DynamicImageGrid(
-                      imagePaths: imagePath,
-                      captions: ['Caption 1', 'Caption 2', 'Caption 3'],
-                      text: "Meilleurs moments",
-                    ),
-                  ),
-                );
+                return isVideosLoading // Check loading state for matches
+                    ? Center(
+                        heightFactor: 2,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        )) // Show loading indicator
+                    : DynamicVideoGrid(
+                        moments: moments,
+                        videoPaths: videoPaths,
+                        captions: captions,
+                        text: "Meilleurs moments",
+                      );
               case 4:
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  child: ImageSlider(
-                    imagePaths: imagePath,
-                  ),
-                );
+                return isAdsLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(), // Loading icon
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 8),
+                        child: ImageSlider(
+                          imagePaths: imagePaths,
+                        ),
+                      );
 
               case 5:
                 return Padding(

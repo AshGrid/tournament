@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/components/TeamCalendar.dart';
 import 'package:untitled/components/TeamPlayers.dart';
 import 'package:untitled/components/TeamResults.dart';
 
@@ -20,13 +21,15 @@ import '../components/resultsContainer.dart';
 import '../components/superPlayOffTableau.dart';
 import '../models/Club.dart';
 import '../models/Player.dart';
+import '../models/Match.dart';
 import '../models/Team.dart';
 
 class TeamPage extends StatefulWidget {
   final Club team;
   final Function(Player) onPlayerSelected;
+  final Function(Match) onMatchSelected;
 
-  const TeamPage({super.key, required this.team, required this.onPlayerSelected});
+  const TeamPage({super.key, required this.team, required this.onPlayerSelected,required this.onMatchSelected});
 
   @override
   _TeamPageState createState() => _TeamPageState();
@@ -44,10 +47,22 @@ class _TeamPageState extends State<TeamPage> {
 
 
   Future<void> _fetchClubs() async {
-    final fetchedClubs= await dataService.fetchRankingByLeague(widget.team.league!);
-    setState(() {
-      clubsList = fetchedClubs;
-    });
+    try {
+      final fetchedClubs = await dataService.fetchRankingByLeague(widget.team.league!);
+      print("fetched clubs premirephase by league id");
+
+      // Sort the clubs by teamranking.points in descending order
+      fetchedClubs.sort((a, b) => b.points!.compareTo(a.points!));
+
+      setState(() {
+        clubsList = fetchedClubs; // Use the sorted list
+      });
+
+      print(clubsList); // Log the sorted clubs
+    } catch (error) {
+      print('Error fetching clubs: $error');
+      // Handle error if necessary
+    }
   }
 
   @override
@@ -241,11 +256,11 @@ class _TeamPageState extends State<TeamPage> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
       case 0:
-        return TeamResults(club: widget.team); // Display RankingScreen
+        return TeamResults(team: widget.team, onMatchSelected: widget.onMatchSelected,); // Display RankingScreen
        case 1:
          return PremierePhaseRankingScreen(clubs: clubsList); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(league: widget.team.league!,); // Display CalendarScreen
+        return TeamCalendar(team: widget.team, onMatchSelected: widget.onMatchSelected,); // Display CalendarScreen
       case 3:
         return TeamPlayers(team: widget.team, onPlayerSelected: widget.onPlayerSelected,);
 

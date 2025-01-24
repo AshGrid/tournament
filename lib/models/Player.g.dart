@@ -29,6 +29,11 @@ Player _$PlayerFromJson(Map<String, dynamic> json) => Player(
       pending_verification: json['pending_verification'] as bool?,
       suspended: json['suspended'] as bool?,
       suspension_duration: (json['suspension_duration'] as num?)?.toInt(),
+      assists: (json['assists'] as num?)?.toInt(),
+      goals: (json['goals'] as num?)?.toInt(),
+      matches_played: (json['played_matches'] as num?)?.toInt(),
+      red_cards: (json['red_cards'] as num?)?.toInt(),
+      yellow_cards: (json['yellow_cards'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
@@ -52,4 +57,9 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
       'pending_verification': instance.pending_verification,
       'suspended': instance.suspended,
       'suspension_duration': instance.suspension_duration,
+      'matches_played': instance.matches_played,
+      'goals': instance.goals,
+      'assists': instance.assists,
+      'yellow_cards': instance.yellow_cards,
+      'red_cards': instance.red_cards,
     };

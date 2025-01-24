@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/components/phaseMatchResultItem.dart';
+import '../Service/data_service.dart';
 import '../models/Match.dart';
 import '../models/SuperPlayOff.dart';
 import 'image_slider.dart';
@@ -18,7 +19,39 @@ class Superplayoffresultat extends StatefulWidget {
 
 class _ResultsScreenState extends State<Superplayoffresultat> {
   int selectedDayIndex = 0;
+  bool isAdsLoading = true;
+  final DataService dataService = DataService();
 
+  List<String> imagePaths = [];
+
+  Future<void> _fetchAds() async {
+    try {
+      final fetchedAds = await dataService.fetchAds();
+      setState(() {
+        // Filter ads by place, ensure non-null images, and map to their image paths
+        imagePaths = fetchedAds
+            .where((ad) =>
+        ad.place == "home_swiper" &&
+            ad.image != null) // Filter by place and non-null images
+            .map((ad) => ad
+            .image!) // Use non-null assertion to convert String? to String
+            .toList();
+        isAdsLoading = false; // Set loading to false after fetching ads
+      });
+    } catch (e) {
+      print("Error fetching ads for home screen: $e");
+      setState(() {
+        isAdsLoading = false; // Stop loading on error
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchAds();
+  }
   final List<String> phases = [
     'Quarterfinals',
     'Semifinals',
@@ -136,8 +169,16 @@ class _ResultsScreenState extends State<Superplayoffresultat> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-          child: ImageSlider(
-            imagePaths: imagePath,
+          child: isAdsLoading
+              ? const Center(
+            child: CircularProgressIndicator(), // Loading icon
+          )
+              : Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: 8, horizontal: 8),
+            child: ImageSlider(
+              imagePaths: imagePaths,
+            ),
           ),
         ),
       ],

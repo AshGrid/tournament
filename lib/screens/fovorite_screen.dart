@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
-import 'package:untitled/Service/mock_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Service/data_service.dart';
-import '../components/colors.dart';
-import '../components/leagueFavoriteComponent.dart';
+import '../components/matchItemFavorite.dart';
 import '../models/Match.dart';
-import '../models/League.dart';
 
 class FavoriteScreen extends StatefulWidget {
-  const FavoriteScreen({Key? key}) : super(key: key);
+  final Function(Match) onMatchSelected;
+  const FavoriteScreen({Key? key, required this.onMatchSelected}) : super(key: key);
 
   @override
   _FavoriteScreenState createState() => _FavoriteScreenState();
@@ -18,23 +15,39 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   final DataService dataService = DataService();
   List<Match> matchesList = [];
-  List<League> leaguesList = [];
   bool isLoading = true;
+  bool isDaysLoading = true;
+  List<DateTime> dayss = [];
+  int selectedDayIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _fetchMatches();
-    _fetchLeagues();
+    _fetchDays();
+  }
+
+  Future<void> _fetchDays() async {
+    try {
+      final fetchedDays = await dataService.fetchUpcomingMatchDates();
+      setState(() {
+        if (fetchedDays.isNotEmpty) {
+          dayss = fetchedDays;
+        }
+        isDaysLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isDaysLoading = false;
+      });
+    }
   }
 
   Future<List<int>> _loadFavoriteTeams() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? favoriteTeams = prefs.getStringList('favoriteTeams') ?? [];
-    // Convert List<String> to List<int>
     return favoriteTeams.map((id) => int.parse(id)).toList();
   }
-
 
   Future<void> _fetchMatches() async {
     setState(() {
@@ -45,9 +58,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       final fetchedMatches = await dataService.fetchUpcomingMatches();
       final favoriteTeamIds = await _loadFavoriteTeams();
 
-      // Filter matches based on favorite teams
+      // Filter matches based on favorite teams from SharedPreferences
       matchesList = fetchedMatches.where((match) {
-        return favoriteTeamIds.contains(match.home!.id) || favoriteTeamIds.contains(match.away!.id);
+        return favoriteTeamIds.contains(match.home!.id) ||
+            favoriteTeamIds.contains(match.away!.id);
       }).toList();
     } catch (e) {
       print('Error fetching matches: $e');
@@ -58,36 +72,22 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     }
   }
 
-  Future<void> _fetchLeagues() async {
-    try {
-      final  fetchedLeagues = await dataService.fetchLeagues(); // Replace with your actual fetching logic
-      setState(() {
-        leaguesList = fetchedLeagues;
-      });
-    } catch (e) {
-      print('Error fetching leagues: $e');
-    }
-  }
-
-  // Group matches by the league ID from match.home.league
-  Map<League, List<Match>> _groupMatchesByLeague(List<Match> matches, List<League> leagues) {
-    Map<League, List<Match>> groupedMatches = {};
-
-    for (var league in leagues) {
-      List<Match> leagueMatches = matches.where((match) => match.home!.league == league.id&&match.away!.league==league.id).toList();
-      if (leagueMatches.isNotEmpty) {
-        groupedMatches[league] = leagueMatches;
-      }
-    }
-
-    return groupedMatches;
-  }
-
   @override
   Widget build(BuildContext context) {
+    bool isAllLoading = isLoading || isDaysLoading;
+    DateTime selectedDate = (dayss.isNotEmpty) ? dayss[selectedDayIndex] : DateTime.now();
+
+    // Filter matches based on the selected date
+    List<Match> filteredMatches = matchesList.where((match) {
+      if (match.date == null) return false;
+      return match.date!.year == selectedDate.year &&
+          match.date!.month == selectedDate.month &&
+          match.date!.day == selectedDate.day;
+    }).toList();
+
     return Column(
       children: [
-        if (isLoading)
+        if (isAllLoading)
           const Expanded(
             child: Center(
               child: CircularProgressIndicator(
@@ -95,38 +95,75 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               ),
             ),
           )
-        else if (matchesList.isEmpty) // Handle the case when no matches are found
-          const Expanded(
-            child: Center(
-              child: Text(
-                'Pas de matches.',
-                style: TextStyle(fontSize: 16, color: Colors.white), // Change color to your theme color
+
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: dayss.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  DateTime day = entry.value;
+                  bool isSelected = index == selectedDayIndex;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedDayIndex = index;
+                        });
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${day.day}/${day.month}/${day.year}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (isSelected)
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              width: 70,
+                              height: 2,
+                              color: Colors.white,
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-          )
-        else
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(left: 0, right: 0, top: 8, bottom: 7),
-              itemCount: _groupMatchesByLeague(matchesList, leaguesList).length,
-              itemBuilder: (context, index) {
-                final groupedMatches = _groupMatchesByLeague(matchesList, leaguesList);
-                final league = groupedMatches.keys.elementAt(index);
-                final matches = groupedMatches[league]!;
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // LeagueFavoriteComponent with matches for the respective league
-                      LeagueFavoriteComponent(league: league, matches: matches),
-                    ],
-                  ),
-                );
-              },
-            ),
           ),
+        if (filteredMatches.isEmpty)
+           Expanded(
+            child: Container(),
+          )
+        else Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.only(top: 8),
+            itemCount: filteredMatches.length,
+            itemBuilder: (context, index) {
+              final match = filteredMatches[index];
+              return GestureDetector(
+                onTap: () {
+                  widget.onMatchSelected(match);
+                },
+                child: MatchItemFavorite(
+                  match: match,
+                  isFirstItem: index == 0,
+                  isLastItem: index == filteredMatches.length - 1,
+                  backgroundColor: Colors.transparent,
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

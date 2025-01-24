@@ -3,13 +3,27 @@ import 'package:intl/intl.dart';
 import 'package:untitled/components/colors.dart';
 import '../Service/data_service.dart';
 import '../models/Trophy.dart';
+import '../models/Match.dart';
 import '../screens/bottom_sheet.dart';
+import '../screens/searchScreeen.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Function(String) onTrophySelected;
+  final Function(Trophy) onTrophySelected;
   final Function() onNotifPressed;
+  final Function(String) onSearchQueryChanged;
+  final Function() onSearchClosed;
+  final List<Match> allMatches; // Pass matches to search screen
+  final int notifCount;
 
-  const CustomAppBar({Key? key, required this.onTrophySelected, required this.onNotifPressed}) : super(key: key);
+  const CustomAppBar({
+    Key? key,
+    required this.onTrophySelected,
+    required this.onNotifPressed,
+    required this.onSearchQueryChanged,
+    required this.onSearchClosed,
+    required this.allMatches,
+    required this.notifCount,
+  }) : super(key: key);
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -18,60 +32,83 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(80.0); // Fixed height for the AppBar
 }
 
-class _CustomAppBarState extends State<CustomAppBar> with SingleTickerProviderStateMixin {
+class _CustomAppBarState extends State<CustomAppBar>
+    with SingleTickerProviderStateMixin {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
-
-
+  final FocusNode _focusNode = FocusNode(); // FocusNode to handle keyboard events
 
   final DataService dataService = DataService();
   List<Trophy> trophiesList = [];
-
-
 
   Future<void> _fetchTrophies() async {
     final fetchedTrophies = await dataService.fetchTrophies();
     setState(() {
       trophiesList = fetchedTrophies;
-      trophiesList = fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
-
+      trophiesList.sort((a, b) => a.name!.compareTo(b.name!));
     });
   }
 
   @override
   void initState() {
     super.initState();
+
     _fetchTrophies();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+
+    // Add listener to close search when keyboard is dismissed
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        setState(() {
+          _isSearching = false; // Close search bar
+          _searchController.clear(); // Clear search field
+          widget.onSearchClosed(); // Notify that search is closed
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     _searchController.dispose();
+    _focusNode.dispose(); // Dispose of FocusNode
     super.dispose();
   }
-final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       key: _scaffoldkey,
       // Ensure no drawer icon is present
-      actions: [IconButton(
-        iconSize: 40, // Adjust the icon size as needed
-        icon: const ImageIcon(
-          AssetImage("assets/icons/profil.png"),
-          color: Colors.white,
+      // actions: [
+      //   IconButton(
+      //     iconSize: 40, // Adjust the icon size as needed
+      //     icon: const ImageIcon(
+      //       AssetImage("assets/icons/profil.png"),
+      //       color: Colors.white,
+      //     ),
+      //     onPressed: () {
+      //       Scaffold.of(context).openEndDrawer(); // Open end drawer
+      //     },
+      //   ),
+      // ],
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0), // Optional padding for alignment
+          child: ImageIcon(
+            AssetImage("assets/icons/profil.png"),
+            color: Colors.white,
+            size: 40, // Adjust the size of the icon as needed
+          ),
         ),
-        onPressed: () {
-          Scaffold.of(context).openEndDrawer(); // Open end drawer
-        },
-      ),],
-
+      ],
       toolbarHeight: 80,
       backgroundColor: Colors.transparent,
       elevation: 4, // Shadow effect for AppBar
@@ -94,7 +131,9 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             SizedBox(height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height * 0.962 ), // Fixed space
+            SizedBox(
+                height: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).size.height * 0.952), // Fixed space
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -125,12 +164,39 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                           ),
                         ),
                         // Notification icon
-                        IconButton(
-                          icon: const Icon(Icons.notifications, color: Colors.white),
-                          onPressed: () {
-
-                            widget.onNotifPressed();
-                          },
+                        Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.notifications, color: Colors.white), // Default notification icon
+                              onPressed: () {
+                                widget.onNotifPressed();
+                              },
+                            ),
+                            if (widget.notifCount > 0)
+                              Positioned(
+                                right: 11,
+                                top: 11,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 10,
+                                    minHeight: 10,
+                                  ),
+                                  child: Text(
+                                    '${widget.notifCount}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
@@ -198,10 +264,18 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                       child: _isSearching
                           ? TextField(
                         controller: _searchController,
+                        focusNode: _focusNode, // Add focus node here
+                        onChanged: (value) {
+                          setState(() {
+                            if (value.isNotEmpty) {
+                              widget.onSearchQueryChanged(value);
+                            }
+                          });
+                        },
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Recherche ...',
-                          hintStyle: const TextStyle(color: Colors.white54,wordSpacing: 10),
+                          hintStyle: const TextStyle(color: Colors.white54, wordSpacing: 10),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                           prefixIcon: Image.asset(
@@ -214,6 +288,7 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                               setState(() {
                                 _isSearching = false;
                                 _searchController.clear();
+                                widget.onSearchClosed();
                               });
                             },
                           ),
@@ -273,7 +348,15 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
                                   color: Colors.transparent, // Background color if needed
                                   borderRadius: BorderRadius.circular(26), // Same radius as shadow container
                                 ),
-
+                                // child: IconButton(
+                                //   icon: const Icon(
+                                //     Icons.more_vert,
+                                //     color: Colors.white,
+                                //   ),
+                                //   onPressed: () {
+                                //     Scaffold.of(context).openEndDrawer(); // Open end drawer
+                                //   },
+                                // ),
                               ),
                             ],
                           );
@@ -290,13 +373,15 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
     );
   }
 
+  // Show bottom sheet
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-       // If the content might scroll
+      // If the content might scroll
       backgroundColor: Colors.transparent, // Optional: to match your design
       builder: (BuildContext context) {
-        return BottomSheetContent(onTrophySelected: widget.onTrophySelected, trophies: trophiesList);
+        return BottomSheetContent(
+            onTrophySelected: widget.onTrophySelected, trophies: trophiesList);
       },
     );
   }

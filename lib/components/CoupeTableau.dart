@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tournament_bracket/src/model/tournament_match.dart';
-import 'package:flutter_tournament_bracket/src/model/tournament_model.dart';
+
 import 'package:untitled/components/CustomMatchCard.dart';
 import 'package:untitled/components/bracketCard.dart';
 import 'package:untitled/components/brackets.dart';
-
+import '../dep/lib/src/model/tournament_match.dart';
+import '../dep/lib/src/model/tournament_model.dart';
 import '../Service/mock_data.dart';
 import '../models/Coupe.dart';
 import '../models/Team.dart';

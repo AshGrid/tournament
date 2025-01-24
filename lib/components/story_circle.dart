@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/story_page.dart';
 import 'colors.dart';
 import 'story_details.dart';
 
@@ -14,7 +15,7 @@ class StoryCircle extends StatelessWidget {
     required this.imageUrls,
     required this.userNames,
     required this.viewedStatuses, // Add this
-    this.isFirst = false,
+    this.isFirst = true,
     required this.currentIndex,
   }) : super(key: key);
 
@@ -27,7 +28,7 @@ class StoryCircle extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StoryDetailScreen(
+            builder: (context) => StoryPageScreen(
               allStories: imageUrls,
               userNames: userNames,
               initialIndex: currentIndex,
@@ -42,9 +43,7 @@ class StoryCircle extends StatelessWidget {
             backgroundColor: Colors.transparent,
             radius: 36,
             backgroundImage: AssetImage(
-              isFirst
-                  ? 'assets/images/ABC.png'
-                  : imageUrls[currentIndex].first,
+                  'assets/images/ABC.png'
             ),
           ),
           CustomPaint(

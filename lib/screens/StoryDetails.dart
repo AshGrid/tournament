@@ -33,6 +33,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
           mediaUrl,
           controller: _storyController,
           caption: Text(widget.userNames[widget.initialIndex]),
+          duration: Duration(seconds: 30),
         );
       } else {
         // If it's an image, use the pageImage constructor
@@ -48,7 +49,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
       backgroundColor: AppColors.navbarColor,
       body: StoryViewScreen(
         storyItems: storyItems,
-        controller: widget._storyController,
+        controller: widget._storyController, onComplete: () {  },
       ),
     );
   }

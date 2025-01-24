@@ -155,16 +155,21 @@ class _ScoreboardItemState extends State<ScoreboardItem> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: Image.network(
-                team.logo!,
+                team.logo??'',
                 fit: BoxFit.fill,
               ),
             ),
           ),
         ),
-        Text(
-          team.name,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15),
-        ),
+        SizedBox(
+          width: 130,
+          child: Text(
+            team.name,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
+        )
       ],
     );
   }
@@ -180,7 +185,7 @@ class _ScoreboardItemState extends State<ScoreboardItem> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "${widget.match.date != null ? DateFormat('MM-dd-yyyy').format(widget.match.date!) : 'TBD'}",
+              "${widget.match.date != null ? DateFormat('dd-MM-yyyy').format(widget.match.date!) : 'TBD'}",
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15),
             ),
             Text(

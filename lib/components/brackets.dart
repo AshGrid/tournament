@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tournament_bracket/src/model/tournament_match.dart';
-import 'package:flutter_tournament_bracket/src/model/tournament_model.dart';
-import 'package:flutter_tournament_bracket/src/utils/calculate_separator_height.dart';
 
+
+import '../dep/lib/src/model/tournament_match.dart';
+import '../dep/lib/src/model/tournament_model.dart';
+import '../dep/lib/src/utils/calculate_seperator_height.dart';
 import 'bracketCard.dart';
 
 

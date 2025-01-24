@@ -49,14 +49,20 @@ class playerCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                playerName,
-                style: TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black, // Adjust text color
+              Container(
+                width: 100,
+                child: Text(
+                  playerName,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Adjust text color
+                  ),
+                  overflow: TextOverflow.ellipsis, // Add ellipsis for overflow
+                  maxLines: 1, // Restrict to 1 line to avoid overflow
                 ),
               ),
+
               SizedBox(height: 4.0), // Space between name and position
               // Text(
               //   playerPosition,

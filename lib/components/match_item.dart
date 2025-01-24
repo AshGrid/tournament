@@ -21,7 +21,14 @@ class MatchItem extends StatelessWidget {
     if (date == null) {
       return "TBD"; // Default value if date is null
     }
-    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    return formatter.format(date);
+  }
+  String _formatTime(DateTime? date) {
+    if (date == null) {
+      return "TBD"; // Default value if date is null
+    }
+    final DateFormat formatter = DateFormat('dd-MM-yyyy');
     return formatter.format(date);
   }
 

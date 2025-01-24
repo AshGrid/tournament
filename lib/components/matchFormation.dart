@@ -31,15 +31,28 @@ class _MatchFormationState extends State<MatchFormation> {
 
   Future<void> _fetchPlayers() async {
     final fetchedPlayers = await dataService.fetchInvitedPlayers(widget.match.id!);
+
     setState(() {
-      // Fetch home and away players for both starting and substitutes
-      homePlayers = fetchedPlayers[0].compositions_de_depart!;
-      awayPlayers = fetchedPlayers[1].compositions_de_depart!;
+      // Assuming 'teamId' is used to differentiate teams
+      final homeTeamId = widget.match.home!.id; // Get home team ID from match data
+      final awayTeamId = widget.match.away!.id; // Get away team ID from match data
 
-      homePlayersR = fetchedPlayers[0].remplacants!;
-      awayPlayersR = fetchedPlayers[1].remplacants!;
+      // Determine home and away players based on team ID
+      if (fetchedPlayers[0].club!.id == homeTeamId) {
+        homePlayers = fetchedPlayers[0].compositions_de_depart!;
+        homePlayersR = fetchedPlayers[0].remplacants!;
 
-      // Add these print statements to verify data
+        awayPlayers = fetchedPlayers[1].compositions_de_depart!;
+        awayPlayersR = fetchedPlayers[1].remplacants!;
+      } else {
+        homePlayers = fetchedPlayers[1].compositions_de_depart!;
+        homePlayersR = fetchedPlayers[1].remplacants!;
+
+        awayPlayers = fetchedPlayers[0].compositions_de_depart!;
+        awayPlayersR = fetchedPlayers[0].remplacants!;
+      }
+
+      // Debugging output to verify data
       print("Home players: ${homePlayers.length}");
       print("Away players: ${awayPlayers.length}");
       print("Home substitutes: ${homePlayersR.length}");
@@ -71,6 +84,7 @@ class _MatchFormationState extends State<MatchFormation> {
               child: Text(
                 "Compositions de départ",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'Oswald'),
+
               ),
             ),
             _buildPlayerRow(homePlayers, awayPlayers, dividerHeight, playerRowHeight),
@@ -107,9 +121,9 @@ class _MatchFormationState extends State<MatchFormation> {
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: awayPlayers.length,
+            itemCount: homePlayers.length,
             itemBuilder: (context, index) {
-              final player = awayPlayers[index];
+              final player = homePlayers[index];
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                 alignment: Alignment.centerLeft, // Align left for away team
@@ -133,9 +147,9 @@ class _MatchFormationState extends State<MatchFormation> {
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: homePlayers.length,
+            itemCount: awayPlayers.length,
             itemBuilder: (context, index) {
-              final player = homePlayers[index];
+              final player = awayPlayers[index];
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                 alignment: Alignment.centerRight, // Align right for home team

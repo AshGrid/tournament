@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:untitled/components/colors.dart';
 import 'myhomePage.dart'; // Import your main screen here
 
 class SplashScreen extends StatefulWidget {
@@ -22,15 +23,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       body: Container(
-        color: Colors.transparent, // Set your desired background color
+        decoration: BoxDecoration(
+          gradient: isTablet?AppColors.backgroundColor:AppColors.backgroundTransparent,
+        ),
         child: Center(
           child: Image.asset(
             'assets/images/soccer.gif', // Replace with your image asset path
             fit: BoxFit.cover, // Ensures the GIF covers the entire screen
-            height: MediaQuery.of(context).size.height, // Full screen height
-            width: MediaQuery.of(context).size.width,  // Full screen width
+            height: isTablet ? MediaQuery.of(context).size.height*0.8 : MediaQuery.of(context).size.height, // Full screen height
+            width: isTablet ? MediaQuery.of(context).size.height*0.7: MediaQuery.of(context).size.width,  // Full screen width
           ),
         ),
       ),

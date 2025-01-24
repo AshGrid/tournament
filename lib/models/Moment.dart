@@ -1,20 +1,24 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'Moment.g.dart';
+part 'Moment.g.dart'; // Replace with your actual file name
 
-@JsonSerializable() // Enable JSON serialization
+@JsonSerializable()
 class Moment {
   final int id;
-  final String? name; // Nullable name
-  final String? file; // Nullable file
+  final String video;
+  final String name;
+  final DateTime created_at;
 
   Moment({
     required this.id,
-    this.name,
-    this.file,
+    required this.video,
+    required this.name,
+    required this.created_at,
   });
 
-  // JSON serialization methods
+  // Factory method to create an instance from JSON
   factory Moment.fromJson(Map<String, dynamic> json) => _$MomentFromJson(json);
+
+  // Method to convert the instance to JSON
   Map<String, dynamic> toJson() => _$MomentToJson(this);
 }

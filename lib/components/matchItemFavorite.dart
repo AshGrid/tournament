@@ -7,15 +7,15 @@ class MatchItemFavorite extends StatelessWidget {
   final Match match;
   final Color backgroundColor;
   final bool isLastItem;
+  final bool isFirstItem;
 
   const MatchItemFavorite({
     Key? key,
     required this.match,
     required this.backgroundColor,
     this.isLastItem = false,
+    this.isFirstItem = false,
   }) : super(key: key);
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,10 @@ class MatchItemFavorite extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border(
-          bottom: BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          bottom: const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          top: isFirstItem
+              ? const BorderSide(color: Color(0xFFFFFFFF), width: 2)
+              : BorderSide.none,
         ),
       ),
       child: Row(
@@ -58,15 +61,29 @@ class MatchItemFavorite extends StatelessWidget {
                     const SizedBox(height: 5),
                     // Team 1 logo and name
                     _buildTeamLogo("${match.home!.logo}", match.home!.name),
-                    const SizedBox(height: 8), // Space between team 1 and team 2
+                    const SizedBox(
+                        height: 8), // Space between team 1 and team 2
                     // Team 2 logo and name
                     _buildTeamLogo("${match.away!.logo}", match.away!.name),
                   ],
                 ),
                 const Spacer(),
-Text(
-  "${ DateFormat('MMMM d, yyyy').format(match.date!)}",
-  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.white),),
+                Text(
+                  match.status == "live"
+                      ? "En cours"
+                      : "${DateFormat('dd MM, yyyy').format(match.date!)}",
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white),
+                ),
+                SizedBox(width: 7,),
+                Container(
+                  width: 1,
+                  height: 70, // Adjust the height of the divider line
+                  color: AppColors.timeLogoSeperator,
+                ),
+
                 // Score on the far right
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -82,16 +99,25 @@ Text(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "${match.home_first_half_score!+match.home_second_half_score!}", // Home team score
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                          "${match.home_first_half_score! + match.home_second_half_score!}", // Home team score
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                         const Text(
                           "",
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                         Text(
-                          "${match.away_first_half_score!+match.away_second_half_score!}", // Away team score
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                          "${match.away_first_half_score! + match.away_second_half_score!}", // Away team score
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ],
                     ),
@@ -135,9 +161,14 @@ Text(
           ),
         ),
         const SizedBox(width: 8), // Space between logo and team name
-        Text(
-          teamName,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+        SizedBox(
+          width: 90,
+          child: Text(
+            teamName,
+            style: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

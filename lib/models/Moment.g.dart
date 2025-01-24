@@ -8,12 +8,14 @@ part of 'Moment.dart';
 
 Moment _$MomentFromJson(Map<String, dynamic> json) => Moment(
       id: (json['id'] as num).toInt(),
-      name: json['name'] as String?,
-      file: json['file'] as String?,
+      video: json['video'] as String,
+      name: json['name'] as String,
+      created_at: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$MomentToJson(Moment instance) => <String, dynamic>{
       'id': instance.id,
+      'video': instance.video,
       'name': instance.name,
-      'file': instance.file,
+      'created_at': instance.created_at.toIso8601String(),
     };

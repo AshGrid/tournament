@@ -10,12 +10,14 @@ class Season {
   final String? season;
   final League? league;
   final List<Club>? teams;
+  final String? full_name;
 
   Season({
     required this.id,
     required this.season,
     required this.league,
     required this.teams,
+    required this.full_name
   });
 
   // JSON serialization methods

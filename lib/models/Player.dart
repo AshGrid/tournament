@@ -25,6 +25,11 @@ class Player {
   final bool? pending_verification;
   final bool? suspended;
   final int? suspension_duration;
+  final int? matches_played;
+  final int? goals;
+  final int? assists;
+  final int? yellow_cards;
+  final int? red_cards;
 
   Player({
     required this.id,
@@ -47,6 +52,11 @@ class Player {
     required this.pending_verification,
     required this.suspended,
     required this.suspension_duration,
+    this.assists,
+    this.goals,
+    this.matches_played,
+    this.red_cards,
+    this.yellow_cards
   });
 
   // JSON serialization methods

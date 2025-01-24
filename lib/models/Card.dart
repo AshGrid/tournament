@@ -10,7 +10,7 @@ class Card {
   final String? type;
   final Player? player;
   final String? min;
-  final bool? secondYellow;
+  final bool? second_yellow;
   final Match? match;
 
   Card({
@@ -18,7 +18,7 @@ class Card {
     required this.type,
     required this.player,
     required this.min,
-    required this.secondYellow,
+    required this.second_yellow,
     required this.match,
   });
 

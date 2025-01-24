@@ -1,11 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:story_view/story_view.dart';
+import 'package:video_player/video_player.dart';
 class StoryViewScreen extends StatelessWidget {
   final List<StoryItem> storyItems;
   final StoryController controller;
-
-  StoryViewScreen({required this.storyItems, required this.controller});
+final void Function()? onComplete;
+  StoryViewScreen({required this.storyItems, required this.controller,required this.onComplete});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +17,12 @@ class StoryViewScreen extends StatelessWidget {
           print("Showing a story");
         },
         onComplete: () {
-          print("Completed a cycle");
+          onComplete!();
         },
-        progressPosition: ProgressPosition.bottom,
+        progressPosition: ProgressPosition.top,
         repeat: false,
         controller: controller,
+
       ),
     );
   }

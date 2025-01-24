@@ -18,6 +18,8 @@ Goal _$GoalFromJson(Map<String, dynamic> json) => Goal(
       match: json['match'] == null
           ? null
           : Match.fromJson(json['match'] as Map<String, dynamic>),
+      is_penalty: json['is_penalty'] as bool?,
+      is_own_goal: json['is_own_goal'] as bool?,
     );
 
 Map<String, dynamic> _$GoalToJson(Goal instance) => <String, dynamic>{
@@ -26,4 +28,5 @@ Map<String, dynamic> _$GoalToJson(Goal instance) => <String, dynamic>{
       'assist': instance.assist?.toJson(),
       'min': instance.min,
       'match': instance.match?.toJson(),
+      'is_penalty': instance.is_penalty,
     };

@@ -53,6 +53,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
     selectedIndex = 1;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +117,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                             child: Center(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(50.0),
-                                child: Image.asset(
+                                child: Image.network(
                                   '${widget.player.avatar}',
                                   fit: BoxFit.contain,
                                   width: 80,
@@ -151,14 +152,14 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                       ),
                                     ),
                                     const SizedBox(width: 4), // Space between league name and trophy name
-                                    Text(
-                                      " (${widget.player.birthday})",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   " (${widget.player.birthday?.year}-${widget.player.birthday?.month}-${widget.player.birthday?.day})",
+                                    //   style: TextStyle(
+                                    //     fontSize: 14,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: Colors.black,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -201,6 +202,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
             // Display the selected content - now below the container
             SliverToBoxAdapter(
               child: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
                 width: MediaQuery.of(context).size.width,
                 padding:  selectedIndex == 1 ? EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0):EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 child: _buildSelectedContent(),
@@ -251,9 +253,9 @@ class _PlayerDetailsState extends State<PlayerDetails> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
       case 0:
-        return PlayerMatches(); // Display RankingScreen
+        return PlayerMatches(player: widget.player); // Display RankingScreen
       case 1:
-        return PlayrCarriere(); // Display ResultsScreen
+        return PlayerCareer(player: widget.player); // Display ResultsScreen
 
       default:
         return Container(); // Fallback case

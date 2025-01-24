@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tournament_bracket/flutter_tournament_bracket.dart';
+
+import '../dep/lib/flutter_tournament_bracket.dart';
 import '../models/Match.dart';
 import 'colors.dart'; // Update the import according to your project structure
 // Update this import according to your color utility path
@@ -11,9 +12,11 @@ class BracketMatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Container(
 
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.teamLogoBorder, width: 1),
         boxShadow: [
@@ -40,7 +43,7 @@ class BracketMatchCard extends StatelessWidget {
                   children: [
                     Container(
 
-                      width: MediaQuery.of(context).size.width*0.13,
+                      width: screenWidth > 600 ? MediaQuery.of(context).size.width*0.073 : MediaQuery.of(context).size.width*0.13,
                       height: MediaQuery.of(context).size.height*0.04,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -80,7 +83,7 @@ class BracketMatchCard extends StatelessWidget {
                   children: [
                     Container(
 
-                      width: MediaQuery.of(context).size.width*0.13,
+                      width: screenWidth > 600 ? MediaQuery.of(context).size.width*0.073 : MediaQuery.of(context).size.width*0.13,
                       height: MediaQuery.of(context).size.height*0.04,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -124,7 +127,7 @@ class BracketMatchCard extends StatelessWidget {
               Text(
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                item.scoreTeamA ?? "",
+                '${item.scoreTeamA ?? ""}  ${item.scoreTeamAAway ?? ""} ',
                 style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -136,7 +139,7 @@ class BracketMatchCard extends StatelessWidget {
               Text(
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                item.scoreTeamB ?? "",
+                '${item.scoreTeamB?? ""}  ${item.scoreTeamBHome?? ""} ',
                 style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,

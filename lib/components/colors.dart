@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppColors {
+
   static const Color primaryColor = Color(0xFF6200EE);
   static const Color primaryVariant = Color(0xFF3700B3);
   static const Color secondaryColor = Color(0xFF03DAC6);
@@ -25,6 +26,11 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+  static const LinearGradient backgroundTransparent = LinearGradient(
+    colors: [Colors.transparent, Colors.transparent], // Change to your desired colors
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   static const LinearGradient newsGradient = LinearGradient(
     colors: [Color(0x13FFFFFF), Color(0xFFFFFFFF)], // Change to your desired colors
     begin: Alignment.topCenter,
@@ -39,6 +45,10 @@ class AppColors {
   );
   static const Color trophyBorder = Color(0x80E6E6E6);
   static const Color trophyShadow = Color(0x26FFFFFF);
+  static const Color colorSaturday = Color(0xFF0966FF);
+  static const Color colorSunday = Color(0xFFD10202);
+
+
   static const Color profileIconShadow = Color(0x40000000);
   static const LinearGradient newsBackground = LinearGradient(
     colors: [Color(0x50000), Color(0x74FFFFFF)], // Change to your desired colors
