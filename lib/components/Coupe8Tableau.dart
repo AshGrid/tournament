@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:untitled/components/CustomMatchCard.dart';
 import 'package:untitled/components/bracketCard.dart';
-import 'package:untitled/components/brackets.dart';
+//import 'package:untitled/components/brackets.dart';
 
 import '../Service/mock_data.dart';
 import '../dep/lib/flutter_tournament_bracket.dart';

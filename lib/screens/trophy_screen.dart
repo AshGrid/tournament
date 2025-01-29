@@ -69,7 +69,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
       });
     }
   }
-
+/// function for fetching leagues
   Future<void> _fetchLeagues() async {
     final fetchedLeagues = await dataService.fetchLeagues();
     setState(() {
