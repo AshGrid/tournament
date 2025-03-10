@@ -11,6 +11,8 @@ class Pool {
   final List<int>? teams;
   final bool? create_matches;
   final String? type;
+  final String? name;
+  final String? full_name;
 
   Pool({
     required this.id,
@@ -18,6 +20,8 @@ class Pool {
     required this.teams,
     required this.create_matches,
     required this.type,
+    required this.name,
+    required this.full_name
   });
 
   // JSON serialization methods

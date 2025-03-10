@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:untitled/components/TropheeHannibalVeteranTableau.dart';
 import 'package:untitled/components/TropheehannibalcalendarVeteran.dart';
 import 'package:untitled/components/TropheehannibalresultasVeteran.dart';
 import 'package:untitled/components/superPlayOff8Calendar.dart';
-
 import 'package:untitled/components/superPlayOffCalendar.dart';
 import 'package:untitled/components/superPlayOffResultats.dart';
 import 'package:untitled/components/tropheeHannibalCalendar.dart';
@@ -12,9 +10,16 @@ import 'package:untitled/components/tropheeHannibalResultats.dart';
 import 'package:untitled/components/tropheeHannibalTableau.dart';
 import 'package:untitled/models/League.dart';
 import 'package:untitled/models/SuperPlayOff.dart';
+import 'package:untitled/models/Trophy.dart';
 import '../Service/data_service.dart';
 import '../components/calendarContainer.dart';
 import '../components/colors.dart';
+import '../components/ramadan_cup_calendar.dart';
+import '../components/ramadan_cup_calendar_container.dart';
+import '../components/ramadan_cup_ranking_screen.dart';
+import '../components/ramadan_cup_results.dart';
+import '../components/ramadan_cup_results_screen.dart';
+import '../components/ramadan_cup_tableau_screen.dart';
 import '../components/rankingContainer.dart';
 import '../components/resultsContainer.dart';
 import '../components/superPlayOff8Resultats.dart';
@@ -24,35 +29,39 @@ import '../components/superPlayOffTableau.dart';
 import '../models/Club.dart';
 import '../models/Match.dart';
 import '../models/Coupe8.dart';
+import '../models/PoolData.dart';
+import '../models/Season.dart';
 import '../models/SuperPlayOff8.dart';
 import '../models/TeamRanking.dart';
 
-class PhaseDetailsScreen extends StatefulWidget {
+class RamadanCupPhaseDetailsScreen extends StatefulWidget {
   final String phaseName;
   final League league;
-  final String trophyName;
+  final Trophy trophy;
   final Function(Match) onMatchSelected;
 
-  const PhaseDetailsScreen(
-      {super.key,
-      required this.phaseName,
-      required this.league,
-      required this.trophyName,
-      required this.onMatchSelected
-      });
+  const RamadanCupPhaseDetailsScreen({
+    Key? key,
+    required this.phaseName,
+    required this.league,
+    required this.trophy,
+    required this.onMatchSelected,
+  }) : super(key: key);
 
   @override
-  _PhaseDetailsScreenState createState() => _PhaseDetailsScreenState();
+  _RamadanCupPhaseDetailsScreenState createState() =>
+      _RamadanCupPhaseDetailsScreenState();
 }
 
-class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
+class _RamadanCupPhaseDetailsScreenState
+    extends State<RamadanCupPhaseDetailsScreen> {
   final DataService dataService = DataService();
   int selectedIndex = 0;
   List<Coupe8> coupes8List = []; // List for Coupe8
   List<String> years = List.generate(
       7, (index) => (19 + index).toString()); // Years from 2010 to 2024
   String selectedYear = '24'; // Default selected year
-  List<Coupe8> league_superTrophies = [];
+
   late Coupe8? league_superTrophy = null;
 
   SuperPlayOff8? hannibalTrophies;
@@ -62,24 +71,101 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   SuperPlayOff? superPlayoffList;
   SuperPlayOff8? superPlayoff8List;
 
-  Future<void> _fetchCoupes8() async {
-    final fetchedCoupes8 = await dataService.fetchCoupes8();
-    setState(() {
-      coupes8List = fetchedCoupes8;
+  Season? selectedSeason = null;
+  bool isSeasonsLoading = true;
+  List<Season> seasonsList = [];
+  List<PoolData> poolData = [];
+  bool isPoolDataLoading = true;
+  List<TeamRanking> rankingsList = [];
 
-      // Print the names of all the fetched coupes
-      for (var coupe in coupes8List) {
-        print("Coupe8 name: ${coupe.season?.league?.trophy?.name}");
+  Future<void> fetchAndProcessPoolData() async {
+    try {
+      // Fetch the pool data
+      List<PoolData> poolDataList =
+          await dataService.fetchPoolData(selectedSeason?.id ?? 14);
+
+      // Check if the pool data list is not empty
+      if (poolDataList.isNotEmpty) {
+        // Initialize a list to store all rankings
+        List<TeamRanking> allRankings = [];
+
+        // Loop through each PoolData object
+        for (var poolData in poolDataList) {
+          // Check if the rankings list is not null
+          if (poolData.rankings != null) {
+            // Add the rankings to the allRankings list
+            allRankings.addAll(poolData.rankings!);
+          }
+        }
+
+        // Now `allRankings` contains all the rankings from all PoolData objects
+        print('Total rankings fetched: ${allRankings.length}');
+
+        // You can now use `allRankings` as needed in your app
+        // For example, assign it to a variable or state
+        setState(() {
+          rankingsList =
+              allRankings; // Assuming `rankingsList` is a state variable
+        });
+      } else {
+        print('No pool data found.');
       }
-    });
+    } catch (e) {
+      print('Error processing pool data: $e');
+    }
   }
 
-  // Future<void> _fetchClubs() async {
-  //   final fetchedClubs= await dataService.fetchRankingByLeague(widget.league.id!);
-  //   setState(() {
-  //     clubsList = fetchedClubs;
-  //   });
-  // }
+  Future<void> _fetchSeasons() async {
+    try {
+      setState(() {
+        isSeasonsLoading = true;
+      });
+
+      // Fetch all seasons
+      final fetchedSeasons = await dataService.fetchSeasons();
+
+      setState(() {
+        // Find the first season where season.league?.id matches widget.league.id
+        seasonsList = fetchedSeasons
+            .where((season) => season.league?.id == widget.league.id)
+            .toList();
+
+        // If a matching season is found, assign it to selectedSeason
+        if (seasonsList.isNotEmpty) {
+          selectedSeason = seasonsList.first; // Take the first matching season
+        } else {
+          selectedSeason = null; // No matching season found
+        }
+
+        isSeasonsLoading = false;
+      });
+
+      print("Filtered seasons list: $seasonsList");
+    } catch (e) {
+      print('Error fetching seasons: $e');
+      setState(() {
+        isSeasonsLoading = false;
+      });
+    }
+  }
+
+  void loadPoolData() async {
+    print("selected season id${selectedSeason?.id}");
+    List<PoolData> poolDataList =
+        await dataService.fetchPoolData(selectedSeason?.id ?? 14);
+    print("pool data list: $poolDataList");
+    if (poolDataList.isNotEmpty) {
+      print('Pool data found: $poolDataList');
+      // Use the poolDataList in your app
+      setState(() {
+        poolData = poolDataList;
+        isPoolDataLoading = false;
+      });
+    } else {
+      print('No pool data found or an error occurred.');
+    }
+  }
+
   Future<void> _fetchClubsByPremierePhase() async {
     print("league id");
     print(widget.league.id);
@@ -103,67 +189,15 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
     }
   }
 
-  Future<void> _fetchsuperPlayoff() async {
-    final fetchedClubs = await dataService.fetchSuperPlayoff(widget.league.id!);
-    print("fetched clubs siperplayoff");
-    setState(() {
-      superPlayoffList = fetchedClubs;
-    });
-  }
-
-  Future<void> _fetchsuperPlayoff8() async {
-    final fetchedClubs =
-        await dataService.fetchSuperPlayoff8(widget.league.id!);
-    print("fetched clubs siperplayoff");
-    setState(() {
-      superPlayoff8List = fetchedClubs;
-    });
-  }
-
-  Future<void> _fetchHannibal() async {
-    final fetchedClubs =
-        await dataService.league_super_trophies(widget.league.id!);
-    print("fetched clubs siperplayoff");
-    setState(() {
-      hannibalTrophies = fetchedClubs;
-    });
-  }
-
-  Future<void> league_super_trophies() async {
-    // Fetch the super trophies
-    final fetchedSuperTrophies = await dataService.league_super_trophies8();
-    print("Fetched clubs from PremierePhase");
-
-    try {
-      // Get the first trophy that matches the league ID
-      final selectedTrophy = fetchedSuperTrophies.firstWhere((trophy) {
-        return trophy.season?.league?.id == widget.league.id;
-      });
-
-      // If found, update your state
-      setState(() {
-        league_superTrophy =
-            selectedTrophy; // Store the single trophy in your state variable
-      });
-    } catch (e) {
-      // Handle the case where no trophy is found
-      print("No trophy found for the league ID ${widget.league.id}");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
+    _fetchSeasons();
+    fetchAndProcessPoolData();
     _fetchClubsByPremierePhase();
-    _fetchsuperPlayoff();
-    _fetchCoupes8(); // Fetch Coupes8
-    _fetchsuperPlayoff8();
-    _fetchHannibal();
-    // _fetchClubs();
-    if (this.widget.phaseName == "SUPER PLAY-OFF") {
+
+    if (this.widget.phaseName == "PHASE ELIMINATOIRE") {
       selectedIndex = 3; // or whatever index you need
-    } else if (this.widget.phaseName == "TROPHÉE HANNIBAL") {
-      selectedIndex = 6; // assign the corresponding index
     } else {
       selectedIndex = 0; // default index
     }
@@ -174,7 +208,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
     List<Coupe8> filteredCoupes8 = coupes8List
         .where((coupe8) =>
             coupe8.season!.league?.trophy!.name!.toUpperCase() ==
-            widget.trophyName.toUpperCase())
+            widget.trophy.name?.toUpperCase())
         .toList();
     return Scaffold(
       body: Container(
@@ -193,7 +227,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                       color: Colors.black,
                       blurRadius: 8,
                       offset: const Offset(0, 1),
-                    ),
+                    )
                   ],
                 ),
                 child: Column(
@@ -229,7 +263,7 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                   color: Colors.black.withOpacity(0.25),
                                   blurRadius: 4,
                                   offset: const Offset(0, 4),
-                                ),
+                                )
                               ],
                             ),
                             child: Center(
@@ -251,27 +285,23 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.trophyName,
+                                  widget.trophy.name!,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                const SizedBox(
-                                    height:
-                                        4), // Space between league name and trophy name
+                                const SizedBox(height: 4),
                                 Text(
-                                  widget.trophyName.toUpperCase() =="RAMADAN CUP" ? "RAMADAN CUP" : widget.league.name!,
+                                  "RAMADAN CUP",
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                const SizedBox(
-                                    height:
-                                        4), // Space between league name and trophy name
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
                                     Text(
@@ -283,7 +313,6 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                                       ),
                                     ),
                                     Spacer(),
-
                                   ],
                                 ),
                               ],
@@ -301,24 +330,18 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                         children: [
                           if (this.widget.phaseName == "PREMIERE PHASE") ...[
                             _buildMenuItem('CLASSEMENT', 0),
-                            const SizedBox(width: 20), // Space between items
+                            const SizedBox(width: 20),
                             _buildMenuItem('RESULTATS', 1),
-                            const SizedBox(width: 20), // Space between items
+                            const SizedBox(width: 20),
                             _buildMenuItem('CALENDRIER', 2),
                           ],
-                          if (this.widget.phaseName == "SUPER PLAY-OFF") ...[
+                          if (this.widget.phaseName ==
+                              "PHASE ELIMINATOIRE") ...[
                             _buildMenuItem('TABLEAU', 3),
                             const SizedBox(width: 20),
                             _buildMenuItem('RESULTATS', 4),
                             const SizedBox(width: 20),
                             _buildMenuItem('CALENDRIER', 5),
-                          ],
-                          if (this.widget.phaseName == "TROPHÉE HANNIBAL") ...[
-                            _buildMenuItem('TABLEAU', 6),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('RESULTATS', 7),
-                            const SizedBox(width: 20),
-                            _buildMenuItem('CALENDRIER', 8),
                           ],
                         ],
                       ),
@@ -328,10 +351,10 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
                 ),
               ),
             ),
+
             // Display the selected content - now below the container
             SliverToBoxAdapter(
               child: Container(
-                width: MediaQuery.of(context).size.width,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
                 child: _buildSelectedContent(),
@@ -382,105 +405,34 @@ class _PhaseDetailsScreenState extends State<PhaseDetailsScreen> {
   Widget _buildSelectedContent() {
     switch (selectedIndex) {
       case 0:
-        return PremierePhaseRankingScreen(
-          clubs: clubsListPremierePhase,
+        return PremierePhaseRamadanRankingScreen(
+          clubs: rankingsList,
+          league: widget.league,
         ); // Display RankingScreen
       case 1:
-        return PremierePhaseResultsScreen(
-            league: widget.league, onMatchSelected: widget.onMatchSelected); // Display ResultsScreen
+        return PremierePhaseRamadanResultsScreen(
+            league: widget.league.id!,
+            onMatchSelected: widget.onMatchSelected); // Display ResultsScreen
       case 2:
-        return PremierePhaseCalendarScreen(
-            league: widget.league.id!, onMatchSelected: widget.onMatchSelected,); // Display CalendarScreen
+        return PremierePhaseRamadanCalendarScreen(
+          league: widget.league.id!,
+          onMatchSelected: widget.onMatchSelected,
+        ); // Display CalendarScreen
       case 3:
-        if (widget.league.id == 5) {
-          return SuperPlayOff8Tableau(playOff: widget.league);
-        }
-        // Ensure superPlayoffList is not null
-        return SuperPlayOffTableau(playOff: widget.league);
+        return
+          // Wrap BracketsScreen in Expanded
+           BracketsScreen(league: widget.league)
+        ;
       case 4:
-        if (widget.league.id == 5) {
-          if (superPlayoff8List != null) {
-            return Superplayoff8resultat(
-              superPlayOffData: superPlayoff8List!,
-            );
-          }
-          return Center(
-              child: CircularProgressIndicator(
-            color: Colors.white,
-          ));
-        }
-        if (superPlayoffList != null) {
-          return Superplayoffresultat(
-            superPlayOffData: superPlayoffList!,
-          );
-        } else {
-          return Center(
-              child: CircularProgressIndicator()); // or any placeholder widget
-        }
-
+        return RamadanCupResults(
+          seasonId: selectedSeason?.id ??
+              14, // Use dynamic seasonId or fallback to 14
+        );
       case 5:
-        if (widget.league.id == 5) {
-          if (superPlayoff8List != null) {
-            return SuperPlayoff8Calendar(
-              superPlayOff: superPlayoff8List!,
-            );
-          }
-          return Center(
-              child: CircularProgressIndicator(
-            color: Colors.white,
-          ));
-        }
-        if (superPlayoffList != null) {
-          return SuperPlayoffCalendar(
-            superPlayOff: superPlayoffList!,
-          );
-        } else {
-          return Center(
-              child: CircularProgressIndicator()); // or any placeholder widget
-        }
-
-      case 6:
-        if (widget.league.id == 5) {
-
-            return Tropheehannibalveterantableau(
-              superPlayOff8: hannibalTrophies,
-            );
-
-
-        }
-        return Tropheehannibaltableau(coupe8: league_superTrophy);
-      case 7:
-        if (widget.league.id == 5) {
-          if (hannibalTrophies != null) {
-            return TropheehannibalresultatsVeteran(coupe:hannibalTrophies );
-          }
-          return Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ));
-        }
-        if (league_superTrophy != null) {
-         return Tropheehannibalresultats(coupe: league_superTrophy);
-        } else {
-          return Center(
-              child: CircularProgressIndicator()); // or any placeholder widget
-        }
-      case 8:
-        if (widget.league.id == 5) {
-          if (hannibalTrophies != null) {
-            return TropheehannibalcalendarVeteran(coupe: hannibalTrophies);
-          }
-          return Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ));
-        }
-        if (league_superTrophy != null) {
-          return Tropheehannibalcalendar(coupe: league_superTrophy);
-        } else {
-          return Center(
-              child: CircularProgressIndicator()); // or any placeholder widget
-        }
+        return RamadanCupCalendar(
+          seasonId: selectedSeason?.id ??
+              14, // Use dynamic seasonId or fallback to 14
+        );
       default:
         return Container(); // Fallback case
     }

@@ -5,17 +5,12 @@ import '../Service/data_service.dart';
 import '../components/CoupeComponent.dart';
 import '../components/LeagueComponent.dart';
 import '../components/colors.dart';
-import '../components/match_item.dart';
 import '../components/match_item_live.dart';
 import '../models/Coupe.dart';
 import '../models/Coupe8.dart';
-import '../models/MatchEvent.dart';
-import '../models/Team.dart';
 import '../models/League.dart';
 import '../models/Match.dart';
-import '../models/Player.dart';
 import '../models/Trophy.dart';
-import 'package:collection/collection.dart';
 
 class MatchesScreen extends StatefulWidget {
   final Function(Match) onMatchSelected;
@@ -32,86 +27,44 @@ class _MatchesScreenState extends State<MatchesScreen> {
   final DataService dataService = DataService();
   List<Trophy> trophiesList = [];
   List<League> leaguesList = [];
-
   List<Match> matches = [];
+  List<Coupe> coupesList = [];
+  List<Coupe8> coupes8List = [];
+  List<DateTime> dayss = [];
+
   bool isTrophiesLoading = true;
   bool isMatchesLoading = true;
   bool isLeaguesLoading = true;
   bool isDaysLoading = true;
-  List<DateTime> dayss = [];
-  List<Coupe> coupesList = [];
-  List<Coupe8> coupes8List = [];
 
-  Future<void> _fetchTrophies() async {
+  Future<void> _fetchData() async {
     try {
       final fetchedTrophies = await dataService.fetchTrophies();
-      setState(() {
-        trophiesList =
-        fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
-        isTrophiesLoading = false;
-      });
-    } catch (error) {
-      setState(() {
-        isTrophiesLoading = false;
-      });
-    }
-  }
-
-  Future<void> _fetchCoupes() async {
-    final fetchedCoupes = await dataService.fetchCoupes();
-    setState(() {
-      coupesList = fetchedCoupes;
-    });
-  }
-
-  Future<void> _fetchCoupes8() async {
-    final fetchedCoupes8 = await dataService.fetchCoupes8();
-    setState(() {
-      coupes8List = fetchedCoupes8;
-    });
-  }
-
-  Future<void> _fetchDays() async {
-    try {
-      final fetchedDays = await dataService.fetchUpcomingMatchDates();
-      setState(() {
-        if (fetchedDays.isNotEmpty) {
-          dayss = fetchedDays;
-        }
-        isDaysLoading = false;
-      });
-    } catch (error) {
-      setState(() {
-        isDaysLoading = false;
-      });
-    }
-  }
-
-  Future<void> _fetchLeagues() async {
-    try {
       final fetchedLeagues = await dataService.fetchLeagues();
+      final fetchedMatches = await dataService.fetchUpcomingMatches();
+      final fetchedDays = await dataService.fetchUpcomingMatchDates();
+      final fetchedCoupes = await dataService.fetchCoupes();
+      final fetchedCoupes8 = await dataService.fetchCoupes8();
+
       setState(() {
+        trophiesList = fetchedTrophies..sort((a, b) => a.name!.compareTo(b.name!));
         leaguesList = fetchedLeagues;
+        matches = fetchedMatches;
+        coupesList = fetchedCoupes;
+        coupes8List = fetchedCoupes8;
+        if (fetchedDays.isNotEmpty) dayss = fetchedDays;
+
+        isTrophiesLoading = false;
+        isMatchesLoading = false;
         isLeaguesLoading = false;
+        isDaysLoading = false;
       });
     } catch (error) {
       setState(() {
+        isTrophiesLoading = false;
+        isMatchesLoading = false;
         isLeaguesLoading = false;
-      });
-    }
-  }
-
-  Future<void> _fetchMatches() async {
-    try {
-
-      final fetchedUpcomingMatches = await dataService.fetchUpcomingMatches();
-      setState(() {
-        matches = fetchedUpcomingMatches;
-        isMatchesLoading = false;
-      });
-    } catch (error) {
-      setState(() {
-        isMatchesLoading = false;
+        isDaysLoading = false;
       });
     }
   }
@@ -119,16 +72,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchTrophies();
-    _fetchMatches();
-    _fetchLeagues();
-    _fetchDays();
-    _fetchCoupes();
-    _fetchCoupes8();
+    _fetchData();
   }
 
-
-  @override
   @override
   Widget build(BuildContext context) {
     bool isLoading = isTrophiesLoading || isMatchesLoading || isLeaguesLoading || isDaysLoading;
@@ -136,7 +82,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
     return Column(
       children: [
-        // Horizontally scrollable container for days
+        // Date selector
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Padding(
@@ -153,7 +99,6 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     onTap: () {
                       setState(() {
                         selectedDayIndex = index;
-                        // Refresh the components based on the selected date
                       });
                     },
                     child: Column(
@@ -161,10 +106,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       children: [
                         Text(
                           "${day.day}/${day.month}/${day.year}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         if (isSelected)
                           Container(
@@ -182,10 +124,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
           ),
         ),
 
-        // Vertically scrollable container for leagues, coupes, and coupe 8
+        // Main content
         Expanded(
           child: isLoading
-              ? Center(child: CircularProgressIndicator(color: Colors.white))
+              ? const Center(child: CircularProgressIndicator(color: Colors.white))
               : ListView.builder(
             itemCount: trophiesList.length,
             itemBuilder: (context, trophyIndex) {
@@ -195,59 +137,84 @@ class _MatchesScreenState extends State<MatchesScreen> {
               final filteredLeagues = leaguesList.where((league) => league.trophy?.id == trophy.id).toList();
               final filteredCoupes = coupesList.where((coupe) => coupe.season!.league?.trophy?.id == trophy.id).toList();
               final filteredCoupes8 = coupes8List.where((coupe8) => coupe8.season!.league?.trophy?.id == trophy.id).toList();
+              final filteredMatches = matches.where((match) => match.trophy?.id == trophy.id).toList();
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTrophyHeader(trophy),
 
-                  // Display leagues for the trophy
+                  // Display leagues
                   if (filteredLeagues.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: filteredLeagues.map((league) {
                           return LeagueComponent(
                             league: league,
                             onMatchSelected: widget.onMatchSelected,
-                            date: selectedDate, // Pass the selected date here
+                            date: selectedDate,
                           );
                         }).toList(),
                       ),
                     ),
 
-                  // Display Coupes for the trophy
+                  // Display Coupes
                   if (filteredCoupes.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: filteredCoupes.map((coupe) {
                           return CoupeComponent(
                             coupe: coupe,
                             onMatchSelected: widget.onMatchSelected,
-                            date: selectedDate, // Pass the selected date here
+                            date: selectedDate,
                           );
                         }).toList(),
                       ),
                     ),
 
-                  // Display Coupe 8s for the trophy
+                  // Display Coupe 8s
                   if (filteredCoupes8.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(left: 0.0, top: 8.0, bottom: 8.0),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: filteredCoupes8.map((coupe8) {
                           return Coupe8Component(
                             coupe8: coupe8,
                             onMatchSelected: widget.onMatchSelected,
-                            date: selectedDate, // Pass the selected date here
+                            date: selectedDate,
                           );
                         }).toList(),
                       ),
                     ),
+
+                  // Special Case: Ramadan Cup Matches
+                  // Special Case: Ramadan Cup Matches
+                  if (trophy.name?.toLowerCase() == "ramadan cup" && filteredMatches.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: filteredMatches.where((match) {
+                          // Compare match date with selectedDate
+                          return match.date?.year == selectedDate.year &&
+                              match.date?.month == selectedDate.month &&
+                              match.date?.day == selectedDate.day;
+                        }).toList().map((match) {
+                          return MatchItemLive(
+                            match: match,
+                            backgroundColor: Colors.transparent,
+                            isFirstItem: match == filteredMatches.first,
+                            isLastItem: match == filteredMatches.last,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
                 ],
               );
             },
@@ -257,72 +224,33 @@ class _MatchesScreenState extends State<MatchesScreen> {
     );
   }
 
-
-
-  // Widget to build trophy header
+  // Trophy Header Widget
   Widget _buildTrophyHeader(Trophy trophy) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bottomSheetItem,
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Color(0xFFFFFFFF), width: 2),
-        ),
+        border: Border.symmetric(horizontal: const BorderSide(color: Color(0xFFFFFFFF), width: 2)),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-            vertical: 8.0, horizontal: 8.0),
+        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         leading: Container(
           width: 55,
           height: 55,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),
-            border: Border.all(
-              color: AppColors.bottomSheetLogo,
-              width: 1.0,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 4.0,
-                spreadRadius: 0.0,
-                offset: Offset(0, 4),
-              ),
-            ],
+            border: Border.all(color: AppColors.bottomSheetLogo, width: 1.0),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Image.asset(
-              'assets/images/${trophy.name?.toUpperCase() ?? 'default'}.png',
-              fit: BoxFit.scaleDown,
-            ),
+          child: Image.asset(
+            'assets/images/${trophy.name?.toUpperCase() ?? 'default'}.png',
+            fit: BoxFit.scaleDown,
           ),
         ),
         title: Text(
           trophy.name?.toUpperCase() ?? 'UNKNOWN TROPHY',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: "oswald",
-            shadows: [
-              Shadow(
-                color: Colors.black,
-                blurRadius: 1.0,
-                offset: Offset(0.0, 3.0),
-              ),
-            ],
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
-
-  // Widget to build league matches
-
-
-// Widget to build coupe matches
-
 }
-  // Widget to build coupe 8 matches
-

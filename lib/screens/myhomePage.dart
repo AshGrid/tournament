@@ -16,12 +16,14 @@ import 'package:untitled/screens/home_screen.dart';
 import 'package:untitled/screens/fovorite_screen.dart';
 import 'package:untitled/screens/notificationScreen.dart';
 import 'package:untitled/screens/profile_screen.dart';
+import 'package:untitled/screens/ramadan_cup_details_screen.dart';
 import 'package:untitled/screens/searchScreeen.dart';
 import 'package:untitled/screens/splash_screen.dart';
 import 'package:untitled/screens/teamPage.dart';
 import 'package:untitled/screens/trophy_screen.dart';
 
 import '../Service/data_service.dart';
+import '../Service/version_service.dart';
 import '../components/bottom_navigation.dart';
 import '../components/colors.dart';
 import '../components/custom_appbar.dart';
@@ -374,8 +376,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkForUpdate(context);
+    });
     _fetchMatches();
     _loadSavedClubsAndNotifications();
+
 
 
   }
@@ -446,6 +452,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getPage(int selectedIndex) {
     // Show league details if a league is selected
     if (_selectedLeague != null) {
+      if(_selectedLeague?.trophy!.name!.toLowerCase() == "ramadan cup") {
+        return RamadanCupDetailsScreen(league: _selectedLeague!, trophy: _selectedTrophyName!, onMatchSelected: _onMatchItemSelected,);
+
+      }
       return LeagueDetailsScreen(league: _selectedLeague!, trophy: _selectedTrophyName!, onMatchSelected: _onMatchItemSelected,);
     }
     if (_selectedCoupe != null) {

@@ -14,6 +14,8 @@ Pool _$PoolFromJson(Map<String, dynamic> json) => Pool(
           .toList(),
       create_matches: json['create_matches'] as bool?,
       type: json['type'] as String?,
+      name: json['name'] as String?,
+      full_name: json['full_name'] as String?,
     );
 
 Map<String, dynamic> _$PoolToJson(Pool instance) => <String, dynamic>{

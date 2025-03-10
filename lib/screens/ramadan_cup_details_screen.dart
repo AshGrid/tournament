@@ -2,30 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:untitled/components/ads_banner.dart';
 import 'package:untitled/models/League.dart';
 import 'package:untitled/screens/phaseDetailsScreen.dart';
+import 'package:untitled/screens/ramadan_cup_phase_details_screen.dart';
 import '../Service/data_service.dart';
 import '../components/colors.dart';
 import '../components/image_slider.dart';
+import '../models/PoolData.dart';
+import '../models/Season.dart';
+import '../models/TeamRanking.dart';
 import '../models/Trophy.dart';
 import '../models/Match.dart';
 
-class LeagueDetailsScreen extends StatefulWidget {
+class RamadanCupDetailsScreen extends StatefulWidget {
   final League league;
   final Trophy trophy;
   final Function(Match) onMatchSelected;
 
-  const LeagueDetailsScreen(
-      {super.key, required this.league, required this.trophy,required this.onMatchSelected});
+  const RamadanCupDetailsScreen(
+      {super.key,
+      required this.league,
+      required this.trophy,
+      required this.onMatchSelected});
 
   @override
-  State<LeagueDetailsScreen> createState() => _LeagueDetailsScreenState();
+  State<RamadanCupDetailsScreen> createState() =>
+      _RamadanCupDetailsScreenState();
 }
 
-class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
+class _RamadanCupDetailsScreenState extends State<RamadanCupDetailsScreen> {
   String? selectedPhase;
   bool isAdsLoading = true;
+  bool isSeasonsLoading = true;
   final DataService dataService = DataService();
-
+  Season? selectedSeason = null;
   List<String> imagePaths = [];
+  List<Season> seasonsList = [];
+  List<PoolData> poolData = [];
+  bool isPoolDataLoading = true;
+
+
+  Future<void> _fetchSeasons() async {
+    try {
+      setState(() {
+        isSeasonsLoading = true;
+      });
+
+      // Fetch all seasons
+      final fetchedSeasons = await dataService.fetchSeasons();
+
+      setState(() {
+        // Find the first season where season.league?.id matches widget.league.id
+        seasonsList = fetchedSeasons
+            .where((season) => season.league?.id == widget.league.id)
+            .toList();
+
+        // If a matching season is found, assign it to selectedSeason
+        if (seasonsList.isNotEmpty) {
+          selectedSeason = seasonsList.first; // Take the first matching season
+        } else {
+          selectedSeason = null; // No matching season found
+        }
+
+        isSeasonsLoading = false;
+      });
+
+      print("Filtered seasons list: $seasonsList");
+    } catch (e) {
+      print('Error fetching seasons: $e');
+      setState(() {
+        isSeasonsLoading = false;
+      });
+    }
+  }
 
   Future<void> _fetchAds() async {
     try {
@@ -34,10 +81,10 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
         // Filter ads by place, ensure non-null images, and map to their image paths
         imagePaths = fetchedAds
             .where((ad) =>
-        ad.place == "league" &&
-            ad.image != null) // Filter by place and non-null images
+                ad.place == "league" &&
+                ad.image != null) // Filter by place and non-null images
             .map((ad) => ad
-            .image!) // Use non-null assertion to convert String? to String
+                .image!) // Use non-null assertion to convert String? to String
             .toList();
         isAdsLoading = false; // Set loading to false after fetching ads
       });
@@ -49,12 +96,33 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
     }
   }
 
+
+
+
+  void loadPoolData() async {
+    List<PoolData> poolDataList = await dataService.fetchPoolData(selectedSeason!.id!);
+    print("pool data list: $poolDataList");
+    if (poolDataList.isNotEmpty) {
+      print('Pool data found: $poolDataList');
+      // Use the poolDataList in your app
+     setState(() {
+        poolData = poolDataList;
+        isPoolDataLoading = false;
+     });
+    } else {
+      print('No pool data found or an error occurred.');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _fetchAds();
+    _fetchSeasons();
+    loadPoolData();
   }
+
   @override
   Widget build(BuildContext context) {
     final league = widget.league;
@@ -62,24 +130,19 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
     // Static list of phases for demonstration
     final List<String> phases = [
       'PREMIERE PHASE',
-      'SUPER PLAY-OFF',
-      'TROPHÉE HANNIBAL',
+      'PHASE ELIMINATOIRE',
     ];
 
     // Static list of images for demonstration
-    List<String> imagePath = [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image1.jpeg',
-    ];
 
     return Scaffold(
       backgroundColor: AppColors.secondaryBackground,
       body: selectedPhase != null
-          ? PhaseDetailsScreen(
+          ? RamadanCupPhaseDetailsScreen(
               phaseName: selectedPhase!,
               league: league,
-              trophyName: this.widget.trophy.name!, onMatchSelected: this.widget.onMatchSelected,
+              trophy: this.widget.trophy,
+              onMatchSelected: this.widget.onMatchSelected,
             ) // Show PhaseDetailsScreen if a phase is selected
           : CustomScrollView(
               // Show initial content if no phase is selected
@@ -169,7 +232,8 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                                         height:
                                             4), // Space between league name and trophy name
                                     Text(
-                                      widget.trophy.name!.toUpperCase() =="RAMADAN CUP" ? "RAMADAN CUP" : league.name!, // Assuming you have trophyName in the League model
+                                      "RAMADAN CUP"
+                                          .toUpperCase(), // Assuming you have trophyName in the League model
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -283,15 +347,15 @@ class _LeagueDetailsScreenState extends State<LeagueDetailsScreen> {
                 SliverToBoxAdapter(
                   child: isAdsLoading
                       ? const Center(
-                    child: CircularProgressIndicator(), // Loading icon
-                  )
+                          child: CircularProgressIndicator(), // Loading icon
+                        )
                       : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 8),
-                    child: ImageSlider(
-                      imagePaths: imagePaths,
-                    ),
-                  ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          child: ImageSlider(
+                            imagePaths: imagePaths,
+                          ),
+                        ),
                 ),
               ],
             ),

@@ -44,6 +44,7 @@ class TeamItem extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(width: 5,),
             Row(
               children: [
                 Container(

@@ -121,11 +121,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
     List<TrophyItem> combinedItems = [];
     combinedItems
-        .addAll(filteredLeagues.map((league) => TrophyItem(league: league)));
+        .addAll(filteredLeagues.map((league) => TrophyItem(league: league, trophyName: widget.trophyName)));
     combinedItems
-        .addAll(filteredCoupes.map((coupe) => TrophyItem(coupe: coupe)));
+        .addAll(filteredCoupes.map((coupe) => TrophyItem(coupe: coupe, trophyName: widget.trophyName)));
     combinedItems
-        .addAll(filteredCoupes8.map((coupe8) => TrophyItem(coupe8: coupe8)));
+        .addAll(filteredCoupes8.map((coupe8) => TrophyItem(coupe8: coupe8, trophyName: widget.trophyName)));
 
     double height =
         widget.trophyName.name?.toUpperCase() == "TROPHÉES DE CARTHAGE"
@@ -336,6 +336,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                                         ),
                                       ),
                                       title: Text(
+
                                         item.displayName(),
                                         style: const TextStyle(
                                           color: Colors.black,
@@ -379,8 +380,9 @@ class TrophyItem {
   final League? league;
   final Coupe? coupe;
   final Coupe8? coupe8;
+  final Trophy trophyName; // Add this line
 
-  TrophyItem({this.league, this.coupe, this.coupe8});
+  TrophyItem({this.league, this.coupe, this.coupe8, required this.trophyName}); // Modify this line
 
   String imagePath() {
     if (league != null) {
@@ -395,7 +397,9 @@ class TrophyItem {
   }
 
   String displayName() {
-    if (league != null) {
+    if (trophyName.name!.toUpperCase() == "RAMADAN CUP") {
+      return "RAMADAN CUP";
+    } else if (league != null) {
       return league!.name!.toUpperCase();
     } else if (coupe != null) {
       return coupe!.name!.toUpperCase();

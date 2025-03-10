@@ -73,9 +73,10 @@ class _LeagueComponentState extends State<LeagueComponent> {
               match.date!.month == widget.date.month &&
               match.date!.day == widget.date.day
       );
+      bool isRamadanCup =  match.trophy!.name == "Ramadan Cup".toUpperCase();
       print("matches in league component");
       print(matchesList);
-      return isSameLeague && isSameDate;
+      return isSameLeague && isSameDate && !isRamadanCup;
     }).toList();
     matchesList.sort((a, b) {
       if (a.time == null) return 1; // Push null times to the end
