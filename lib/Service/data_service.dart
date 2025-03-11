@@ -30,7 +30,7 @@ import '../models/ramadan_cup.dart';
 
 class DataService {
   final String baseUrl =
-      'https://www.abcevents.com.tn/api/'; // Replace with your API URL
+      'https://dev.abcevents.com.tn/api/'; // Replace with your API URL
 
   /// Fetches news from the API
 

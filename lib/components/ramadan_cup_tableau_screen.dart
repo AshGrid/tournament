@@ -130,135 +130,87 @@ class _BracketsScreenState extends State<BracketsScreen> {
     // Create a sample match to use as a fallback
     final sampleMatch = createSampleMatch();
 
-    // Case 1: If bracketDataList is empty, create both tournaments with the sample match
-    if (bracketDataList.isEmpty) {
-      semiFinal1B1 = sampleMatch;
-      semiFinal2B1 = sampleMatch;
-      finalMatchB1 = sampleMatch;
+    // Initialize matches with sample match
+    semiFinal1B1 = sampleMatch;
+    semiFinal2B1 = sampleMatch;
+    finalMatchB1 = sampleMatch;
 
-      semiFinal1B2 = sampleMatch;
-      semiFinal2B2 = sampleMatch;
-      finalMatchB2 = sampleMatch;
-    }
-    // Case 2: If bracketDataList has only one object, create the first tournament with the data and the second with the sample match
-    else if (bracketDataList.length == 1) {
-      // Populate the first tournament with the data from bracketDataList[0]
-      semiFinal1B1 = bracketDataList[0].matches.semiFinals[0] as Match?;
-      semiFinal2B1 = bracketDataList[0].matches.semiFinals[1] as Match?;
-      finalMatchB1 = bracketDataList[0].matches.finals[0] as Match?;
+    semiFinal1B2 = sampleMatch;
+    semiFinal2B2 = sampleMatch;
+    finalMatchB2 = sampleMatch;
 
-      // Populate the second tournament with the sample match
-      semiFinal1B2 = sampleMatch;
-      semiFinal2B2 = sampleMatch;
-      finalMatchB2 = sampleMatch;
-    }
-    // Case 3: If bracketDataList has two objects, create both tournaments normally
-    else if (bracketDataList.length >= 2) {
-      // Populate the first tournament with the data from bracketDataList[0]
-      semiFinal1B1 = bracketDataList[0].matches.semiFinals[0] as Match?;
-      semiFinal2B1 = bracketDataList[0].matches.semiFinals[1] as Match?;
-      finalMatchB1 = bracketDataList[0].matches.finals[0] as Match?;
+    if (bracketDataList.isNotEmpty) {
+      // Populate the first tournament if it exists
+      if (bracketDataList.length >= 1) {
+        final matchesB1 = bracketDataList[0].matches;
 
-      // Populate the second tournament with the data from bracketDataList[1]
-      semiFinal1B2 = bracketDataList[1].matches.semiFinals[0] as Match?;
-      semiFinal2B2 = bracketDataList[1].matches.semiFinals[1] as Match?;
-      finalMatchB2 = bracketDataList[1].matches.finals[0] as Match?;
+        if (matchesB1.semiFinals.length > 0) {
+          semiFinal1B1 = matchesB1.semiFinals[0] ?? sampleMatch;
+        }
+        if (matchesB1.semiFinals.length > 1) {
+          semiFinal2B1 = matchesB1.semiFinals[1] ?? sampleMatch;
+        }
+        if (matchesB1.finals.isNotEmpty) {
+          finalMatchB1 = matchesB1.finals[0] ?? sampleMatch;
+        }
+      }
+
+      // Populate the second tournament if available
+      if (bracketDataList.length >= 2) {
+        final matchesB2 = bracketDataList[1].matches;
+
+        if (matchesB2.semiFinals.length > 0) {
+          semiFinal1B2 = matchesB2.semiFinals[0] ?? sampleMatch;
+        }
+        if (matchesB2.semiFinals.length > 1) {
+          semiFinal2B2 = matchesB2.semiFinals[1] ?? sampleMatch;
+        }
+        if (matchesB2.finals.isNotEmpty) {
+          finalMatchB2 = matchesB2.finals[0] ?? sampleMatch;
+        }
+      }
     }
 
     // Create the first tournament (_tournaments)
     _tournaments = [
       Tournament(matches: [
-        TournamentMatch(
-          id: "1",
-          teamA: semiFinal1B1!.home?.name ?? "TBD",
-          teamB: semiFinal1B1!.away?.name ?? "TBD",
-          scoreTeamA: ((semiFinal1B1!.home_first_half_score ?? 0) +
-              (semiFinal1B1!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((semiFinal1B1!.away_first_half_score ?? 0) +
-              (semiFinal1B1!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: semiFinal1B1!.home?.logo ?? "",
-          teamBImage: semiFinal1B1!.away?.logo ?? "",
-        ),
-        TournamentMatch(
-          id: "2",
-          teamA: semiFinal2B1!.home?.name ?? "TBD",
-          teamB: semiFinal2B1!.away?.name ?? "TBD",
-          scoreTeamA: ((semiFinal2B1!.home_first_half_score ?? 0) +
-              (semiFinal2B1!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((semiFinal2B1!.away_first_half_score ?? 0) +
-              (semiFinal2B1!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: semiFinal2B1!.home?.logo ?? "",
-          teamBImage: semiFinal2B1!.away?.logo ?? "",
-        ),
+        _createTournamentMatch("1", semiFinal1B1!),
+        _createTournamentMatch("2", semiFinal2B1!),
       ]),
       Tournament(matches: [
-        TournamentMatch(
-          id: "5",
-          teamA: finalMatchB1!.home?.name ?? "TBD",
-          teamB: finalMatchB1!.away?.name ?? "TBD",
-          scoreTeamA: ((finalMatchB1!.home_first_half_score ?? 0) +
-              (finalMatchB1!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((finalMatchB1!.away_first_half_score ?? 0) +
-              (finalMatchB1!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: finalMatchB1!.home?.logo ?? "",
-          teamBImage: finalMatchB1!.away?.logo ?? "",
-        ),
+        _createTournamentMatch("5", finalMatchB1!),
       ]),
     ];
 
     // Create the second tournament (_tournaments2)
     _tournaments2 = [
       Tournament(matches: [
-        TournamentMatch(
-          id: "1",
-          teamA: semiFinal1B2!.home?.name ?? "TBD",
-          teamB: semiFinal1B2!.away?.name ?? "TBD",
-          scoreTeamA: ((semiFinal1B2!.home_first_half_score ?? 0) +
-              (semiFinal1B2!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((semiFinal1B2!.away_first_half_score ?? 0) +
-              (semiFinal1B2!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: semiFinal1B2!.home?.logo ?? "",
-          teamBImage: semiFinal1B2!.away?.logo ?? "",
-        ),
-        TournamentMatch(
-          id: "2",
-          teamA: semiFinal2B2!.home?.name ?? "TBD",
-          teamB: semiFinal2B2!.away?.name ?? "TBD",
-          scoreTeamA: ((semiFinal2B2!.home_first_half_score ?? 0) +
-              (semiFinal2B2!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((semiFinal2B2!.away_first_half_score ?? 0) +
-              (semiFinal2B2!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: semiFinal2B2!.home?.logo ?? "",
-          teamBImage: semiFinal2B2!.away?.logo ?? "",
-        ),
+        _createTournamentMatch("1", semiFinal1B2!),
+        _createTournamentMatch("2", semiFinal2B2!),
       ]),
       Tournament(matches: [
-        TournamentMatch(
-          id: "5",
-          teamA: finalMatchB2!.home?.name ?? "TBD",
-          teamB: finalMatchB2!.away?.name ?? "TBD",
-          scoreTeamA: ((finalMatchB2!.home_first_half_score ?? 0) +
-              (finalMatchB2!.home_second_half_score ?? 0))
-              .toString(),
-          scoreTeamB: ((finalMatchB2!.away_first_half_score ?? 0) +
-              (finalMatchB2!.away_second_half_score ?? 0))
-              .toString(),
-          teamAImage: finalMatchB2!.home?.logo ?? "",
-          teamBImage: finalMatchB2!.away?.logo ?? "",
-        ),
+        _createTournamentMatch("5", finalMatchB2!),
       ]),
     ];
   }
+
+// Helper function to create TournamentMatch
+  TournamentMatch _createTournamentMatch(String id, Match match) {
+    return TournamentMatch(
+      id: id,
+      teamA: match.home?.name ?? "TBD",
+      teamB: match.away?.name ?? "TBD",
+      scoreTeamA: ((match.home_first_half_score ?? 0) +
+          (match.home_second_half_score ?? 0))
+          .toString(),
+      scoreTeamB: ((match.away_first_half_score ?? 0) +
+          (match.away_second_half_score ?? 0))
+          .toString(),
+      teamAImage: match.home?.logo ?? "",
+      teamBImage: match.away?.logo ?? "",
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
